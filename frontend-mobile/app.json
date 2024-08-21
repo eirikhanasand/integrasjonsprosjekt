@@ -17,17 +17,6 @@
             "fallbackToCacheTimeout": 0,
             "url": "https://u.expo.dev/952a1914-0c53-43e7-b64e-8daab0b3a435"
         },
-        "plugins": [
-            ["@react-native-firebase/app"],
-            [
-                "expo-build-properties",
-                {
-                "ios": {
-                        "useFrameworks": "static"
-                }
-                }
-            ]
-        ],
         "assetBundlePatterns": [
             "**/*"
         ],
