@@ -34,12 +34,7 @@
         "ios": {
             "supportsTablet": true,
             "bundleIdentifier": "com.speedrun.speedrun",
-            "buildNumber": "1",
-            "infoPlist": {
-                "UIBackgroundModes": [
-                    "fetch"
-                ]
-            }
+            "buildNumber": "1"
         },
         "android": {
             "adaptiveIcon": {
