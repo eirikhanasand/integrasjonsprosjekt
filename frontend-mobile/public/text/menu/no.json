@@ -1,0 +1,12 @@
+{
+    "screen": "Meny",
+    "nav": "menu",
+    "setting": [
+        {
+            "id": 2, 
+            "nav": "SettingScreen",
+            "title": "Innstillinger"
+        }
+    ],
+    "version": "Versjon "
+}

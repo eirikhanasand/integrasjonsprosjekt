@@ -1,0 +1,17 @@
+{
+    "screen": "Menu",
+    "nav": "menu",
+    "setting": [
+        {
+            "id": 1, 
+            "nav": "ProfileScreen",   
+            "title": "Profile" 
+        },
+        {
+            "id": 2, 
+            "nav": "SettingScreen",   
+            "title": "Settings" 
+        }
+    ],
+    "version": "Version "
+}

@@ -1,0 +1,7 @@
+{
+    "screens": {
+        "EventScreen": "Events",
+        "AdScreen": "Ads",
+        "SettingScreen": "Settings"
+    }
+}
