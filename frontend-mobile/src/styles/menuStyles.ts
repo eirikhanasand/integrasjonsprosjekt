@@ -32,9 +32,9 @@ export const MS = StyleSheet.create ({
     bMenu: {
         position: "absolute",
         top: Platform.OS === "ios" ? "90%" : null,
-        bottom: Platform.OS === "ios" ? null : -50,
+        bottom: Platform.OS === "ios" ? null : -30,
         width: "100%",
-        height: Platform.OS === "ios" ? "10%" : "14%",
+        height: "12.5%",
         flexDirection: "row",
         justifyContent: "space-evenly",
     },
