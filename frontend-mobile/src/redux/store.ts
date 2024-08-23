@@ -21,8 +21,6 @@ const saveState = {
     storage: AsyncStorage,
     // Whitelists the names of the states to save
     whitelist: [
-        "ad",
-        "event", 
         "lang",
         "theme"
     ]

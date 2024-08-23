@@ -2,7 +2,7 @@ import { View } from "react-native"
 import { ClusterProps } from "@/interfaces"
 import { useSelector } from "react-redux"
 import ES from "@styles/eventStyles"
-import React from "react"
+import React, { useEffect } from "react"
 
 /**
  * Card function for styling a div, displays a view containing curved
@@ -38,7 +38,7 @@ children, highlight, style }: ClusterProps) {
 export function ClusterSmaller ({children}: React.PropsWithChildren<{}>) {
 
     const { theme } = useSelector((state: ReduxState) => state.theme)
-
+    
     return (
         <View style={{...ES.clusterSmaller, backgroundColor: theme.darker}}>
             <View>
