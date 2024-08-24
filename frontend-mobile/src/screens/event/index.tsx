@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar"
 import GS from "@styles/globalStyles"
-import { Animated, Dimensions, PanResponder, View } from "react-native"
+import { Animated, Dimensions, PanResponder, Text, View } from "react-native"
 import Swipe from "@components/nav/swipe"
 import { useSelector } from "react-redux"
 import { useRef, useState } from "react"
@@ -21,16 +21,50 @@ export default function EventScreen(): JSX.Element {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const height = Dimensions.get('window').height
-    const width = Dimensions.get('window').width
     const translateX = useRef(new Animated.Value(0)).current
     const translateY = useRef(new Animated.Value(0)).current
     const [directionLock, setDirectionLock] = useState<'horizontal' | 'vertical' | null>(null)
     const [horizontalState, setHorizontalState] = useState<'left' | 'middle' | 'right'>('middle')
-    const [verticalState, setVerticalState] = useState<'up' | 'down' | 'normal'>('normal')
+    const [verticalState, setVerticalState] = useState<'down' | 'normal' | 'up'>('normal')
+
+    function moveLeft() {
+        setHorizontalState((prevState) => {
+            const newPosition = prevState === 'right' ? 0 : -100
+    
+            // Starts the animation based on previous state
+            Animated.timing(translateX, {
+                toValue: newPosition,
+                duration: 1,
+                delay: 50,
+                useNativeDriver: true,
+            }).start()
+    
+            // Returns the new state
+            return 'left'
+        })
+    }
+    
+    function moveRight() {
+        setHorizontalState((prevState) => {
+            const newPosition = prevState === 'left' ? 0 : 100
+    
+            // Starts the animation based on previous state
+            Animated.timing(translateX, {
+                toValue: newPosition,
+                duration: 1,
+                delay: 50,
+                useNativeDriver: true,
+            }).start()
+    
+            // Returns the new state
+            return 'right'
+        })
+    }
 
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) => {
+                // Creates the threshold for movement necesarry to trigger the panResponder
                 return (
                     Math.abs(gestureState.dx) > 10 || Math.abs(gestureState.dy) > 10
                 )
@@ -44,6 +78,8 @@ export default function EventScreen(): JSX.Element {
                     }
                 }
 
+                // Checks for horizontal or vertical movement and locks it
+                // in the direction its moving the most
                 if (directionLock === 'horizontal') {
                     translateX.setValue(gestureState.dx)
                 } else {
@@ -51,28 +87,21 @@ export default function EventScreen(): JSX.Element {
                 }
             },
             onPanResponderRelease: (_, gestureState) => {
-                if (gestureState.moveX < width / 3) {
-                    Animated.spring(translateX, {
-                        toValue: -100,
-                        useNativeDriver: true,
-                    }).start();
-                } else if (gestureState.moveX > width / 3 && gestureState.moveX < width / 1.5) {       
-                    Animated.spring(translateX, {
-                        toValue: 0,
-                        useNativeDriver: true,
-                    }).start();
-                } else {       
-                    Animated.spring(translateX, {
-                        toValue: 100,
-                        useNativeDriver: true,
-                    }).start();
+                // Checks for left or right movement
+                if (gestureState.dx > 20) {
+                    moveRight()
+                } else if (gestureState.dx < -20) {
+                    moveLeft()
                 }
 
+                // Resets the vertical movement
                 Animated.spring(translateY, {
                     toValue: 0,
-                    tension: 0.5,
+                    stiffness: 200,
+                    damping: 200,
+                    mass: 1,
                     useNativeDriver: true,
-                }).start();
+                }).start()
 
             }
         })
@@ -97,9 +126,7 @@ export default function EventScreen(): JSX.Element {
                         top: height * 0.7, 
                         alignSelf: 'center',
                         transform: [{ translateX }, { translateY }],
-                    }}>
-
-                    </Animated.View>
+                    }}/>
                 </Animated.View>
             </View>
         </Swipe>
