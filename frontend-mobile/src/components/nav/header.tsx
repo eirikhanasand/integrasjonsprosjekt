@@ -8,11 +8,14 @@ import { useSelector } from 'react-redux'
 export default function Header({ options, route }: HeaderProps): ReactNode {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang  } = useSelector((state: ReduxState) => state.lang)
-
+    const GameScreen = route.name === "GameScreen"
     const [title, setTitle] = useState<string>(route.name && (lang
         ? require('@text/no.json').screens[route.name]
         : require('@text/en.json').screens[route.name]))
 
+    if (GameScreen) {
+        return
+    }
     return (
         <BlurWrapper>
             <View style={{...GS.headerView, top: Dimensions.get("window").height / 17}}>

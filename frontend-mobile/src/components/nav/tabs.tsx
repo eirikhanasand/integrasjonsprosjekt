@@ -6,6 +6,7 @@ import ShopScreen from "@screens/shop"
 import MS from "@styles/menuStyles"
 import { Image } from "react-native"
 import SettingScreen from "@screens/menu/settings"
+import PauseScreen from "@screens/game/pauseScreen"
 import Header from "./header"
 import { 
     GameStackParamList, 
@@ -29,7 +30,8 @@ function Shop() {
         <ShopStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
-            header: props => <Header {...props}/>}}>
+            header: props => <Header {...props}/>
+        }}>
             <ShopStack.Screen name="ShopScreen" component={ShopScreen}/>
         </ShopStack.Navigator>
     )
@@ -40,8 +42,10 @@ function Game() {
         <GameStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
-            header: props => <Header {...props}/>}}>
+            header: props => <Header {...props}/>
+        }}>
             <GameStack.Screen name="GameScreen" component={GameScreen}/>
+            <GameStack.Screen name="PauseScreen" component={GameScreen}/>
         </GameStack.Navigator>
     )
 }
@@ -51,7 +55,8 @@ function Menu() {
         <MenuStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
-            header: props => <Header {...props}/>}}>
+            header: props => <Header {...props}/>
+        }}>
             <MenuStack.Screen name="SettingScreen" component={SettingScreen} />
         </MenuStack.Navigator>
     )

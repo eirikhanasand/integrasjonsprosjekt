@@ -3,7 +3,9 @@ import Swipe from "@components/nav/swipe"
 import { StatusBar } from "expo-status-bar"
 import { useSelector } from "react-redux"
 import { View } from "react-native"
-import Player from "@components/game/player"
+import Gameplay from "@components/game/game"
+import { useState } from "react"
+import StartGame from "@components/game/startGame"
 
 /**
  * Parent GameScreen component
@@ -15,21 +17,26 @@ import Player from "@components/game/player"
  * @returns GameScreen
  */
 export default function GameScreen(): JSX.Element {
-    
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
 
+    // Game states
+    const [inGame, setInGame] = useState(false)
+    const left = inGame ? undefined : "ShopNav"
+    const right = inGame ? undefined : "MenuNav"
+
     // --- DISPLAYS THE GAMESCREEN ---
     return (
-        <Swipe left="EventNav" right="MenuNav">
+        <Swipe left={left} right={right}>
             <View>
                 <StatusBar style={"dark"} />
                 <View style={{
                     ...GS.content,
-                    paddingHorizontal: 5,
+                    paddingHorizontal: 0,
                     backgroundColor: theme.darker
                 }}>
-                    <Player />
+                    <StartGame inGame={inGame} setInGame={setInGame} />
+                    {inGame && <Gameplay />}
                 </View>
             </View>
         </Swipe>

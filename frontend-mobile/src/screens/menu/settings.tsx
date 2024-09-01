@@ -14,7 +14,7 @@ export default function SettingScreen(): JSX.Element {
     const { theme } = useSelector((state: ReduxState) => state.theme)
 
     return (
-        <Swipe left="MenuScreen">
+        <Swipe left="GameNav">
             <View>
                 <View style={{...GS.content, backgroundColor: theme.darker}}>
                     <Content />
@@ -53,8 +53,7 @@ function Content(): JSX.Element {
                 </View>
             </Cluster>
 
-            <Space height={10} />
-            <Space height={Dimensions.get("window").height / 7} />
+            <Space height={Dimensions.get("window").height / 7 + 10} />
         </ScrollView>
     )
 }

@@ -25,6 +25,7 @@ export type ShopScreenProps<T extends keyof ShopStackParamList> =
 
 export type GameStackParamList = {
     GameScreen: undefined
+    PauseScreen: { score: number}
 }
 
 export type GameScreenProps<T extends keyof GameStackParamList> =
@@ -45,11 +46,7 @@ export type MenuProps<T extends keyof MenuStackParamList> =
 StackScreenProps<MenuStackParamList, T>
 
 export type MenuStackParamList = {
-    // Example list of nested screens in the menu
-    // ProfileScreen: undefined
-    // SettingScreen: undefined
-    // AboutScreen: undefined
-    // BusinessScreen: undefined
+    SettingScreen: undefined
 }
 
 export type TabBarParamList = {

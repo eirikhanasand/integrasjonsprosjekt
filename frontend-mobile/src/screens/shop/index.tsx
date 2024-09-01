@@ -5,28 +5,19 @@ import Swipe from "@components/nav/swipe"
 import { useSelector } from "react-redux"
 
 /**
- * Parent EventScreen component
- *
- * Handles:
- * - Displaying events
- * - Filtering events
- * - Notification Management
- * - Event notifications, both scheduling and cancelling
+ * Parent ShopScreen component
  *
  * @param {navigation} Navigation Navigation route
- * @returns EventScreen
+ * @returns ShopScreen
  */
-export default function EventScreen(): JSX.Element {
+export default function ShopScreen(): JSX.Element {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
 
-    // Displays the EventScreen
+    // Displays the ShopScreen UI
     return (
-        <Swipe right="AdNav">
-            <View style={{
-                ...GS.content,
-                backgroundColor: theme.darker
-            }}>
+        <Swipe right="GameNav">
+            <View style={{ ...GS.content, backgroundColor: theme.darker }}>
                 <StatusBar style={"dark"} />
             </View>
         </Swipe>

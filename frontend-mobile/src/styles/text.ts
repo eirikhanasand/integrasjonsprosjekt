@@ -15,6 +15,14 @@ export const T = StyleSheet.create({
     //  Text of size 20
     text20: {
         fontSize: adjustForDevice(20),
+    },
+    //  Text of size 22
+    text22: {
+        fontSize: adjustForDevice(22),
+    },
+    //  Text of size 30
+    text30: {
+        fontSize: adjustForDevice(30),
     }
 })
 
