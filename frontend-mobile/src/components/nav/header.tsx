@@ -16,6 +16,7 @@ export default function Header({ options, route }: HeaderProps): ReactNode {
     if (GameScreen) {
         return
     }
+
     return (
         <BlurWrapper>
             <View style={{...GS.headerView, top: Dimensions.get("window").height / 17}}>
