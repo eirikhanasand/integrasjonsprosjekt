@@ -5,12 +5,13 @@ const appDirectory = path.resolve(__dirname)
 const { presets, plugins } = require(`${appDirectory}/babel.config.js`)
 const compileNodeModules = [
     // Add every react-native package that needs compiling
+    'react-native-game-engine',
     // 'react-native-gesture-handler',
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`))
 
 const babelLoaderConfiguration = {
-    // Updated to include .jsx
-    test: /\.(js|jsx|ts|tsx)$/,
+    // Handles .js, .jsx, .ts and .tsx files
+    test: /\.[jt]sx?$/,
     // Add every directory that needs to be compiled by Babel during the build.
     include: [
          // Entry to your application
