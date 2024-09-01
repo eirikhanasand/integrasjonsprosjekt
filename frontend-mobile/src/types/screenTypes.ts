@@ -10,25 +10,26 @@ declare global {
 export type TabBarProps<T extends keyof TabBarParamList> =
 BottomTabScreenProps<TabBarParamList, T>
 
-export type EventStackParamList = {
-    EventScreen: undefined
-    SpecificEventScreen: {eventID: number}
+export type ShopStackParamList = {
+    ShopScreen: undefined
+
+    // Example on how to pass props to a screen
+    // ExampleScreen: {name: string}
 }
 
-export type EventScreenProps<T extends keyof EventStackParamList> = 
+export type ShopScreenProps<T extends keyof ShopStackParamList> = 
     CompositeScreenProps<
-        StackScreenProps<EventStackParamList, T>,
+        StackScreenProps<ShopStackParamList, T>,
         BottomTabScreenProps<TabBarParamList>
     >
 
-export type AdStackParamList = {
-    AdScreen: undefined
-    SpecificAdScreen: {adID: number}
+export type GameStackParamList = {
+    GameScreen: undefined
 }
 
-export type AdScreenProps<T extends keyof AdStackParamList> =
+export type GameScreenProps<T extends keyof GameStackParamList> =
     CompositeScreenProps<
-        StackScreenProps<AdStackParamList, T>,
+        StackScreenProps<GameStackParamList, T>,
         BottomTabScreenProps<TabBarParamList>
     >
 
@@ -44,15 +45,16 @@ export type MenuProps<T extends keyof MenuStackParamList> =
 StackScreenProps<MenuStackParamList, T>
 
 export type MenuStackParamList = {
-    ProfileScreen: undefined
-    SettingScreen: undefined
-    AboutScreen: undefined
-    BusinessScreen: undefined
+    // Example list of nested screens in the menu
+    // ProfileScreen: undefined
+    // SettingScreen: undefined
+    // AboutScreen: undefined
+    // BusinessScreen: undefined
 }
 
 export type TabBarParamList = {
-    EventNav: NavigatorScreenParams<EventStackParamList>
-    AdNav: NavigatorScreenParams<AdStackParamList>
+    ShopNav: NavigatorScreenParams<ShopStackParamList>
+    GameNav: NavigatorScreenParams<GameStackParamList>
     MenuNav: NavigatorScreenParams<MenuStackParamList>
 }
 

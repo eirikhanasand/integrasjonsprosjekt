@@ -1,7 +1,7 @@
 {
     "screens": {
-        "EventScreen": "Arrangementer",
-        "AdScreen": "Jobbanonser",
+        "ShopScreen": "Butikk",
+        "GameScreen": "Spill",
         "SettingScreen": "Innstillinger"
     }
 }

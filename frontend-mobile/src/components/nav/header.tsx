@@ -8,8 +8,6 @@ import { useSelector } from 'react-redux'
 export default function Header({ options, route }: HeaderProps): ReactNode {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang  } = useSelector((state: ReduxState) => state.lang)
-    const SES = route.name === "SpecificEventScreen"
-    const SAS = route.name === "SpecificAdScreen"
 
     const [title, setTitle] = useState<string>(route.name && (lang
         ? require('@text/no.json').screens[route.name]
@@ -21,7 +19,7 @@ export default function Header({ options, route }: HeaderProps): ReactNode {
                 <View style={GS.innerHeaderViewOne}>
                 </View>
                 <Text style={{...GS.headerTitle, color: theme.titleTextColor, 
-                            width: SES || SAS ? 300 : 150, textAlign: "center", top: title?.length > 30 ? -8 : undefined}}>
+                            width: 300, textAlign: "center", top: title?.length > 30 ? -8 : undefined}}>
                             {title}
                         </Text>
                     <View style={GS.innerHeaderViewTwo}>

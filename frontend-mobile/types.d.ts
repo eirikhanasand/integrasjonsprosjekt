@@ -12,39 +12,6 @@ type ReduxState = {
     lang: {
         lang: boolean
     }
-    event: {
-        events: EventProps[]
-        event: DetailedEventResponse
-        history: number[]
-        clickedEvents: EventProps[]
-        renderedEvents: EventProps[]
-        lastFetch: string
-        search: boolean
-        categories: {
-            no: string[]
-            en: string[]
-        }
-        clickedCategories: string[]
-        input: string
-        downloadState: Date
-        tag: {
-            title: string
-            body: string
-        }
-    }
-    ad: {
-        ads: AdProps[]
-        ad: DetailedAdResponse
-        history: number[]
-        clickedAds: AdProps[]
-        renderedAds: AdProps[]
-        lastFetch: string
-        search: boolean
-        skills: string[]
-        clickedSkills: string[]
-        input: string
-        downloadState: Date
-    }
 }
 
 type Setting = {

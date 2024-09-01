@@ -19,139 +19,15 @@ export const GS = StyleSheet.create({
     notificationTip: {
         fontSize: 15,
     },
-    // ReportScreen name and notifier text
-    inputText: {
-        alignSelf: "center",
-        alignItems: "center",
-        width: "80%",
-        height: 50,
-        borderRadius: 20,
-    },
-    // Left view of notificationScreen
+    // Left view of settings
     view: {
         alignSelf: "center",
         width: "85%",
     },
-    // Right view of notificationScreen
+    // Right view of settings
     view2: {
         justifyContent: "center",
         marginVertical: 2,
-    },
-    // Used anywhere there is a small image
-    smallImage: {
-        alignSelf: "center",
-        height: 150,
-        width: 150,
-    },
-    parentCommitteeView: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginVertical: 8,
-        maxWidth: "93%"
-    },
-    committee: {
-        borderRadius: 10,
-    },
-    image80: {
-        alignSelf: "center",
-        height: 80,
-        width: 80,
-    },
-    dropdown: {
-        flexDirection: "row",
-        paddingLeft: 5,
-        alignItems: "center",
-        height: 40,
-    },
-    reminderDropdown: {
-        flexDirection: "row",
-        alignItems: "center",
-        height: 40,
-        justifyContent: "space-between",
-    },
-    dropdownContent: {
-        flexDirection: "row",
-        paddingLeft: 10,
-        alignItems: "center",
-        height: 36,
-    },
-    dropImage: {
-        alignSelf: "center",
-        height: 60,
-        width: 40,
-    },
-    reminderDropdownArrow: {
-        alignSelf: "center",
-        height: 20,
-        width: 20,
-        resizeMode: "contain",
-    },
-    smallDropImage: {
-        alignSelf: "center",
-        height: 40,
-        width: 25
-    },
-    row: {
-        flexDirection: "row",
-    },
-    aboutImage: {
-        width: "100%",
-        height: undefined,
-        aspectRatio: 1.5,
-    },
-    tiny: {
-        height: 15,
-        width: 25,
-    },
-    medium: {
-        alignSelf: "center",
-        height: 50,
-        width: 50,
-    },
-    small: {
-        height: 25,
-        width: 35,
-    },
-    personImage: {
-        alignSelf: "center",
-        width: 220,
-        height: 220,
-        marginBottom: 10
-    },
-    socialView: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    socialPartView: {
-        width: "15%",
-        alignItems: "center",
-    },
-    notificationDropdownTouchable: {
-        top: 50,
-        marginHorizontal: 12,
-        zIndex: 3,
-        borderRadius: 20,
-        height: 70,
-        alignItems: "flex-start",
-        paddingHorizontal: 14
-    }, 
-    notificationDropdownBlur: {
-        top: 50,
-        position: "absolute",
-        marginHorizontal: 12,
-        width: "94%",
-        zIndex: 1,
-        borderRadius: 10,
-        height: 70,
-        overflow: "hidden"
-    }, 
-    notificationDropdownTitle: {
-        fontWeight: "500",
-        fontSize: 20,
-    }, 
-    notificationDropdownBody: {
-        fontSize: 18
     },
     headerView: {
         position: "absolute",
@@ -159,12 +35,14 @@ export const GS = StyleSheet.create({
         display: 'flex', 
         flexDirection: 'row', 
     },
+    // Inner header view
     innerHeaderViewOne: {
         flex: 1, 
         display: 'flex', 
         flexDirection: 'row', 
         alignItems: 'center'
     },
+    // Reversed inner header view
     innerHeaderViewTwo: {
         flex: 1, 
         display: 'flex', 
@@ -172,43 +50,23 @@ export const GS = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'space-evenly'
     },
+    // Header title
     headerTitle: {
         alignSelf: 'center', 
         fontSize: 20,
     },
+    // Background view of blur component
     blurBackgroundView: {
         position: "absolute",
         width: "100%",
         justifyContent: "center",
     },
+    // Custom menu icon for the header
     customMenuIcon: {
         right: Platform.OS === "ios" 
             ? Dimensions.get("window").width / 50 
             : Dimensions.get("window").width / 30
     },
-    logo: {
-        left: Platform.OS === "ios"
-            ? Dimensions.get("window").width / 21.5
-            : Dimensions.get("window").width / 20
-    },
-    tag: {
-        width: 15,
-        height: 15,
-        top: 1,
-        resizeMode: "contain",
-    },
-    animatedCard: {
-        position: "absolute",
-        zIndex: 2,
-        bottom: 0,
-        height: Platform.OS=="ios" ? Dimensions.get("window").height / 1.48 : Dimensions.get("window").height / 1.40,
-        width: "100%", 
-        borderRadius: 20,
-    },
-    trashCan: {
-        height: 50,
-        width: 50
-    }
 })
 
 export default GS

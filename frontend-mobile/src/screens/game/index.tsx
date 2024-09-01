@@ -3,25 +3,23 @@ import Swipe from "@components/nav/swipe"
 import { StatusBar } from "expo-status-bar"
 import { useSelector } from "react-redux"
 import { View } from "react-native"
+import Player from "@components/game/player"
 
 /**
- * Parent AdScreen component
+ * Parent GameScreen component
  *
  * Handles:
- * - Displaying ads
- * - Filtering ads
- * - Notification Management
- * - Ad notifications, both scheduling and cancelling
+ * - Core gameplay
  *
  * @param {navigation} Navigation Navigation route
- * @returns AdScreen
+ * @returns GameScreen
  */
-export default function AdScreen(): JSX.Element {
+export default function GameScreen(): JSX.Element {
     
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
 
-    // --- DISPLAYS THE EVENTSCREEN ---
+    // --- DISPLAYS THE GAMESCREEN ---
     return (
         <Swipe left="EventNav" right="MenuNav">
             <View>
@@ -31,6 +29,7 @@ export default function AdScreen(): JSX.Element {
                     paddingHorizontal: 5,
                     backgroundColor: theme.darker
                 }}>
+                    <Player />
                 </View>
             </View>
         </Swipe>

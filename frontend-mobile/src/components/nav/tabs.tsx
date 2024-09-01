@@ -1,15 +1,15 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { NavigationContainer } from "@react-navigation/native"
 import Footer from "@nav/footer"
-import AdScreen from "@screens/ads"
-import EventScreen from "@screens/event"
+import GameScreen from "@screens/game"
+import ShopScreen from "@screens/shop"
 import MS from "@styles/menuStyles"
 import { Image } from "react-native"
 import SettingScreen from "@screens/menu/settings"
 import Header from "./header"
 import { 
-    AdStackParamList, 
-    EventStackParamList, 
+    GameStackParamList, 
+    ShopStackParamList, 
     MenuStackParamList, 
     RootStackParamList, 
     TabBarParamList 
@@ -20,29 +20,29 @@ import { createStackNavigator } from "@react-navigation/stack"
 // Declares Tab to equal CBTN function
 const Root = createStackNavigator<RootStackParamList>()
 const Tab = createBottomTabNavigator<TabBarParamList>()
-const EventStack = createStackNavigator<EventStackParamList>()
-const AdStack = createStackNavigator<AdStackParamList>()
+const ShopStack = createStackNavigator<ShopStackParamList>()
+const GameStack = createStackNavigator<GameStackParamList>()
 const MenuStack = createStackNavigator<MenuStackParamList>()
 
-function Events() {
+function Shop() {
     return (
-        <EventStack.Navigator screenOptions={{
+        <ShopStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
             header: props => <Header {...props}/>}}>
-            <EventStack.Screen name="EventScreen" component={EventScreen}/>
-        </EventStack.Navigator>
+            <ShopStack.Screen name="ShopScreen" component={ShopScreen}/>
+        </ShopStack.Navigator>
     )
 }
 
-function Ads() {
+function Game() {
     return (
-        <AdStack.Navigator screenOptions={{
+        <GameStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
             header: props => <Header {...props}/>}}>
-            <AdStack.Screen name="AdScreen" component={AdScreen}/>
-        </AdStack.Navigator>
+            <GameStack.Screen name="GameScreen" component={GameScreen}/>
+        </GameStack.Navigator>
     )
 }
 
@@ -67,7 +67,7 @@ function Tabs(): JSX.Element {
     return (
         <Tab.Navigator
             // Set initialscreen at to not defaut to top of tab stack
-            initialRouteName={"EventNav"}
+            initialRouteName={"GameNav"}
             backBehavior="history"
             screenOptions={{headerShown: false}}
             // Sets the tab bar component
@@ -78,8 +78,8 @@ function Tabs(): JSX.Element {
             />}
         >
             <Tab.Screen 
-                name="EventNav" 
-                component={Events} 
+                name="ShopNav" 
+                component={Shop} 
                 options={({
                     tabBarIcon: () => (
                         <Image
@@ -90,8 +90,8 @@ function Tabs(): JSX.Element {
                 })}
             />
             <Tab.Screen 
-                name="AdNav" 
-                component={Ads} 
+                name="GameNav" 
+                component={Game} 
                 options={({
                     tabBarIcon: () => (
                         <Image

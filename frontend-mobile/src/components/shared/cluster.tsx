@@ -1,8 +1,8 @@
 import { View } from "react-native"
 import { ClusterProps } from "@/interfaces"
 import { useSelector } from "react-redux"
-import ES from "@styles/eventStyles"
-import React, { useEffect } from "react"
+import CS from "@styles/clusterStyles"
+import React from "react"
 
 /**
  * Card function for styling a div, displays a view containing curved
@@ -19,10 +19,10 @@ children, highlight, style }: ClusterProps) {
             backgroundColor: !noColor ? theme.darker : "", 
             margin: highlight ? 4 : 0, 
             paddingHorizontal: !highlight ? 6 : 4, 
-            ...ES.clusterWraper, 
+            ...CS.clusterWrapper, 
             ...style as any
         }}>
-            <View style={{...ES.clusterContent, marginVertical, marginHorizontal}}>
+            <View style={{ marginVertical, marginHorizontal }}>
                 { children }
             </View>
         </View>
@@ -40,7 +40,7 @@ export function ClusterSmaller ({children}: React.PropsWithChildren<{}>) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     
     return (
-        <View style={{...ES.clusterSmaller, backgroundColor: theme.darker}}>
+        <View style={{...CS.clusterSmaller, backgroundColor: theme.darker}}>
             <View>
                 { children }
             </View>

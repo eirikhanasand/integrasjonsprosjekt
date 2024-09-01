@@ -1,31 +1,16 @@
-import { StatusBar } from "expo-status-bar"
 import GS from "@styles/globalStyles"
-import { Animated, Dimensions, PanResponder, Text, View } from "react-native"
-import Swipe from "@components/nav/swipe"
-import { useSelector } from "react-redux"
 import { useRef, useState } from "react"
+import { Animated, Dimensions, PanResponder } from "react-native"
+import { useSelector } from "react-redux"
 
-/**
- * Parent EventScreen component
- *
- * Handles:
- * - Displaying events
- * - Filtering events
- * - Notification Management
- * - Event notifications, both scheduling and cancelling
- *
- * @param {navigation} Navigation Navigation route
- * @returns EventScreen
- */
-export default function EventScreen(): JSX.Element {
-    // Redux states
+export default function Player() {
     const { theme } = useSelector((state: ReduxState) => state.theme)
-    const height = Dimensions.get('window').height
     const translateX = useRef(new Animated.Value(0)).current
     const translateY = useRef(new Animated.Value(0)).current
     const [directionLock, setDirectionLock] = useState<'horizontal' | 'vertical' | null>(null)
     const [horizontalState, setHorizontalState] = useState<'left' | 'middle' | 'right'>('middle')
     const [verticalState, setVerticalState] = useState<'down' | 'normal' | 'up'>('normal')
+    const height = Dimensions.get('window').height
 
     function moveLeft() {
         setHorizontalState((prevState) => {
@@ -107,28 +92,22 @@ export default function EventScreen(): JSX.Element {
         })
     ).current
 
-    // Displays the EventScreen
     return (
-        <Swipe right="AdNav">
-            <View>
-                <StatusBar style={"dark"} />
-                <Animated.View 
-                    style={{
-                        ...GS.content,
-                        paddingHorizontal: 5,
-                        backgroundColor: theme.darker
-                    }}{...panResponder.panHandlers}
-                >
-                    <Animated.View style={{
-                        backgroundColor: 'white', 
-                        width: 40, 
-                        height: 40, 
-                        top: height * 0.7, 
-                        alignSelf: 'center',
-                        transform: [{ translateX }, { translateY }],
-                    }}/>
-                </Animated.View>
-            </View>
-        </Swipe>
+        <Animated.View 
+            style={{
+                ...GS.content,
+                paddingHorizontal: 5,
+                backgroundColor: theme.darker
+            }}{...panResponder.panHandlers}
+        >
+            <Animated.View style={{
+                backgroundColor: 'white', 
+                width: 40, 
+                height: 40, 
+                top: height * 0.7, 
+                alignSelf: 'center',
+                transform: [{ translateX }, { translateY }],
+            }}/>
+        </Animated.View>
     )
 }
