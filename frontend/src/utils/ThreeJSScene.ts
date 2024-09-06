@@ -24,7 +24,7 @@ export const initThreeJSScene = (mountRef: HTMLElement) => {
 
   // Load FBX Model
   const loader = new FBXLoader();
-  loader.load('/assets/models/character_running.fbx', (fbx: THREE.Object3D) => {
+  loader.load('@assets/models/character_running.fbx', (fbx: THREE.Object3D) => {
     fbx.scale.set(0.01, 0.01, 0.01);  // Adjust the scale based on the model size
     scene.add(fbx);
 
@@ -44,12 +44,5 @@ export const initThreeJSScene = (mountRef: HTMLElement) => {
     };
 
     animate();
-  });
-
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
   });
 };
