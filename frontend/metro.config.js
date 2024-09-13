@@ -10,6 +10,7 @@ const config = getExpoDefaultConfig(__dirname)
 
 // Enables css support
 config.resolver.sourceExts.push('css')
+config.resolver.assetExts.push('fbx')
 
 // Export the merged configuration
 module.exports = {

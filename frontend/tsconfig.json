@@ -39,7 +39,8 @@
     ".next/types/**/*.ts",
     "**/*.json",
     "**/*.png",
-    "**/*.svg"
+    "**/*.svg",
+    "**/*.fbx",
   ],
   "exclude": ["node_modules"],
   "extends": "expo/tsconfig.base"

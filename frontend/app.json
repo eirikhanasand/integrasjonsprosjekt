@@ -17,6 +17,14 @@
             "fallbackToCacheTimeout": 0,
             "url": "https://u.expo.dev/952a1914-0c53-43e7-b64e-8daab0b3a435"
         },
+        "plugins": [
+            [
+                "expo-asset",
+                {
+                    "test": ["./public/assets/models/map/test.fbx"]
+                }
+            ]
+        ],
         "assetBundlePatterns": [
             "**/*"
         ],
