@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit"
 import { persistReducer } from "redux-persist"
 import LangReducer from "@redux/lang"
 import ThemeReducer from "@redux/theme"
+import UserReducer from "@redux/user"
 import { thunk } from "redux-thunk"
 
 // Combines all reducers
@@ -11,6 +12,8 @@ const reducers = combineReducers({
     theme: ThemeReducer,
     // Language reducer
     lang: LangReducer,
+    // User reducer
+    user: UserReducer
 })
 
   // Function to localstore redux state
@@ -22,7 +25,8 @@ const saveState = {
     // Whitelists the names of the states to save
     whitelist: [
         "lang",
-        "theme"
+        "theme",
+        "user"
     ]
 }
 

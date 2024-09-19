@@ -12,6 +12,12 @@ type ReduxState = {
     lang: {
         lang: boolean
     }
+    user: {
+        authenticated: boolean
+        username: string
+        userID: string
+        highscore: number
+    }
 }
 
 type Setting = {

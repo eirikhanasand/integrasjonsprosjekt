@@ -8,6 +8,7 @@ import { useSelector } from "react-redux"
 import en from "@text/menu/settings/en.json"
 import no from "@text/menu/settings/no.json"
 import Swipe from "@components/nav/swipe"
+import Logout from "@components/settings/logout"
 
 export default function SettingScreen(): JSX.Element {
 
@@ -47,6 +48,25 @@ function Content(): JSX.Element {
                             color: theme.oppositeTextColor
                         }}>
                             {info[0].description}
+                        </Text>
+                    </View>
+                    <View style={GS.view2}><Logout/></View>
+                </View>
+            </Cluster>
+            <Cluster marginHorizontal={0}>
+                <View style={GS.notificationBack}>
+                    <View style={GS.view}>
+                        <Text style={{
+                            ...GS.notificationText, 
+                            color: theme.textColor
+                        }}>
+                            {info[1].title}
+                        </Text>
+                        <Text style={{
+                            ...GS.notificationTip, 
+                            color: theme.oppositeTextColor
+                        }}>
+                            {info[1].description}
                         </Text>
                     </View>
                     <View style={GS.view2}><Language/></View>

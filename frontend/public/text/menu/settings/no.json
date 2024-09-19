@@ -1,6 +1,10 @@
 {
     "info": [
         { 
+            "title": "Logg ut",
+            "description": "Logger deg ut."
+        },
+        { 
             "title": "Språk",
             "description": "Endrer språk."
         }
