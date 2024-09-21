@@ -16,6 +16,14 @@ export default function PauseScreen({ route, navigation }: PauseScreenProps) {
         navigation.goBack(); // Return to game screen
     };
 
+    const handleGoToShop = () => {
+ //       navigation.navigate("ShopScreen"); // Navigate to the shop screen
+    };
+
+    const handleExitGame = () => {
+//        navigation.navigate("StartScreen"); // Navigate back to the start screen
+    };
+
     return (
         <View style={{ 
             ...GS.content,
@@ -26,8 +34,20 @@ export default function PauseScreen({ route, navigation }: PauseScreenProps) {
             alignItems: 'center',
         }}>
             <Text style={styles.text}>Current score: {score}</Text>
+            
+            {/* Button to resume game */}
             <TouchableOpacity style={styles.button} onPress={handleUnpause}>
                 <Text style={styles.buttonText}>Return to Game</Text>
+            </TouchableOpacity>
+
+            {/* Button to navigate to shop screen */}
+            <TouchableOpacity style={styles.button} onPress={handleGoToShop}>
+                <Text style={styles.buttonText}>Go to Shop</Text>
+            </TouchableOpacity>
+
+            {/* Button to exit the game and return to start screen */}
+            <TouchableOpacity style={styles.button} onPress={handleExitGame}>
+                <Text style={styles.buttonText}>Exit to Main menu</Text>
             </TouchableOpacity>
         </View>
     );
@@ -43,6 +63,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 15,
         borderRadius: 5,
+        marginVertical: 10,
     },
     buttonText: {
         color: 'red',
