@@ -25,7 +25,7 @@ export type ShopScreenProps<T extends keyof ShopStackParamList> =
 
 export type GameStackParamList = {
     GameScreen: undefined;
-    PauseScreen: { score: number; onResume: () => void };  // Added onResume
+    PauseScreen: { score: number; onResume: () => void; setInGame: (inGame: boolean) => void; };
 };
 
 export type GameScreenProps<T extends keyof GameStackParamList> =

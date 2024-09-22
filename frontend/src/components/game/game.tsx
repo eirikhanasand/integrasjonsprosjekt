@@ -15,6 +15,7 @@ type PauseButtonProps = {
     score: number;
     onPause: () => void;
     onResume: () => void;
+    setInGame: (inGame: boolean) => void;
 };
 
 export default function Gameplay() {
@@ -24,7 +25,8 @@ export default function Gameplay() {
     // Game states
     const [score, setScore] = useState(0);
     const [multiplier, setMultiplier] = useState(31);
-    const [paused, setPaused] = useState(false); // New state to handle pause
+    const [paused, setPaused] = useState(false);
+    const [inGame, setInGame] = useState(false);
 
     // Helper functions
     function updateScore() {
@@ -59,7 +61,7 @@ export default function Gameplay() {
 
     return (
         <>
-            <PauseButton score={score} onPause={handlePause} onResume={handleResume} />
+            <PauseButton score={score} onPause={handlePause} onResume={handleResume} setInGame={setInGame}/>
             <Text style={{
                 ...T.text20,
                 position: 'absolute',
@@ -95,7 +97,7 @@ class Game extends PureComponent<GameProps> {
     }
 }
 
-function PauseButton({ score, onPause, onResume }: PauseButtonProps) {
+function PauseButton({ score, onPause, onResume, setInGame }: PauseButtonProps) {
     const { theme } = useSelector((state: ReduxState) => state.theme);
     const navigation: Navigation = useNavigation();
 
@@ -104,6 +106,7 @@ function PauseButton({ score, onPause, onResume }: PauseButtonProps) {
         navigation.navigate("PauseScreen", {
             score,
             onResume,
+            setInGame,
         });
     };
 

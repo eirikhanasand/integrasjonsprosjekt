@@ -7,7 +7,7 @@ import React from "react";
 type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">;
 
 export default function PauseScreen({ route, navigation }: PauseScreenProps) {
-    const { score, onResume } = route.params;
+    const { score, onResume, setInGame } = route.params;
 
     const handleUnpause = () => {
         if (onResume) {
@@ -21,7 +21,8 @@ export default function PauseScreen({ route, navigation }: PauseScreenProps) {
     };
 
     const handleExitGame = () => {
-//        navigation.navigate("StartScreen"); // Navigate back to the start screen
+        setInGame(false);
+        navigation.navigate("GameScreen");
     };
 
     return (
