@@ -9,12 +9,12 @@ export default function Game3D() {
     const sceneRef = useRef<THREE.Scene | null>(null)
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
     const rendererRef = useRef<Renderer | null>(null)
-    const [modelLoaded, setModelLoaded] = useState(false) // To check when the model is ready
+    const [modelLoaded, setModelLoaded] = useState(false)
 
     useEffect(() => {
         // Preload the model
         async function loadModel() {
-            const asset = Asset.fromModule(require('@assets/models/map/background.glb'))
+            const asset = Asset.fromModule(require('@assets/models/map/background2.glb'))
             await asset.downloadAsync()
             return asset.localUri
         }
@@ -57,7 +57,7 @@ export default function Game3D() {
             1000
         )
         
-        camera.position.set(0, 5, 10); // Closer to the model
+        camera.position.set(0, 5, 10);
         camera.lookAt(0, 0, 0);
 
         const renderer = new Renderer({ gl })
