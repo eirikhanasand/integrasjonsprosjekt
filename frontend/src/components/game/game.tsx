@@ -1,4 +1,4 @@
-import React, { PureComponent, useState } from "react"
+import { PureComponent, useState } from "react"
 import { GameEngine } from "react-native-game-engine"
 import Player from "./player"
 import { Text, View, TouchableOpacity } from "react-native"

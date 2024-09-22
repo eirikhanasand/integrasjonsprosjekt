@@ -2,91 +2,92 @@ import { GLView } from 'expo-gl'
 import { Renderer } from 'expo-three'
 import { useRef, useEffect, useState } from 'react'
 import * as THREE from 'three'
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { Asset } from 'expo-asset'
 
 export default function Game3D() {
     const sceneRef = useRef<THREE.Scene | null>(null)
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
     const rendererRef = useRef<Renderer | null>(null)
-    const [model, setModel] = useState<THREE.Object3D | null>(null)
+    const [modelLoaded, setModelLoaded] = useState(false) // To check when the model is ready
 
     useEffect(() => {
         // Preload the model
         async function loadModel() {
-            const asset = Asset.fromModule(require('@assets/models/map/test.fbx'))
+            const asset = Asset.fromModule(require('@assets/models/map/background.glb'))
             await asset.downloadAsync()
             return asset.localUri
         }
 
         loadModel().then((modelUri) => {
             if (modelUri) {
-                const loader = new FBXLoader()
-                loader.load(modelUri, (loadedModel) => {
-                    setModel(loadedModel)
-                    console.log('Model loaded:', loadedModel)
+                const loader = new GLTFLoader()
+                loader.load(modelUri, (gltf) => {
+                    const loadedModel = gltf.scene
+
+                    // Ensure scene exists before adding the model
+                    if (sceneRef.current) {
+                        loadedModel.scale.set(1, 1, 1)
+                        loadedModel.position.set(0, 0, 0)
+                        sceneRef.current.add(loadedModel)
+
+                        // Log the bounding box for reference
+                        const bbox = new THREE.Box3().setFromObject(loadedModel)
+                        console.log('Bounding box:', bbox)
+
+                        // Set the model as loaded
+                        setModelLoaded(true)
+                    }
+
                 }, undefined, (error) => {
-                    console.error('Error loading model:', error)
+                    console.error('Error loading GLTF model:', error)
                 })
             }
         })
     }, [])
 
-    useEffect(() => {
-        if (!model || !sceneRef.current || !cameraRef.current || !rendererRef.current) return
-
-        const scene = sceneRef.current
-        const camera = cameraRef.current
-        const renderer = rendererRef.current
-        camera.position.set(0, 50, 150);
-        camera.lookAt(new THREE.Vector3(0, 0, 0)); 
-        model.scale.set(1, 1, 1) // Adjusted scale for better visibility
-        model.position.set(0, 0, 0)
-        scene.add(model)
-
-        const ambientLight = new THREE.AmbientLight(0xffffff) // Soft white light
-        scene.add(ambientLight)
-
-        const pointLight = new THREE.PointLight(0xffffff, 1, 100)
-        pointLight.position.set(50, 50, 50)
-        scene.add(pointLight)
-
-        // Log bounding box
-        const bbox = new THREE.Box3().setFromObject(model)
-        console.log('Bounding box:', bbox)
-    }, [model])
-
     function onContextCreate(gl: any) {
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x66cdaa);
-    
+        const scene = new THREE.Scene()
+        scene.background = new THREE.Color('mediumaquamarine')
+
         const camera = new THREE.PerspectiveCamera(
             75,
             gl.drawingBufferWidth / gl.drawingBufferHeight,
             0.1,
             1000
-        );
-        // Adjust camera to better fit the model
-        camera.position.set(0, 100, 300);
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
-    
-        const renderer = new Renderer({ gl });
-        renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-    
-        // Starts the rendering loop
+        )
+        
+        camera.position.set(0, 5, 10); // Closer to the model
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new Renderer({ gl })
+        renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Full intensity
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 2, 100); // Increased intensity
+        pointLight.position.set(50, 50, 50);
+        scene.add(pointLight);
+
+        // Save references
+        sceneRef.current = scene
+        cameraRef.current = camera
+        rendererRef.current = renderer
+
+        // Starts the rendering loop only when model is loaded
         function renderLoop() {
-            requestAnimationFrame(renderLoop);
-            if (sceneRef.current && cameraRef.current && rendererRef.current) {
-                rendererRef.current.render(sceneRef.current, cameraRef.current);
-                gl.endFrameEXP();
+            if (rendererRef.current && sceneRef.current && cameraRef.current) {
+                if (modelLoaded) {  // Render only if the model is loaded
+                    rendererRef.current.render(sceneRef.current, cameraRef.current)
+                    gl.endFrameEXP()
+                }
+                requestAnimationFrame(renderLoop)
             }
         }
-        renderLoop();
-    
-        sceneRef.current = scene;
-        cameraRef.current = camera;
-        rendererRef.current = renderer;
+        renderLoop()
     }
-  
+
     return <GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
 }

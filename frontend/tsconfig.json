@@ -41,6 +41,7 @@
     "**/*.png",
     "**/*.svg",
     "**/*.fbx",
+    "**/*.glb",
   ],
   "exclude": ["node_modules"],
   "extends": "expo/tsconfig.base"

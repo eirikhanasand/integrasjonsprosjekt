@@ -1,9 +1,8 @@
 import GS from "@styles/globalStyles"
 import Swipe from "@components/nav/swipe"
 import { useDispatch, useSelector } from "react-redux"
-import { Dimensions, Text, TouchableOpacity, View } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native"
 import { authenticate } from "@redux/user"
-import { useNavigation } from "@react-navigation/native"
 
 /**
  * Parent GameScreen component
