@@ -12,7 +12,7 @@ export default function Game3D() {
     const [modelLoaded, setModelLoaded] = useState(false)
 
     useEffect(() => {
-        // Preload the model
+        // Preloads model
         async function loadModel() {
             const asset = Asset.fromModule(require('@assets/models/map/background2.glb'))
             await asset.downloadAsync()
@@ -25,17 +25,17 @@ export default function Game3D() {
                 loader.load(modelUri, (gltf) => {
                     const loadedModel = gltf.scene
 
-                    // Ensure scene exists before adding the model
+                    // Adds the model to the scene if the scene exists
                     if (sceneRef.current) {
                         loadedModel.scale.set(1, 1, 1)
                         loadedModel.position.set(0, 0, 0)
                         sceneRef.current.add(loadedModel)
 
-                        // Log the bounding box for reference
+                        // Logs the bounding box for reference
                         const bbox = new THREE.Box3().setFromObject(loadedModel)
                         console.log('Bounding box:', bbox)
 
-                        // Set the model as loaded
+                        // Sets the model as loaded
                         setModelLoaded(true)
                     }
 
@@ -63,23 +63,24 @@ export default function Game3D() {
         const renderer = new Renderer({ gl })
         renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
 
-        // Add lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Full intensity
+        // Sets the light
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
         scene.add(ambientLight);
 
-        const pointLight = new THREE.PointLight(0xffffff, 2, 100); // Increased intensity
+        const pointLight = new THREE.PointLight(0xffffff, 2, 100);
         pointLight.position.set(50, 50, 50);
         scene.add(pointLight);
 
-        // Save references
+        // Saves references
         sceneRef.current = scene
         cameraRef.current = camera
         rendererRef.current = renderer
 
-        // Starts the rendering loop only when model is loaded
+        // Starts the rendering loop when the model is loaded
         function renderLoop() {
             if (rendererRef.current && sceneRef.current && cameraRef.current) {
-                if (modelLoaded) {  // Render only if the model is loaded
+                if (modelLoaded) {
+                    // Only renders if the model is loaded
                     rendererRef.current.render(sceneRef.current, cameraRef.current)
                     gl.endFrameEXP()
                 }
