@@ -63,3 +63,11 @@ export type RootStackParamList = {
 export type RootStackProps<T extends keyof RootStackParamList> =
     CompositeScreenProps<StackScreenProps<RootStackParamList, T>,
     BottomTabScreenProps<TabBarParamList>>
+
+export interface StoreItem {
+    id: string;
+    name: string;
+    price: number;
+    image: any; // or ImageSourcePropType if you're importing from 'react-native'
+}
+      
