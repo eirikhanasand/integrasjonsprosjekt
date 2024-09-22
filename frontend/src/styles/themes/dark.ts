@@ -1,7 +1,7 @@
 const Dark = {
     background: "black",
     darker: "black",
-    contrast: "#111",
+    contrast: "#222",
     transparent: "#000000B3",
     transparentAndroid: "#090909B3",
     orange: "#fd8738",
