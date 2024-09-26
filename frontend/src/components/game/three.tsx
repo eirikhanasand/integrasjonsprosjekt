@@ -1,113 +1,112 @@
-import { GLView } from 'expo-gl'
-import { Renderer } from 'expo-three'
-import { useRef, useEffect } from 'react'
-import * as THREE from 'three'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-import { Asset } from 'expo-asset'
-import { Platform } from 'react-native'
+import { useState, useEffect } from 'react';
+import { Asset } from 'expo-asset';
+import { GLView } from 'expo-gl';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
+import { Renderer } from 'expo-three';
 
 export default function Game3D() {
-    const sceneRef = useRef<THREE.Scene | null>(null)
-    const cameraRef = useRef<THREE.PerspectiveCamera | null>(null)
-    const rendererRef = useRef<Renderer | null>(null)
-    const modelLoadedRef = useRef(false)
+    const [modelUri, setModelUri] = useState<string | null>(null);
+    const [glContext, setGlContext] = useState<any>(null);
 
+    // Preload the model
     useEffect(() => {
-        // Preloads model
         async function loadModel() {
-            const asset = Asset.fromModule(require('@assets/models/map/background2.glb'))
-            await asset.downloadAsync()
-            return asset.localUri
+            try {
+                const asset = Asset.fromModule(require('@assets/models/map/test5.glb'));
+                await asset.downloadAsync(); 
+                setModelUri(asset.localUri);  
+                console.log('Model URI:', asset.localUri); 
+            } catch (error) {
+                console.error('Error loading model:', error); 
+            }
         }
 
-        loadModel().then((modelUri) => {
-            if (modelUri) {
-                const loader = new GLTFLoader()
-                loader.load(modelUri, (gltf) => {
-                    const loadedModel = gltf.scene
-
-                    // Adds the model to the scene if the scene exists
-                    if (sceneRef.current) {
-                        loadedModel.scale.set(1, 1, 1)
-                        loadedModel.position.set(0, 0, 0)
-
-                        if (Platform.OS === 'ios') {
-                            console.error("iOS simulators do not support OpenGL, and just crashed.")
-                        }
-
-                        sceneRef.current.add(loadedModel)
-                        console.log("after")
-                        // Logs the bounding box for reference
-                        const bbox = new THREE.Box3().setFromObject(loadedModel)
-                        console.log('Bounding box:', bbox)
-
-                        // Sets the model as loaded
-                        modelLoadedRef.current = true
-                    }
-
-                }, undefined, (error) => {
-                    console.error('Error loading GLTF model:', error)
-                })
-            }
-        })
-    }, [])
+        loadModel(); 
+    }, []);
 
     function onContextCreate(gl: any) {
-        console.log('called 1')
-        const scene = new THREE.Scene()
-        console.log('called 2')
-        scene.background = new THREE.Color('mediumaquamarine')
-        console.log('called 3')
-        
-        const camera = new THREE.PerspectiveCamera(
-            75,
-            gl.drawingBufferWidth / gl.drawingBufferHeight,
-            0.1,
-            1000
-        )
-        
-        console.log('called 4')
-        camera.position.set(0, 5, 10);
-        camera.lookAt(0, 0, 0);
-        
-        console.log('called 5')
-        const renderer = new Renderer({ gl })
-        renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight)
-        console.log('called 6')
-        
-        // Sets the light
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-        scene.add(ambientLight);
-        console.log('called 7')
-        
-        const pointLight = new THREE.PointLight(0xffffff, 2, 100);
-        pointLight.position.set(50, 50, 50);
-        scene.add(pointLight);
-        console.log('called 8')
-        
-        // Saves references
-        sceneRef.current = scene
-        cameraRef.current = camera
-        rendererRef.current = renderer
-        
-        console.log('called 9')
-        // Starts the rendering loop when the model is loaded
-        function renderLoop() {
-            if (rendererRef.current && sceneRef.current && cameraRef.current) {
-                if (modelLoadedRef.current) {
-                    // Only renders if the model is loaded
-                    rendererRef.current.render(sceneRef.current, cameraRef.current)
-                    gl.endFrameEXP()
-                } else {
-                    console.log('not loaded')
-                }
-                requestAnimationFrame(renderLoop)
-            }
-        }
-        console.log('called 10')
-        renderLoop()
-        console.log('called 11')
+        const renderer = new Renderer({ gl });
+        renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
+        setGlContext(gl);
+        console.log('WebGL context created'); 
+
+        gl.endFrameEXP();
     }
 
-    return <GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
+    useEffect(() => {
+        if (glContext && modelUri) {
+            console.log('Starting rendering with glContext and modelUri');
+        } else {
+            console.log("glContext or modelUri is not set yet.");
+        }
+    }, [glContext, modelUri]);
+
+    function log(number:number) {console.log(number)}
+    return (
+        <GLView
+            style={{ flex: 1 }}
+            onContextCreate={onContextCreate} 
+        >
+            {glContext ? (
+                modelUri ? (
+                    <Canvas
+                    gl={glContext}
+                    camera={{ position: [0, 5, 10], fov: 75 }}
+                    onCreated={(state) => {
+                        console.log('Canvas created');
+                        
+                        const handleRender = state.gl.render.bind(state.gl);
+                        state.gl.render = (...args) => {
+                            handleRender(...args);
+                            glContext.endFrameEXP(); 
+                        };
+                    }}
+                    >
+                        {log(3) as any}
+                        {/* {console.log("inside cabv", Model)} */}
+                        <ambientLight intensity={0.5} />
+                        {/* {console.log("inside cabv 1")} */}
+                        <directionalLight position={[5, 10, 7.5]} intensity={1.5} castShadow />
+                        {/* {console.log("inside cabv 2")} */}
+                        <pointLight position={[10, 10, 10]} intensity={1} />
+                        {/* {console.log("inside cabv 3")} */}
+                        <spotLight position={[-5, 10, -5]} angle={0.2} penumbra={1} intensity={1} castShadow />
+
+                        {console.log("inside cabv 4", modelUri)}
+                        <Model modelUri={modelUri} />
+                        {console.log("inside cabv 5", modelUri)}
+                    </Canvas>
+                ) : (
+                    <p>Loading Model...</p> 
+                )
+            ) : (
+                <p>Loading WebGL Context...</p> 
+            )}
+        </GLView>
+    );
+}
+
+function Model({ modelUri }: { modelUri: string }) {
+    console.log("model called before uri")
+    console.log("Model component called with URI:", modelUri);
+
+    const { scene } = useGLTF(modelUri, true); 
+
+    useEffect(() => {
+        if (scene) {
+            console.log("Inside Model useEffect - Scene Loaded"); 
+            const bbox = new THREE.Box3().setFromObject(scene); 
+            console.log('Bounding box:', bbox); 
+        } else {
+            console.log("Scene is not loaded yet.");
+        }
+    }, [scene]);
+
+    if (!scene) {
+        return null;
+    }
+
+    return <primitive object={scene} scale={[1, 1, 1]} position={[0, 0, 0]} />;
 }
