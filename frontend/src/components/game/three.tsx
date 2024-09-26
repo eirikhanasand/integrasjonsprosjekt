@@ -2,19 +2,19 @@ import { useState, useEffect } from 'react';
 import { Asset } from 'expo-asset';
 import { GLView } from 'expo-gl';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { Renderer } from 'expo-three';
 
 export default function Game3D() {
-    const [modelUri, setModelUri] = useState<string | null>(null);
-    const [glContext, setGlContext] = useState<any>(null);
+    const [modelUri, setModelUri] = useState(null);
+    const [glContext, setGlContext] = useState(null);
 
     // Preload the model
     useEffect(() => {
         async function loadModel() {
             try {
-                const asset = Asset.fromModule(require('@assets/models/map/test5.glb'));
+                const asset = Asset.fromModule(require("@assets/models/map/Level.glb"));
                 await asset.downloadAsync(); 
                 setModelUri(asset.localUri);  
                 console.log('Model URI:', asset.localUri); 
@@ -26,7 +26,7 @@ export default function Game3D() {
         loadModel(); 
     }, []);
 
-    function onContextCreate(gl: any) {
+    function onContextCreate(gl) {
         const renderer = new Renderer({ gl });
         renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
         setGlContext(gl);
@@ -43,10 +43,9 @@ export default function Game3D() {
         }
     }, [glContext, modelUri]);
 
-    function log(number:number) {console.log(number)}
     return (
         <GLView
-            style={{ flex: 1 }}
+            style={{ flex: 1, backgroundColor: '87ceeb' }}
             onContextCreate={onContextCreate} 
         >
             {glContext ? (
@@ -64,19 +63,11 @@ export default function Game3D() {
                         };
                     }}
                     >
-                        {log(3) as any}
-                        {/* {console.log("inside cabv", Model)} */}
-                        <ambientLight intensity={0.5} />
-                        {/* {console.log("inside cabv 1")} */}
+                        <ambientLight intensity={0.6} />
                         <directionalLight position={[5, 10, 7.5]} intensity={1.5} castShadow />
-                        {/* {console.log("inside cabv 2")} */}
                         <pointLight position={[10, 10, 10]} intensity={1} />
-                        {/* {console.log("inside cabv 3")} */}
-                        <spotLight position={[-5, 10, -5]} angle={0.2} penumbra={1} intensity={1} castShadow />
 
-                        {console.log("inside cabv 4", modelUri)}
                         <Model modelUri={modelUri} />
-                        {console.log("inside cabv 5", modelUri)}
                     </Canvas>
                 ) : (
                     <p>Loading Model...</p> 
@@ -88,7 +79,7 @@ export default function Game3D() {
     );
 }
 
-function Model({ modelUri }: { modelUri: string }) {
+function Model({ modelUri }) {
     console.log("model called before uri")
     console.log("Model component called with URI:", modelUri);
 
@@ -108,5 +99,5 @@ function Model({ modelUri }: { modelUri: string }) {
         return null;
     }
 
-    return <primitive object={scene} scale={[1, 1, 1]} position={[0, 0, 0]} />;
+    return <primitive object={scene} scale={[1, 1, 1]} position={[0, 1, 10]} />;
 }
