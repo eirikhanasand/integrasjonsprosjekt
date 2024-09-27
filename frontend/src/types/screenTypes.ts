@@ -49,10 +49,15 @@ export type MenuStackParamList = {
     SettingScreen: undefined
 }
 
+export type LoginStackParamList = {
+    LoginScreen: undefined
+}
+
 export type TabBarParamList = {
     ShopNav: NavigatorScreenParams<ShopStackParamList>
     GameNav: NavigatorScreenParams<GameStackParamList>
     MenuNav: NavigatorScreenParams<MenuStackParamList>
+    LoginNav: NavigatorScreenParams<LoginStackParamList>
 }
 
 export type RootStackParamList = {
