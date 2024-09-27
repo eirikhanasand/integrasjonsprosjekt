@@ -11,6 +11,7 @@ import (
 type User struct {
 	UserID     string `bson:"userId"`
 	Balance    int32  `bson:"balance"`
+	Highscore  int64  `bson:"highscore"`
 	WeeklyBest int64  `bson:"weeklyBest"`
 	Skins      []int8 `bson:"skins"`
 }
