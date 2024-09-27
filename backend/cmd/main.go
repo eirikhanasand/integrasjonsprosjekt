@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"integrasjon/api"
 	"integrasjon/service"
 	"log"
 	"net/http"
@@ -38,6 +39,8 @@ func main() {
 
 	r := gin.Default()
 	r.GET("/", root)
+	r.GET("users", api.GetUsers)
+
 	r.Run()
 }
 
