@@ -1,73 +1,89 @@
-import { GameStackParamList } from "@type/screenTypes";
-import { StackScreenProps } from "@react-navigation/stack";
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
-import GS from "@styles/globalStyles";
-import React from "react";
+import { GameStackParamList } from "@type/screenTypes"
+import { StackScreenProps } from "@react-navigation/stack"
+import { Text, View, TouchableOpacity, StyleSheet } from "react-native"
+import GS from "@styles/globalStyles"
+import { useSelector } from "react-redux"
 
-type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">;
+type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">
 
 export default function PauseScreen({ route, navigation }: PauseScreenProps) {
-    const { score, onResume, setInGame } = route.params;
+    const { score, onResume, setInGame } = route.params
+    const { theme } = useSelector((state: ReduxState) => state.theme)
 
-    const handleUnpause = () => {
+    function handleUnpause() {
         if (onResume) {
-            onResume(); // Call the onResume callback to resume the game
+            onResume()
         }
-        navigation.goBack(); // Return to game screen
-    };
+        navigation.goBack()
+    }
 
-    const handleGoToShop = () => {
- //       navigation.navigate("ShopScreen"); // Navigate to the shop screen
-    };
+    function handleGoToShop() {
+        // navigation.navigate("ShopScreen");
+    }
 
-    const handleExitGame = () => {
-        setInGame(false);
-        navigation.navigate("GameScreen");
-    };
+    function handleExitGame() {
+        setInGame(false)
+        navigation.navigate("GameScreen")
+    }
 
     return (
         <View style={{ 
-            ...GS.content,
-            paddingHorizontal: 0,
-            backgroundColor: 'red', 
-            width: '100%', 
-            justifyContent: 'center',
-            alignItems: 'center',
+            ...styles.container,
+            backgroundColor: theme.background, 
         }}>
-            <Text style={styles.text}>Current score: {score}</Text>
+            <Text style={{...styles.text, color: theme.textColor}}>
+                Current score: {score}
+            </Text>
             
             {/* Button to resume game */}
-            <TouchableOpacity style={styles.button} onPress={handleUnpause}>
-                <Text style={styles.buttonText}>Return to Game</Text>
-            </TouchableOpacity>
+            <Button handler={handleUnpause} text="Return to Game" />
 
             {/* Button to navigate to shop screen */}
-            <TouchableOpacity style={styles.button} onPress={handleGoToShop}>
-                <Text style={styles.buttonText}>Go to Shop</Text>
-            </TouchableOpacity>
+            <Button handler={handleGoToShop} text="Go to Shop" />
 
             {/* Button to exit the game and return to start screen */}
-            <TouchableOpacity style={styles.button} onPress={handleExitGame}>
-                <Text style={styles.buttonText}>Exit to Main menu</Text>
-            </TouchableOpacity>
+            <Button handler={handleExitGame} text="Exit to Main menu" />
         </View>
     );
 }
 
+function Button({handler, text}: { handler: () => void, text: string }) {
+    const { theme } = useSelector((state: ReduxState) => state.theme)
+
+    return (
+        <TouchableOpacity 
+            style={{...styles.button, backgroundColor: theme.contrast}} 
+            onPress={handler}
+        >
+            <Text style={{...styles.buttonText, color: theme.textColor}}>
+                {text}
+            </Text>
+        </TouchableOpacity>
+    )
+}
+
 const styles = StyleSheet.create({
+    container: { 
+        ...GS.content,
+        paddingHorizontal: 0,
+        width: '100%', 
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     text: {
         fontSize: 20,
         marginBottom: 20,
-        color: 'white',
+        fontWeight: 'bold'
     },
     button: {
-        backgroundColor: 'white',
         padding: 15,
+        paddingVertical: 10,
         borderRadius: 5,
         marginVertical: 10,
+        width: 160,
     },
     buttonText: {
-        color: 'red',
         fontWeight: 'bold',
+        textAlign: 'center'
     },
-});
+})
