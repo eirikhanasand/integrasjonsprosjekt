@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Asset } from 'expo-asset';
-import { GLView } from 'expo-gl';
+import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
 import { Canvas } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { Renderer } from 'expo-three';
 
 export default function Game3D() {
-    const [modelUri, setModelUri] = useState(null);
-    const [glContext, setGlContext] = useState(null);
+    const [modelUri, setModelUri] = useState<string | null>(null);
+    const [glContext, setGlContext] = useState<ExpoWebGLRenderingContext | null>(null);
 
     // Preload the model
     useEffect(() => {
@@ -26,7 +26,7 @@ export default function Game3D() {
         loadModel(); 
     }, []);
 
-    function onContextCreate(gl) {
+    function onContextCreate(gl: ExpoWebGLRenderingContext) {
         const renderer = new Renderer({ gl });
         renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
         setGlContext(gl);
@@ -79,7 +79,7 @@ export default function Game3D() {
     );
 }
 
-function Model({ modelUri }) {
+function Model({ modelUri }: { modelUri: string }) {
     console.log("model called before uri")
     console.log("Model component called with URI:", modelUri);
 
