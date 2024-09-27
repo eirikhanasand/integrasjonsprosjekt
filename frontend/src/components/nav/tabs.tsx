@@ -16,7 +16,8 @@ import {
     TabBarParamList 
 } from "@type/screenTypes"
 import { createStackNavigator } from "@react-navigation/stack"
-import React from "react"
+import LoginScreen from "@screens/login"
+import { useSelector } from "react-redux"
 
 // Declares Tab to equal CBTN function
 const Root = createStackNavigator<RootStackParamList>()
@@ -68,6 +69,22 @@ function Menu() {
  * @returns Application with navigation
  */
 function Tabs(): JSX.Element {
+    const { authenticated } = useSelector((state: ReduxState) => state.user)
+
+    if (!authenticated) {
+        return (
+            <Tab.Navigator
+                // Set initialscreen at to not defaut to top of tab stack
+                initialRouteName={"LoginNav"}
+                backBehavior="history"
+                screenOptions={{headerShown: false}}
+                // Hides default tabBar without showing anything
+                tabBar={_ => undefined}
+            >
+                <Tab.Screen name="LoginNav" component={LoginScreen} />
+            </Tab.Navigator>
+        )
+    }
 
     return (
         <Tab.Navigator

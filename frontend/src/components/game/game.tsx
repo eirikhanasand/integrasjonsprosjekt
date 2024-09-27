@@ -1,11 +1,12 @@
 import { PureComponent, useState, useEffect, SetStateAction, Dispatch } from "react"
 import { GameEngine } from "react-native-game-engine"
 import Player from "./player"
-import { Text, TouchableOpacity } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native"
 import { useSelector } from "react-redux"
 import T from "@styles/text"
 import { useNavigation } from "@react-navigation/native"
 import { Navigation } from "@/interfaces"
+import Game3D from "./three"
 
 type GamePlayProps = {
     setInGame: Dispatch<SetStateAction<boolean>>
@@ -82,6 +83,16 @@ export default function Gameplay({ setInGame }: GamePlayProps) {
             }}>
                 {score}
             </Text>
+            <View style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 1,
+            }}>
+                <Game3D />
+            </View>
             <Game paused={paused} />
         </>
     );
