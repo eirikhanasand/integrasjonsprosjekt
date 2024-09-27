@@ -34,7 +34,7 @@ export default function GameScreen(): JSX.Element {
                     backgroundColor: theme.darker
                 }}>
                     <StartGame inGame={inGame} setInGame={setInGame} />
-                    {inGame && <Gameplay />}
+                    {inGame && <Gameplay setInGame={setInGame} />}
                 </View>
             </View>
         </Swipe>

@@ -1,7 +1,10 @@
 {
     "info": [
         {
-            "id": 1,
+            "title": "Logout",
+            "description": "Logs you out."
+        },
+        {
             "title": "Language",
             "description": "Changes language."
         }

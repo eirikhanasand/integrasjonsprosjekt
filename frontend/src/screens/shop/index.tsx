@@ -1,7 +1,35 @@
-import GS from "@styles/globalStyles"
-import { View } from "react-native"
-import Swipe from "@components/nav/swipe"
-import { useSelector } from "react-redux"
+import { View, Text, Image, FlatList, Dimensions } from 'react-native'
+import GS from '@styles/globalStyles'
+import Swipe from '@components/nav/swipe'
+import { useSelector } from 'react-redux'
+import SHS from '@styles/shopStyles'
+import { StoreItem } from '@type/screenTypes'
+import Space from '@components/shared/utils'
+
+// Sample data for the store items
+const storeSections = [
+    {
+        title: 'Upgrades',
+        data: [
+            { id: '1', name: 'Bag upgrade', price: 200, image: require('@assets/shop/school-bag.png') },
+            { id: '2', name: 'Coin multiplier', price: 200, image: require('@assets/shop/calculator.png') },
+        ],
+    },
+    {
+        title: 'Consumables',
+        data: [
+            { id: '3', name: 'Start boost', price: 200, image: require('@assets/shop/coffee-cup.png') },
+            { id: '4', name: 'Electric Scooter', price: 200, image: require('@assets/shop/electric-scooter.png') },
+        ],
+    },
+    {
+        title: 'Skins',
+        data: [
+            { id: '5', name: 'Skin 1', price: 200, image: require('@assets/shop/boy.png') },
+            { id: '6', name: 'Skin 2', price: 200, image: require('@assets/shop/boy.png') },
+        ],
+    },
+];
 
 /**
  * Parent ShopScreen component
@@ -11,13 +39,40 @@ import { useSelector } from "react-redux"
  */
 export default function ShopScreen(): JSX.Element {
     // Redux states
-    const { theme } = useSelector((state: ReduxState) => state.theme)
+    const { theme } = useSelector((state: ReduxState) => state.theme);
+
+    // Render function for store items
+    const renderItem = ({ item }: { item: StoreItem }) => (
+        <View style={{...SHS.itemContainer, backgroundColor: theme.contrast }}>
+            <Image source={item.image} style={SHS.itemImage} />
+            <Text style={{...SHS.itemName, color: theme.textColor}}>{item.name}</Text>
+            <Text style={{...SHS.itemPrice, color: theme.textColor}}>
+                {item.price}{' '}
+                <Image 
+                    source={require('@assets/shop/energy-drink.png')} 
+                    style={SHS.currencyIcon} 
+                />
+            </Text>
+        </View>
+    );
 
     // Displays the ShopScreen UI
     return (
         <Swipe right="GameNav">
             <View style={{ ...GS.content, backgroundColor: theme.darker }}>
+                <Space height={Dimensions.get("window").height / 8.1} /> 
+                {storeSections.map((section) => (
+                <View key={section.title} style={SHS.sectionContainer}>
+                    <Text style={SHS.sectionTitle}>{section.title}</Text>
+                    <FlatList
+                        data={section.data}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id}
+                        numColumns={2}
+                    />
+                </View>
+                ))}
             </View>
         </Swipe>
-    )
+    );
 }
