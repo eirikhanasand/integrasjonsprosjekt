@@ -7,41 +7,41 @@
     "icon": "./public/assets/logo/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./public/assets/logo/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000000"
+        "image": "./public/assets/logo/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/952a1914-0c53-43e7-b64e-8daab0b3a435"
+        "fallbackToCacheTimeout": 0,
+        "url": "https://u.expo.dev/952a1914-0c53-43e7-b64e-8daab0b3a435"
     },
     "assetBundlePatterns": [
-      "**/*"
+        "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.speedrun.speedrun",
-      "buildNumber": "1"
+        "supportsTablet": true,
+        "bundleIdentifier": "com.speedrun.speedrun",
+        "buildNumber": "1"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./public/assets/logo/adaptiveIcon.png",
-        "backgroundColor": "#000000"
-      },
-      "package": "com.speedrun.speedrun",
-      "versionCode": 1,
-      "softwareKeyboardLayoutMode": "pan"
+        "adaptiveIcon": {
+            "foregroundImage": "./public/assets/logo/adaptiveIcon.png",
+            "backgroundColor": "#000000"
+        },
+        "package": "com.speedrun.speedrun",
+        "versionCode": 1,
+        "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
-      "favicon": "./public/assets/logo/favicon.ico"
+        "favicon": "./public/assets/logo/favicon.ico"
     },
     "extra": {
-      "eas": {
-        "projectId": "952a1914-0c53-43e7-b64e-8daab0b3a435"
-      }
+        "eas": {
+            "projectId": "952a1914-0c53-43e7-b64e-8daab0b3a435"
+        }
     },
     "runtimeVersion": {
-      "policy": "sdkVersion"
+        "policy": "sdkVersion"
     }
   }
   
