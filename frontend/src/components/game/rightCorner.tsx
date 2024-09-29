@@ -17,7 +17,7 @@ export default function RightCorner({ score }: RightCornerProps) {
             position: 'absolute', 
             width: 200, 
             height: 60, 
-            zIndex: 1, 
+            zIndex: 100, 
             top: 60, 
             alignSelf: 'flex-end',
             borderRadius: 10,
@@ -26,7 +26,6 @@ export default function RightCorner({ score }: RightCornerProps) {
                 ...T.text20,
                 position: 'absolute',
                 color: theme.textColor,
-                zIndex: 10,
                 right: 10,
                 top: 5,
                 fontWeight: '800',
@@ -50,7 +49,6 @@ export default function RightCorner({ score }: RightCornerProps) {
                 position: 'absolute',
                 color: theme.textColor,
                 top: 30,
-                zIndex: 10,
                 right: 35,
                 fontWeight: '800'
             }}>

@@ -1,7 +1,6 @@
 import { Navigation } from "@/interfaces"
 import { useNavigation } from "@react-navigation/native"
 import T from "@styles/text"
-import { Dispatch, SetStateAction } from "react"
 import { Text, TouchableOpacity } from "react-native"
 import { useSelector } from "react-redux"
 
@@ -26,7 +25,7 @@ export default function PauseButton({ score, onPause, onResume }: PauseButtonPro
             style={{
                 position: 'absolute',
                 top: 65,
-                zIndex: 10,
+                zIndex: 100,
                 left: 10,
             }}
         >

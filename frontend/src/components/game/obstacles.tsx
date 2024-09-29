@@ -7,7 +7,7 @@ type Entity = {
 }
 
 type EngineEntity = {
-    nextCoinSpawn: number
+    nextObstacleSpawn: number
 }
 
 type Entities = {
@@ -24,24 +24,29 @@ type CoinProps = {
     }
 }
 
-export default function CoinSpawner(entities: Entities, { time }: { time: { delta: number } }) {
+export default function ObstacleSpawner(entities: Entities, { time }: { time: { delta: number } }) {
     let engine = entities["engine"]
     let player = entities["player"] as Entity
-    const addCoin = entities.addCoin
+    const kill = entities.kill
     const lineLength = 5
     const lanes = [
         Math.floor(Math.random() * 2), 
         Math.floor(Math.random() * 2), 
         Math.floor(Math.random() * 2)
     ]
+
+    if (lanes[0] === 1 && lanes[1] === 1 && lanes[2] === 1) {
+        const freeLane = Math.floor(Math.random() * 3)
+        lanes[freeLane] = 0
+    }
  
-    // Interpolates coins toward the player
+    // Interpolates obstacles toward the player
     Object.keys(entities).forEach((key) => {
-        if (key.startsWith("coin_")) {
-            let coin = entities[key] as Entity
-            const [cx, cy] = coin.position
+        if (key.startsWith("obstacle_")) {
+            let obstacle = entities[key] as Entity
+            const [cx, cy] = obstacle.position
             let [pxValue, pyValue] = player.position
-            // Moves coin towards the player based on delta time
+            // Moves obstacle towards the player based on delta time
             const speed = 1 * (time.delta / 16.67)
             // @ts-expect-error (hidden method on player position)
             const px = pxValue.__getValue()
@@ -50,16 +55,16 @@ export default function CoinSpawner(entities: Entities, { time }: { time: { delt
             const newX = cx
             const newY = cy + speed
             
-            coin.position = [newX, newY]
+            obstacle.position = [newX, newY]
             // @ts-expect-error (location does exist)
-            coin.location.x.setValue(newX)
+            obstacle.location.x.setValue(newX)
             // @ts-expect-error (location does exist)
-            coin.location.y.setValue(newY)
+            obstacle.location.y.setValue(newY)
 
-            // Despawns the coin - picked up by player
-            if (Math.abs(cy - py) < 10 && Math.abs(cx - px) < 10) {
+            // Despawns the obstacle - player killed
+            if (Math.abs(cy +300 - py) < 10 && Math.abs(cx - px) < 10) {
                 // @ts-expect-error
-                addCoin()
+                kill()
                 delete entities[key]
             }
 
@@ -71,24 +76,24 @@ export default function CoinSpawner(entities: Entities, { time }: { time: { delt
     })
 
     // Spawns coins based on delta time
-    if (!engine.nextCoinSpawn) {
-        engine.nextCoinSpawn = 0
+    if (!engine.nextObstacleSpawn) {
+        engine.nextObstacleSpawn = 0
     }
 
-    engine.nextCoinSpawn -= time.delta
-    if (engine.nextCoinSpawn <= 0) {
+    engine.nextObstacleSpawn -= time.delta
+    if (engine.nextObstacleSpawn <= 0) {
         lanes[0] && spawnLine(0, entities, lineLength)
         lanes[1] && spawnLine(1, entities, lineLength)
         lanes[2] && spawnLine(2, entities, lineLength)
 
         // Resets the spawn timer (spawns every second / lineLength)
-        engine.nextCoinSpawn = 2000 * lineLength
+        engine.nextObstacleSpawn = 2000 * lineLength
     }
 
     return entities
 }
 
-export function Coin({ style, location }: CoinProps) {
+export function Obstacle({ style, location }: CoinProps) {
     return (
         <Animated.View style={style ? style : {
             transform: location ? [
@@ -96,11 +101,10 @@ export function Coin({ style, location }: CoinProps) {
                 { translateY: location.y }
             ] : [],
             width: 50,
-            height: 50,
-            backgroundColor: 'yellow',
-            borderRadius: 25,
+            height: 300,
+            backgroundColor: 'red',
             position: 'absolute',
-            zIndex: 100
+            zIndex: 50
         }} />
     )
 }
@@ -108,32 +112,30 @@ export function Coin({ style, location }: CoinProps) {
 function spawnLine(lane: number, entities: Entities, length: number) {
     for (let index = 0; index < length; index++) {
         setTimeout(() => {
-            spawnCoin(lane, entities)
-        }, index * 1000)
+            spawnObstacle(lane, entities)
+        }, index * 10000)
     }
 }
 
-function spawnCoin(lane: number, entities: Entities) {
-    const coin = createCoin(lane)
-    const newCoinId = `coin_${lane}_${new Date().getTime()}`
-    const newCoin: Entity = {
-        position: [coin.x.__getValue(), coin.y.__getValue()],
+function spawnObstacle(lane: number, entities: Entities) {
+    const obstacle = createObstacle(lane)
+    const newObstacleId = `obstacle_${lane}_${new Date().getTime()}`
+    const newObstacle: Entity = {
+        // @ts-expect-error (__getValue() isnt defined in type)
+        position: [obstacle.x.__getValue(), obstacle.y.__getValue()],
         // @ts-expect-error (location isnt expected here)
-        location: coin,
-        renderer: <Coin />
+        location: obstacle,
+        renderer: <Obstacle />
     }
 
-    entities[newCoinId] = newCoin
+    entities[newObstacleId] = newObstacle
 }
 
-function createCoin(lane: number): {
-    x: AnimatedValue
-    y: AnimatedValue
-} {
+function createObstacle(lane: number) {
     const originalX = Dimensions.get('window').width * 0.5 - 125
 
     return {
-        x: new Animated.Value(originalX + lane * 100) as AnimatedValue,
-        y: new Animated.Value(150) as AnimatedValue,
+        x: new Animated.Value(originalX + lane * 100),
+        y: new Animated.Value(-100),
     }
 }

@@ -1,7 +1,7 @@
 import { ParamListBase } from "@react-navigation/native"
 import type { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs'
-import { DimensionValue, ImageSourcePropType, StyleProp, ViewStyle } from "react-native"
-import { ReactNode } from "react"
+import { Animated, DimensionValue, ImageSourcePropType, StyleProp, ViewStyle } from "react-native"
+import { Dispatch, ReactNode, SetStateAction } from "react"
 import type { StackHeaderProps, StackNavigationOptions } from "@react-navigation/stack"
 import { 
     BottomTabHeaderProps,
@@ -51,4 +51,16 @@ export interface HeaderProps extends Omit<StackHeaderProps, 'options'> {
 
 export interface StackRouteOptions extends Omit<StackNavigationOptions, 'header'> {
     header?: (props: HeaderProps) => React.ReactNode
+}
+
+export interface MoveProps<T extends Direction> {
+    setState: Dispatch<SetStateAction<T>>
+    value: AnimatedValue
+    opposite: Direction
+    state: Direction
+}
+
+export interface AnimatedValue extends Animated.Value {
+    __getValue: () => number
+    __setValue: (newValue: number) => void
 }

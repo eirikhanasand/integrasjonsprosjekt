@@ -1,4 +1,4 @@
-import { setInGame, setStartTime } from "@redux/game"
+import { setAlive, setInGame, setStartTime } from "@redux/game"
 import T from "@styles/text"
 import { Text, TouchableOpacity } from "react-native"
 import { useDispatch, useSelector } from "react-redux"
@@ -22,6 +22,7 @@ export default function StartGame() {
     function handleStart() {
         dispatch(setStartTime(Date.now()))
         dispatch(setInGame(true))
+        dispatch(setAlive(true))
     }
 
     return (

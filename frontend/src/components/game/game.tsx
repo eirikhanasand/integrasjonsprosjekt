@@ -1,4 +1,4 @@
-import Game3D from "./three"
+import Map from "./map"
 import PauseButton from "./pause"
 import RightCorner from "./rightCorner"
 import { GameEngine } from "react-native-game-engine"
@@ -7,12 +7,14 @@ import { useEffect, useRef, useState } from "react"
 import CoinSpawner from "./coins"
 import Player from "./player"
 import { useDispatch, useSelector } from "react-redux"
-import { addCoins, setStartTime } from "@redux/game"
+import { addCoins, setAlive, setStartTime } from "@redux/game"
+import ObstacleSpawner from "./obstacles"
+import { AnimatedValue } from "@/interfaces"
 
 type GameProps = {
     paused: boolean
-    playerX: Animated.Value
-    playerY: Animated.Value
+    playerX: AnimatedValue
+    playerY: AnimatedValue
 }
 
 export default function Gameplay() {
@@ -25,8 +27,8 @@ export default function Gameplay() {
     const [pauseTime, setPauseTime] = useState<number>(0)
     const originalX = Dimensions.get('window').width * 0.5 - 25
     const originalY = Dimensions.get('window').height * 0.73
-    const playerX = useRef(new Animated.Value(originalX)).current
-    const playerY = useRef(new Animated.Value(originalY)).current
+    const playerX = useRef(new Animated.Value(originalX)).current as AnimatedValue
+    const playerY = useRef(new Animated.Value(originalY)).current as AnimatedValue
     const dispatch = useDispatch()
 
     // Helper functions
@@ -77,9 +79,9 @@ export default function Gameplay() {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                zIndex: 1,
+                backgroundColor: '#87ceeb'
             }}>
-                <Game3D />
+                <Map />
             </View>
             <Game paused={paused} playerX={playerX} playerY={playerY} />
         </>
@@ -94,9 +96,14 @@ function Game({playerX, playerY, paused}: GameProps) {
         dispatch(addCoins(1))
     }
 
+    function kill() {
+        dispatch(setAlive(false))
+    }
+
     return (
         <GameEngine
-            systems={[CoinSpawner]}
+            style={{flex: 1}}
+            // systems={[CoinSpawner, ObstacleSpawner]}
             entities={{
                 player: { 
                     position: [playerX, playerY], 
@@ -105,8 +112,12 @@ function Game({playerX, playerY, paused}: GameProps) {
                     // @ts-expect-error (expects translateX and translateY, but they are already passed)
                     renderer: <Player /> 
                 },
-                engine: { nextCoinSpawn: startTime - Date.now() },
-                addCoin
+                engine: { 
+                    nextCoinSpawn: startTime - Date.now(),
+                    nextObstacleSpawn: startTime - Date.now()
+                },
+                addCoin,
+                kill
             }}
             running={!paused}
         />
