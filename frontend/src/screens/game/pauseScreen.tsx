@@ -9,6 +9,7 @@ type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">
 export default function PauseScreen({ route, navigation }: PauseScreenProps) {
     const { score, onResume, setInGame } = route.params
     const { theme } = useSelector((state: ReduxState) => state.theme)
+    const { coins } = useSelector((state: ReduxState) => state.game)
 
     function handleUnpause() {
         if (onResume) {
@@ -33,6 +34,9 @@ export default function PauseScreen({ route, navigation }: PauseScreenProps) {
         }}>
             <Text style={{...styles.text, color: theme.textColor}}>
                 Current score: {score}
+            </Text>
+            <Text style={{...styles.text, color: theme.textColor}}>
+                Coins: {coins}
             </Text>
             
             {/* Button to resume game */}

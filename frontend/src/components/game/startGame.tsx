@@ -1,6 +1,7 @@
-import T from "@styles/text";
-import { Text, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import { setStartTime } from "@redux/game"
+import T from "@styles/text"
+import { Text, TouchableOpacity } from "react-native"
+import { useDispatch, useSelector } from "react-redux"
 
 type StartGameProps = {
     inGame: boolean
@@ -11,6 +12,7 @@ export default function StartGame({inGame, setInGame}: StartGameProps) {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang } = useSelector((state: ReduxState) => state.lang)
+    const dispatch = useDispatch()
 
     // Game states
     const text = lang ? "Trykk for å starte" : "Tap to Play"
@@ -21,9 +23,14 @@ export default function StartGame({inGame, setInGame}: StartGameProps) {
         return null
     }
 
+    function handleStart() {
+        dispatch(setStartTime(Date.now()))
+        setInGame(true)
+    }
+
     return (
         <TouchableOpacity
-            onPress={() => setInGame(true)}
+            onPress={handleStart}
             style={{
                 position: 'absolute',
                 alignItems: 'center',

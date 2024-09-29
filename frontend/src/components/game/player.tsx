@@ -3,12 +3,15 @@ import { useRef, useState } from "react"
 import { Animated, Dimensions, PanResponder } from "react-native"
 import { useSelector } from "react-redux"
 
-export default function Player() {
+type PlayerProps = {
+    translateX: Animated.Value
+    translateY: Animated.Value
+}
+
+export default function Player({translateX, translateY}: PlayerProps) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
-    const translateX = useRef(new Animated.Value(0)).current
-    const translateY = useRef(new Animated.Value(0)).current
     const [directionLock, setDirectionLock] = useState<'horizontal' | 'vertical' | null>(null)
-    const [horizontalState, setHorizontalState] = useState<'left' | 'middle' | 'right'>('middle')
+    const [_, setHorizontalState] = useState<'left' | 'middle' | 'right'>('middle')
     const [verticalState, setVerticalState] = useState<'down' | 'normal' | 'up'>('normal')
     const height = Dimensions.get('window').height
 
@@ -28,7 +31,7 @@ export default function Player() {
             return 'left'
         })
     }
-    
+
     function moveRight() {
         setHorizontalState((prevState) => {
             const newPosition = prevState === 'left' ? 0 : 100
@@ -87,7 +90,6 @@ export default function Player() {
                     mass: 1,
                     useNativeDriver: true,
                 }).start()
-
             }
         })
     ).current
@@ -103,10 +105,8 @@ export default function Player() {
             <Animated.View style={{
                 backgroundColor: 'white', 
                 width: 40, 
-                height: 40, 
-                top: height * 0.7, 
-                alignSelf: 'center',
-                transform: [{ translateX }, { translateY }],
+                height: 40,
+                transform: [{translateX}, {translateY}]
             }}/>
         </Animated.View>
     )

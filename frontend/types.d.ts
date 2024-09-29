@@ -17,6 +17,10 @@ type ReduxState = {
         username: string
         userID: string
         highscore: number
+    },
+    game: {
+        coins: number
+        startTime: number
     }
 }
 

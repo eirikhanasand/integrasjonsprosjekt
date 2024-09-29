@@ -1,12 +1,19 @@
-import { PureComponent, useState, useEffect, SetStateAction, Dispatch } from "react"
-import { GameEngine } from "react-native-game-engine"
-import Player from "./player"
-import { Text, TouchableOpacity, View } from "react-native"
-import { useSelector } from "react-redux"
-import T from "@styles/text"
-import { useNavigation } from "@react-navigation/native"
-import { Navigation } from "@/interfaces"
 import Game3D from "./three"
+import PauseButton from "./pause"
+import RightCorner from "./rightCorner"
+import { GameEngine } from "react-native-game-engine"
+import { Animated, Dimensions, View } from "react-native"
+import { 
+    Dispatch,
+    SetStateAction, 
+    useEffect, 
+    useRef, 
+    useState, 
+} from "react"
+import CoinSpawner from "./coins"
+import Player from "./player"
+import { useDispatch, useSelector } from "react-redux"
+import { addCoins, setStartTime } from "@redux/game"
 
 type GamePlayProps = {
     setInGame: Dispatch<SetStateAction<boolean>>
@@ -14,34 +21,33 @@ type GamePlayProps = {
 
 type GameProps = {
     paused: boolean
-}
-
-type PauseButtonProps = {
-    score: number
-    onPause: () => void
-    onResume: () => void
-    setInGame: Dispatch<SetStateAction<boolean>>
+    playerX: Animated.Value
+    playerY: Animated.Value
 }
 
 export default function Gameplay({ setInGame }: GamePlayProps) {
-    // Redux states
-    const { theme } = useSelector((state: ReduxState) => state.theme)
-
+    const { startTime } = useSelector((state: ReduxState) => state.game)
+    
     // Game states
     const [score, setScore] = useState(0)
     const [multiplier, setMultiplier] = useState(31)
     const [paused, setPaused] = useState(false)
+    const [pauseTime, setPauseTime] = useState<number>(0)
+    const originalX = Dimensions.get('window').width * 0.5 - 25
+    const originalY = Dimensions.get('window').height * 0.73
+    const playerX = useRef(new Animated.Value(originalX)).current
+    const playerY = useRef(new Animated.Value(originalY)).current
+    const dispatch = useDispatch()
 
     // Helper functions
     function updateScore() {
-        setScore((prev) => prev + 1 * multiplier);
+        setScore((prev) => prev + 1 * multiplier)
     }
 
     // Handle score updates based on the paused state
     useEffect(() => {
         if (!paused) {
             const interval = setInterval(() => {
-                console.log("Score Updated")
                 updateScore()
             }, 50)
 
@@ -54,35 +60,28 @@ export default function Gameplay({ setInGame }: GamePlayProps) {
 
     // Pauses the game
     function handlePause() {
+        setPauseTime(Date.now())
         console.log("Game Paused")
         setPaused(true)
     }
     
     // Resumes the game
     function handleResume() {
+        dispatch(setStartTime(startTime + (pauseTime - startTime)))
+        setPauseTime(0)
         console.log("Game Resumed")
         setPaused(false)
     }
 
     return (
         <>
-            <PauseButton 
-                score={score} 
+            <PauseButton
+                score={score}
                 onPause={handlePause} 
                 onResume={handleResume} 
                 setInGame={setInGame}
             />
-            <Text style={{
-                ...T.text20,
-                position: 'absolute',
-                color: theme.textColor,
-                top: 65,
-                zIndex: 10,
-                right: 10,
-                fontWeight: '800'
-            }}>
-                {score}
-            </Text>
+            <RightCorner score={score} />
             <View style={{
                 position: "absolute",
                 top: 0,
@@ -93,60 +92,34 @@ export default function Gameplay({ setInGame }: GamePlayProps) {
             }}>
                 <Game3D />
             </View>
-            <Game paused={paused} />
+            <Game paused={paused} playerX={playerX} playerY={playerY} />
         </>
-    );
+    )
 }
 
-class Game extends PureComponent<GameProps> {
-    constructor(props: GameProps) {
-        super(props)
-    }
+function Game({playerX, playerY, paused}: GameProps) {
+    const { startTime } = useSelector((state: ReduxState) => state.game)
+    const dispatch = useDispatch()
 
-    render() {
-        return (
-            <GameEngine
-                style={{}}
-                systems={[]}
-                entities={{
-                    1: { position: [], renderer: <Player /> },
-                }}
-                running={!this.props.paused}
-            />
-        )
-    }
-}
-
-function PauseButton({ score, onPause, onResume, setInGame }: PauseButtonProps) {
-    const { theme } = useSelector((state: ReduxState) => state.theme)
-    const navigation: Navigation = useNavigation()
-
-    function handlePress() {
-        onPause()
-        navigation.navigate("PauseScreen", {
-            score,
-            onResume,
-            setInGame,
-        })
+    function addCoin() {
+        dispatch(addCoins(1))
     }
 
     return (
-        <TouchableOpacity
-            onPress={handlePress}
-            style={{
-                position: 'absolute',
-                top: 65,
-                zIndex: 10,
-                left: 10,
+        <GameEngine
+            systems={[CoinSpawner]}
+            entities={{
+                player: { 
+                    position: [playerX, playerY], 
+                    translateX: playerX, 
+                    translateY: playerY,
+                    // @ts-expect-error (expects translateX and translateY, but they are already passed)
+                    renderer: <Player /> 
+                },
+                engine: { nextCoinSpawn: startTime - Date.now() },
+                addCoin
             }}
-        >
-            <Text style={{
-                ...T.text20,
-                color: theme.textColor,
-                fontWeight: '800'
-            }}>
-                Pause
-            </Text>
-        </TouchableOpacity>
-    );
+            running={!paused}
+        />
+    )
 }
