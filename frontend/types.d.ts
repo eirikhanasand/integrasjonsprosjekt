@@ -21,6 +21,7 @@ type ReduxState = {
     game: {
         coins: number
         startTime: number
+        inGame: boolean
     }
 }
 

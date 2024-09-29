@@ -18,9 +18,9 @@ import StartGame from "@components/game/startGame"
 export default function GameScreen(): JSX.Element {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
+    const { inGame } = useSelector((state: ReduxState) => state.game)
 
     // Game states
-    const [inGame, setInGame] = useState(false)
     const left = inGame ? undefined : "ShopNav"
     const right = inGame ? undefined : "MenuNav"
 
@@ -33,8 +33,8 @@ export default function GameScreen(): JSX.Element {
                     paddingHorizontal: 0,
                     backgroundColor: theme.darker
                 }}>
-                    <StartGame inGame={inGame} setInGame={setInGame} />
-                    {inGame && <Gameplay setInGame={setInGame} />}
+                    <StartGame />
+                    {inGame && <Gameplay  />}
                 </View>
             </View>
         </Swipe>

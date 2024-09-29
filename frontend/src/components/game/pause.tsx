@@ -9,20 +9,15 @@ type PauseButtonProps = {
     score: number
     onPause: () => void
     onResume: () => void
-    setInGame: Dispatch<SetStateAction<boolean>>
 }
 
-export default function PauseButton({ score, onPause, onResume, setInGame }: PauseButtonProps) {
+export default function PauseButton({ score, onPause, onResume }: PauseButtonProps) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const navigation: Navigation = useNavigation()
 
     function handlePress() {
         onPause()
-        navigation.navigate("PauseScreen", {
-            score,
-            onResume,
-            setInGame,
-        })
+        navigation.navigate("PauseScreen", { score, onResume })
     }
 
     return (

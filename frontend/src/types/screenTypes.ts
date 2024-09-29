@@ -24,9 +24,12 @@ export type ShopScreenProps<T extends keyof ShopStackParamList> =
     >
 
 export type GameStackParamList = {
-    GameScreen: undefined;
-    PauseScreen: { score: number; onResume: () => void; setInGame: (inGame: boolean) => void; };
-};
+    GameScreen: undefined
+    PauseScreen: { 
+        score: number 
+        onResume: () => void 
+    }
+}
 
 export type GameScreenProps<T extends keyof GameStackParamList> =
     CompositeScreenProps<
@@ -70,9 +73,9 @@ export type RootStackProps<T extends keyof RootStackParamList> =
     BottomTabScreenProps<TabBarParamList>>
 
 export interface StoreItem {
-    id: string;
-    name: string;
-    price: number;
-    image: any; // or ImageSourcePropType if you're importing from 'react-native'
+    id: string
+    name: string
+    price: number
+    image: any
 }
       

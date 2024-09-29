@@ -64,7 +64,7 @@ export default function CoinSpawner(entities: Entities, { time }: { time: { delt
             }
 
             // Despawns the coin - player passed it already, and its outside of the screen
-            if (cy > py + 100) {
+            if (cy > Dimensions.get('window').height) {
                 delete entities[key]
             }
         }

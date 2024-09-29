@@ -1,17 +1,13 @@
-import { setStartTime } from "@redux/game"
+import { setInGame, setStartTime } from "@redux/game"
 import T from "@styles/text"
 import { Text, TouchableOpacity } from "react-native"
 import { useDispatch, useSelector } from "react-redux"
 
-type StartGameProps = {
-    inGame: boolean
-    setInGame: (inGame: boolean) => void
-}
-
-export default function StartGame({inGame, setInGame}: StartGameProps) {
+export default function StartGame() {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang } = useSelector((state: ReduxState) => state.lang)
+    const { inGame } = useSelector((state: ReduxState) => state.game)
     const dispatch = useDispatch()
 
     // Game states
@@ -25,7 +21,7 @@ export default function StartGame({inGame, setInGame}: StartGameProps) {
 
     function handleStart() {
         dispatch(setStartTime(Date.now()))
-        setInGame(true)
+        dispatch(setInGame(true))
     }
 
     return (

@@ -3,21 +3,11 @@ import PauseButton from "./pause"
 import RightCorner from "./rightCorner"
 import { GameEngine } from "react-native-game-engine"
 import { Animated, Dimensions, View } from "react-native"
-import { 
-    Dispatch,
-    SetStateAction, 
-    useEffect, 
-    useRef, 
-    useState, 
-} from "react"
+import { useEffect, useRef, useState } from "react"
 import CoinSpawner from "./coins"
 import Player from "./player"
 import { useDispatch, useSelector } from "react-redux"
 import { addCoins, setStartTime } from "@redux/game"
-
-type GamePlayProps = {
-    setInGame: Dispatch<SetStateAction<boolean>>
-}
 
 type GameProps = {
     paused: boolean
@@ -25,7 +15,7 @@ type GameProps = {
     playerY: Animated.Value
 }
 
-export default function Gameplay({ setInGame }: GamePlayProps) {
+export default function Gameplay() {
     const { startTime } = useSelector((state: ReduxState) => state.game)
     
     // Game states
@@ -79,7 +69,6 @@ export default function Gameplay({ setInGame }: GamePlayProps) {
                 score={score}
                 onPause={handlePause} 
                 onResume={handleResume} 
-                setInGame={setInGame}
             />
             <RightCorner score={score} />
             <View style={{

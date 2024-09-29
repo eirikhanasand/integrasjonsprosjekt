@@ -2,14 +2,16 @@ import { GameStackParamList } from "@type/screenTypes"
 import { StackScreenProps } from "@react-navigation/stack"
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native"
 import GS from "@styles/globalStyles"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { setInGame } from "@redux/game"
 
 type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">
 
 export default function PauseScreen({ route, navigation }: PauseScreenProps) {
-    const { score, onResume, setInGame } = route.params
+    const { score, onResume } = route.params
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { coins } = useSelector((state: ReduxState) => state.game)
+    const dispatch = useDispatch()
 
     function handleUnpause() {
         if (onResume) {
@@ -19,11 +21,11 @@ export default function PauseScreen({ route, navigation }: PauseScreenProps) {
     }
 
     function handleGoToShop() {
-        // navigation.navigate("ShopScreen");
+        // navigation.navigate("ShopScreen")
     }
 
     function handleExitGame() {
-        setInGame(false)
+        dispatch(setInGame(false))
         navigation.navigate("GameScreen")
     }
 

@@ -10,7 +10,6 @@ import {
     BottomTabDescriptorMap, 
     BottomTabNavigationEventMap 
 } from "@react-navigation/bottom-tabs/lib/typescript/src/types"
-import React from "react"
 
 export type FooterProps = {
     state: TabNavigationState<ParamListBase>

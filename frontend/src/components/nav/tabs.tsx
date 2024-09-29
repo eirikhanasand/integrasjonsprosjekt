@@ -70,6 +70,7 @@ function Menu() {
  */
 function Tabs(): JSX.Element {
     const { authenticated } = useSelector((state: ReduxState) => state.user)
+    const { inGame } = useSelector((state: ReduxState) => state.game)
 
     if (!authenticated) {
         return (
@@ -93,7 +94,7 @@ function Tabs(): JSX.Element {
             backBehavior="history"
             screenOptions={{headerShown: false}}
             // Sets the tab bar component
-            tabBar={props => <Footer 
+            tabBar={props => inGame ? undefined : <Footer 
                 state={props.state} 
                 descriptors={props.descriptors} 
                 navigation={props.navigation} 

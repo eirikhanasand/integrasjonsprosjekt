@@ -7,7 +7,8 @@ export const GameSlice = createSlice({
     // Initial state
     initialState: {
        coins: 0,
-       startTime: 0
+       startTime: 0,
+       inGame: false
     },
     // Declares slice reducer
     reducers: {
@@ -20,6 +21,9 @@ export const GameSlice = createSlice({
         },
         setStartTime(state, action) {
             state.startTime = action.payload
+        },
+        setInGame(state, action) {
+            state.inGame = action.payload
         }
     }
 })
@@ -28,7 +32,8 @@ export const GameSlice = createSlice({
 export const { 
     addCoins,
     removeCoins,
-    setStartTime
+    setStartTime,
+    setInGame
 } = GameSlice.actions
 
 // Exports the language slice
