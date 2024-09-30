@@ -20,11 +20,16 @@ type UsersRequestParam struct {
 	IDs *string `form:"ids"`
 }
 
-func GetUsers(ctx *gin.Context) {
+type UserPostRequest struct {
+	Id      string `form:"id"`
+	Balance *int32 `form:"balance"`
+}
+
+func (server *Server) GetUsers(ctx *gin.Context) {
 	var req UsersRequestParam
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		println("Invalid ")
+		ctx.JSON(http.StatusBadRequest, "Malformed param request")
 		return
 	}
 	var users []User
@@ -33,11 +38,12 @@ func GetUsers(ctx *gin.Context) {
 		ids, err := parseIds(*req.IDs)
 
 		if err != nil {
+			ctx.JSON(http.StatusBadRequest, "Malformed id-list")
 			return
 		}
 		for i := range ids {
 			userId := ids[i]
-			user, err := service.FetchTypeFromKeyValue[User]("userId", userId, "users") // Temporary hardcoded collection
+			user, err := service.FetchTypeFromKeyValue[User]("userId", userId, server.UserCollection)
 
 			if err != nil || user == nil {
 				continue
@@ -48,6 +54,29 @@ func GetUsers(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, users)
+}
+
+func (server *Server) PostUser(ctx *gin.Context) {
+	var req UserPostRequest
+
+	if err := ctx.ShouldBindJSON(req); err != nil {
+		ctx.JSON(http.StatusBadRequest, "Malformed JSON body")
+		return
+	}
+	var balance int32 = 0
+	if req.Balance != nil {
+		balance = *req.Balance
+	}
+
+	var user = User{
+		req.Id,
+		balance,
+		0,
+		0,
+		make([]int8, 0),
+	}
+
+	service.InsertDocument(user, server.UserCollection)
 }
 
 func parseIds(ids string) ([]string, error) {
