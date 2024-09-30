@@ -1,26 +1,31 @@
-import React from 'react';
-import { View, Text, Image, FlatList, Dimensions, TouchableOpacity } from 'react-native';
-import GS from '@styles/globalStyles';
-import Swipe from '@components/nav/swipe';
-import { useSelector, useDispatch } from 'react-redux';
-import SHS from '@styles/shopStyles';
-import { StoreItem } from '@type/screenTypes';
-import Space from '@components/shared/utils';
-import storeSections from './items';
-import { removeCoins, increaseMultiplier } from '../../redux/game'; // Import actions
-import { ReduxState } from '@type/screenTypes';
+import GS from '@styles/globalStyles'
+import Swipe from '@components/nav/swipe'
+import { useSelector, useDispatch } from 'react-redux'
+import SHS from '@styles/shopStyles'
+import { consumableItem, skinItem, StoreItem, upgradeItem } from '@/interfaces'
+import Space from '@components/shared/utils'
+import { consumables, skins, upgrades } from './items'
+import { removeCoins, increaseCoinMultiplier } from '../../redux/game'
+import { 
+    View, 
+    Text, 
+    Image, 
+    FlatList, 
+    Dimensions, 
+    TouchableOpacity 
+} from 'react-native'
 
 export default function ShopScreen(): JSX.Element {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
 
     // Redux states
-    const { theme } = useSelector((state: ReduxState) => state.theme);
-    const { coins, multiplier } = useSelector((state: ReduxState) => state.game);
+    const { theme } = useSelector((state: ReduxState) => state.theme)
+    const { coins, multiplier } = useSelector((state: ReduxState) => state.game)
 
     // Function to handle item purchase or upgrade
     const handlePurchase = (item: StoreItem) => {
         if (item.currentLevel < item.maxLevel) {
-            const currentCost = item.basePrice * (item.currentLevel + 1); // Cost ramps with each level
+            const currentCost = item.price[item.currentLevel] * (item.currentLevel + 1)
 
             if (coins >= currentCost) {
                 // Deduct coins
@@ -32,8 +37,8 @@ export default function ShopScreen(): JSX.Element {
 
                 // Apply multiplier if it's a multiplier upgrade
                 if (item.name === 'Coin Multiplier') {
-                    console.log("Dispatching increaseMultiplier with value:", item.multiplier);
-                    dispatch(increaseMultiplier(item.multiplier)); // Increase coin multiplier by 0.2 for each level
+                    console.log("Dispatching increaseMultiplier with value:", 1)
+                    dispatch(increaseCoinMultiplier(1))
                 }
 
             } else {
@@ -45,12 +50,12 @@ export default function ShopScreen(): JSX.Element {
     };
 
     // Render function for store items
-    const renderItem = ({ item }: { item: StoreItem }) => (
+    const renderItem = ({ item }: { item: upgradeItem | consumableItem | skinItem }) => (
         <View style={{ ...SHS.itemContainer, backgroundColor: theme.contrast }}>
             <Image source={item.image} style={SHS.itemImage} />
             <Text style={{ ...SHS.itemName, color: theme.textColor }}>{item.name}</Text>
             <Text style={{ ...SHS.itemPrice, color: theme.textColor }}>
-                {item.currentLevel < item.maxLevel ? `Level ${item.currentLevel + 1} Cost: ${item.basePrice * (item.currentLevel + 1)}` : 'Max Level Reached'}{' '}
+                {item.currentLevel < item.maxLevel ? `Level ${item.currentLevel + 1} Cost: ${item.price[0] * (item.currentLevel + 1)}` : 'Max Level Reached'}{' '}
                 <Image 
                     source={require('@assets/shop/energy-drink.png')} 
                     style={SHS.currencyIcon} 
@@ -73,7 +78,29 @@ export default function ShopScreen(): JSX.Element {
                 <Space height={Dimensions.get("window").height / 8.1} />
                 <Text style={{ ...GS.title, color: theme.textColor }}>Coins: {coins}</Text>
                 <Text style={{ ...GS.title, color: theme.textColor }}>Multiplier: {multiplier}</Text>
-                {storeSections.map((section) => (
+                {upgrades.map((section) => (
+                    <View key={section.title} style={SHS.sectionContainer}>
+                        <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
+                        <FlatList
+                            data={section.data}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id}
+                            numColumns={2}
+                        />
+                    </View>
+                ))}
+                {consumables.map((section) => (
+                    <View key={section.title} style={SHS.sectionContainer}>
+                        <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
+                        <FlatList
+                            data={section.data}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id}
+                            numColumns={2}
+                        />
+                    </View>
+                ))}
+                {skins.map((section) => (
                     <View key={section.title} style={SHS.sectionContainer}>
                         <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
                         <FlatList

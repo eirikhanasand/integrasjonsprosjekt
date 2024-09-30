@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
 
 // Declares Game Slice
 export const GameSlice = createSlice({
@@ -12,7 +12,8 @@ export const GameSlice = createSlice({
         alive: false,
         score: 0,
         highscore: 0,
-        multiplier: 1, // Multiplier starts at 1
+        multiplier: 31,
+        coinMultiplier: 1
     },
     // Declares slice reducer
     reducers: {
@@ -20,16 +21,19 @@ export const GameSlice = createSlice({
         addCoins(state, action) {
             const coinsToAdd = action.payload;
             // Check for valid multiplier
-            const effectiveMultiplier = typeof state.multiplier === 'number' && !isNaN(state.multiplier) ? state.multiplier : 1;
+            const effectiveMultiplier = 
+            typeof state.coinMultiplier === 'number' 
+            && !isNaN(state.coinMultiplier) ? state.coinMultiplier : 1;
 
             if (typeof coinsToAdd === 'number' && !isNaN(coinsToAdd)) {
                 const coinsBefore = state.coins;
-                const totalCoinsToAdd = coinsToAdd * effectiveMultiplier; // Multiply coins to add by the effective multiplier
+                // Multiplies coins to add by the effective multiplier
+                const totalCoinsToAdd = coinsToAdd * effectiveMultiplier
                 const coinsAfter = coinsBefore + totalCoinsToAdd;
 
                 console.log("Adding coins:", {
                     coinsToAdd,
-                    multiplier: effectiveMultiplier,
+                    coinMultiplier: effectiveMultiplier,
                     totalCoinsToAdd,
                     coinsBefore,
                     coinsAfter,
@@ -55,43 +59,46 @@ export const GameSlice = createSlice({
                     coinsToRemove,
                     coinsBefore,
                     coinsAfter,
-                });
+                })
 
-                state.coins = coinsAfter;
+                state.coins = coinsAfter
             } else {
-                console.error("Invalid coinsToRemove value:", coinsToRemove);
+                console.error("Invalid coinsToRemove value:", coinsToRemove)
             }
         },
         setStartTime(state, action) {
-            state.startTime = action.payload;
+            state.startTime = action.payload
         },
         setInGame(state, action) {
-            state.inGame = action.payload;
+            state.inGame = action.payload
         },
         setAlive(state, action) {
-            state.alive = action.payload;
+            state.alive = action.payload
         },
         setScore(state, action) {
-            state.score = action.payload;
+            state.score = action.payload
         },
         setHighScore(state, action) {
-            state.highscore = action.payload;
+            state.highscore = action.payload
         },
         setMultiplier(state, action) {
+            state.multiplier = action.payload
+        },
+        setCoinMultiplier(state, action) {
             const newMultiplier = action.payload;
             if (typeof newMultiplier === 'number' && newMultiplier >= 0) {
-                console.log("Setting new multiplier:", newMultiplier);
+                console.log("Setting new coinMultiplier:", newMultiplier);
                 state.multiplier = newMultiplier;
             } else {
-                console.error("Invalid multiplier value:", newMultiplier);
+                console.error("Invalid coinMultiplier value:", newMultiplier);
             }
         },
-        // New action to increment the multiplier by a given value
-        increaseMultiplier(state, action) {
+        // New action to increment the scoreMultiplier by a given value
+        increaseCoinMultiplier(state, action) {
             const incrementValue = action.payload;
             if (typeof incrementValue === 'number' && incrementValue > 0) {
-                console.log("Increasing multiplier by:", incrementValue);
-                state.multiplier += incrementValue;
+                console.log("Increasing coin multiplier by:", incrementValue);
+                state.coinMultiplier += incrementValue;
             } else {
                 console.error("Invalid incrementValue:", incrementValue);
             }
@@ -109,7 +116,8 @@ export const {
     setScore,
     setHighScore,
     setMultiplier,
-    increaseMultiplier,
+    setCoinMultiplier,
+    increaseCoinMultiplier,
 } = GameSlice.actions;
 
 // Exports the game slice

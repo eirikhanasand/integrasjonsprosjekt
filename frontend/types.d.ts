@@ -26,6 +26,7 @@ type ReduxState = {
         score: number
         highscore: number
         multiplier: number
+        coinMultiplier: number
     }
 }
 
