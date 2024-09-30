@@ -30,10 +30,7 @@ export default function EndScreen() {
     }
 
     return (
-        <View style={{ 
-            ...styles.container,
-            backgroundColor: theme.background, 
-        }}>
+        <View style={{...styles.container, backgroundColor: theme.background}}>
             <Text style={{...styles.gameOver, color: theme.textColor}}>
                 {lang ? 'Spillet er slutt!' : 'Game over!'}
             </Text>

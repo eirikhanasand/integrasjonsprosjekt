@@ -5,31 +5,7 @@ import { useSelector } from 'react-redux'
 import SHS from '@styles/shopStyles'
 import { StoreItem } from '@type/screenTypes'
 import Space from '@components/shared/utils'
-
-// Sample data for the store items
-const storeSections = [
-    {
-        title: 'Upgrades',
-        data: [
-            { id: '1', name: 'Bag upgrade', price: 200, image: require('@assets/shop/school-bag.png') },
-            { id: '2', name: 'Coin multiplier', price: 200, image: require('@assets/shop/calculator.png') },
-        ],
-    },
-    {
-        title: 'Consumables',
-        data: [
-            { id: '3', name: 'Start boost', price: 200, image: require('@assets/shop/coffee-cup.png') },
-            { id: '4', name: 'Electric Scooter', price: 200, image: require('@assets/shop/electric-scooter.png') },
-        ],
-    },
-    {
-        title: 'Skins',
-        data: [
-            { id: '5', name: 'Skin 1', price: 200, image: require('@assets/shop/boy.png') },
-            { id: '6', name: 'Skin 2', price: 200, image: require('@assets/shop/boy.png') },
-        ],
-    },
-];
+import storeSections from './items'
 
 /**
  * Parent ShopScreen component
@@ -39,7 +15,7 @@ const storeSections = [
  */
 export default function ShopScreen(): JSX.Element {
     // Redux states
-    const { theme } = useSelector((state: ReduxState) => state.theme);
+    const { theme } = useSelector((state: ReduxState) => state.theme)
 
     // Render function for store items
     const renderItem = ({ item }: { item: StoreItem }) => (
@@ -54,7 +30,7 @@ export default function ShopScreen(): JSX.Element {
                 />
             </Text>
         </View>
-    );
+    )
 
     // Displays the ShopScreen UI
     return (
@@ -74,5 +50,5 @@ export default function ShopScreen(): JSX.Element {
                 ))}
             </View>
         </Swipe>
-    );
+    )
 }
