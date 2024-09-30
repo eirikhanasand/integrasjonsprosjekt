@@ -13,8 +13,8 @@ import {
     ShopStackParamList, 
     MenuStackParamList, 
     RootStackParamList, 
-    TabBarParamList 
-} from "@type/screenTypes"
+    TabBarParamList
+ } from "@/interfaces"
 import { createStackNavigator } from "@react-navigation/stack"
 import LoginScreen from "@screens/login"
 import { useSelector } from "react-redux"
