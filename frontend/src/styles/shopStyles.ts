@@ -33,6 +33,14 @@ const SS =  StyleSheet.create({
         width: 16,
         height: 16,
     },
+    buyButtonText: {
+        color: 'purple'
+    },
+    buyButton: {
+        width: 50,
+        height: 50,
+        backgroundColor: 'red'
+    }
     });
 
 export default SS;

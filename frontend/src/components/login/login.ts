@@ -1,10 +1,14 @@
 import { authenticate } from "@redux/user"
-import { Linking } from "react-native";
-import { useDispatch } from "react-redux"
+import { Dispatch } from "react"
+import { Linking } from "react-native"
+import { UnknownAction } from "redux"
+
+type HandleLoginProps = {
+    dispatch: Dispatch<UnknownAction>
+}
 
 // Login with Dicord
-export default function handleLogin() {
-    const dispatch = useDispatch()
+export default function handleLogin({ dispatch }: HandleLoginProps) {
     // Send to Discord login page
     dispatch(authenticate())
     // Should redirect to GameNav not ShopNav here
@@ -25,4 +29,4 @@ async function redirectToLogin() {
     } catch (error) {
         console.error('Login error:', error);
     }
-  };
+}

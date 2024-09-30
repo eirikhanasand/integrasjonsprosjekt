@@ -1,4 +1,4 @@
-import { GameStackParamList } from "@type/screenTypes"
+import { GameStackParamList } from "@/interfaces"
 import { StackScreenProps } from "@react-navigation/stack"
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native"
 import GS from "@styles/globalStyles"
