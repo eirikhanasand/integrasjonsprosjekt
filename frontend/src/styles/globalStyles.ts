@@ -67,6 +67,9 @@ export const GS = StyleSheet.create({
             ? Dimensions.get("window").width / 50 
             : Dimensions.get("window").width / 30
     },
+    title: {
+        color: "yellow"
+    }
 })
 
 export default GS
