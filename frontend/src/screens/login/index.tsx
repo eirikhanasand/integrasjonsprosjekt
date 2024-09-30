@@ -2,7 +2,6 @@ import GS from "@styles/globalStyles"
 import Swipe from "@components/nav/swipe"
 import { useDispatch, useSelector } from "react-redux"
 import { Text, TouchableOpacity, View } from "react-native"
-import { authenticate } from "@redux/user"
 import handleLogin from "@components/login/login"
 
 /**
@@ -17,6 +16,7 @@ import handleLogin from "@components/login/login"
 export default function LoginScreen(): JSX.Element {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
+    const dispatch = useDispatch()
 
     // --- DISPLAYS THE LOGINSCREEN ---
     return (
@@ -38,7 +38,7 @@ export default function LoginScreen(): JSX.Element {
                             padding: 12,
                             borderRadius: 12
                         }}
-                        onPress={handleLogin}
+                        onPress={() => handleLogin({dispatch})}
                     >
                         <Text style={{ color: 'white', fontSize: 16 }}>
                             Login with Discord
