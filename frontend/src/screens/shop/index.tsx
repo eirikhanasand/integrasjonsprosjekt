@@ -24,7 +24,7 @@ export default function ShopScreen(): JSX.Element {
     const { coins, multiplier } = useSelector((state: ReduxState) => state.game)
 
     // Function to handle item purchase or upgrade
-    const handlePurchase = (item: StoreItem) => {
+    const handlePurchase = (item: upgradeItem | consumableItem | skinItem) => {
         if (item.currentLevel < item.maxLevel) {
             const currentCost = item.price[item.currentLevel] * (item.currentLevel + 1)
 
