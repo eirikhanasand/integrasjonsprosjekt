@@ -1,22 +1,13 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"integrasjon/api"
 	"integrasjon/service"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
 )
-
-type Struktern struct {
-	Name         string
-	RestaurantId string `bson:"restaurant_id,omitempty"`
-	Cuisine      string `bson:"cuisine,omitempty"`
-	Borough      string `bson:"borough,omitempty"`
-}
 
 func main() {
 	pwd, err := os.Getwd()
@@ -36,16 +27,14 @@ func main() {
 		log.Fatalf("Failed to setup mongodb store.")
 		return
 	}
+	var server = api.Server{
+		GameMap: make(map[string]api.Game),
+	}
+	err = server.InitServer()
 
-	r := gin.Default()
-	r.GET("/", root)
-	r.GET("users", api.GetUsers)
-
-	r.Run()
-}
-
-func root(ctx *gin.Context) {
-	fetch, _ := service.FetchTypeFromKeyValue[Struktern]("restaurant_id", "2", "gubb")
-
-	ctx.JSON(http.StatusOK, fetch.Name)
+	if err != nil {
+		log.Println("Failed to initialize server with environment variables.")
+		return
+	}
+	server.StartServer()
 }
