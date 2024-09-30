@@ -1,33 +1,26 @@
-import { GameStackParamList } from "@type/screenTypes"
-import { StackScreenProps } from "@react-navigation/stack"
 import { Text, View, TouchableOpacity, StyleSheet } from "react-native"
 import GS from "@styles/globalStyles"
 import { useDispatch, useSelector } from "react-redux"
-import { setInGame } from "@redux/game"
+import { setHighScore, setInGame } from "@redux/game"
+import { useNavigation } from "@react-navigation/native"
+import { Navigation } from "@/interfaces"
 
-type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">
-
-export default function PauseScreen({ route, navigation }: PauseScreenProps) {
-    const { onResume } = route.params
+export default function EndScreen() {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang } = useSelector((state: ReduxState) => state.lang)
-    const { coins, score } = useSelector((state: ReduxState) => state.game)
+    const { coins, highscore, score } = useSelector((state: ReduxState) => state.game)
+    const highScoreText = score > highscore ? handleNewHighScore() : `Highscore: ${highscore}`
     const dispatch = useDispatch()
+    const navigation: Navigation = useNavigation()
 
-    function handleUnpause() {
-        if (onResume) {
-            onResume()
-        }
-        navigation.goBack()
-    }
-
-    function handleGoToShop() {
-        // navigation.navigate("ShopScreen")
-    }
-
-    function handleExitGame() {
+    function handleExitEndScreen() {
         dispatch(setInGame(false))
         navigation.navigate("GameScreen")
+    }
+    
+    function handleNewHighScore() {
+        dispatch(setHighScore(score))
+        return `New highscore: ${highscore}`
     }
 
     return (
@@ -35,21 +28,21 @@ export default function PauseScreen({ route, navigation }: PauseScreenProps) {
             ...styles.container,
             backgroundColor: theme.background, 
         }}>
+            <Text style={{...styles.gameOver, color: theme.textColor}}>
+                {lang ? 'Spillet er slutt!' : 'Game over!'}
+            </Text>
+            {highscore && <Text style={{...styles.text, color: theme.textColor}}>
+                {highScoreText}
+            </Text>}
             <Text style={{...styles.text, color: theme.textColor}}>
-                {lang ? 'Poengsum' : 'Current score'}: {score}
+                {lang ? 'Poengsum' : 'Score'}: {score}
             </Text>
             <Text style={{...styles.text, color: theme.textColor}}>
-                Coins: {coins}
+                {lang ? 'Mynter' : 'Coins'}: {coins}
             </Text>
-            
-            {/* Button to resume game */}
-            <Button handler={handleUnpause} text={lang ? 'Fortsett spillet' : 'Return to Game'} />
-
-            {/* Button to navigate to shop screen */}
-            <Button handler={handleGoToShop} text={lang ? 'Gå til butikken' : 'Go to Shop'} />
 
             {/* Button to exit the game and return to start screen */}
-            <Button handler={handleExitGame} text={lang ? 'Avslutt spillet' : 'Exit to Main menu'} />
+            <Button handler={handleExitEndScreen} text={lang ? 'Fortsett' : 'Continue'} />
         </View>
     );
 }
@@ -81,6 +74,11 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginBottom: 20,
         fontWeight: 'bold'
+    },
+    gameOver: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        marginBottom: 80,
     },
     button: {
         padding: 15,

@@ -58,7 +58,6 @@ export default function Player({translateX, translateY}: PlayerProps) {
     function moveUp() {
         setVerticalState((prevState) => {
             if (prevState === 'up') {
-                // console.log('illegal up')
                 return 'up'
             }
 
@@ -75,12 +74,9 @@ export default function Player({translateX, translateY}: PlayerProps) {
                     toValue: translateY.__getValue() + 100,
                     duration: 200,
                     useNativeDriver: true,
-                }).start(() => {
-                    // console.log("HILL: Finished moving down")
-                })
+                }).start()
             }, 400)
 
-            // console.log("moved up", translateY)
 
             // Returns the new state
             // return prevState === 'normal' ? 'up' : 'normal'
@@ -91,7 +87,6 @@ export default function Player({translateX, translateY}: PlayerProps) {
     function moveDown() {
         setVerticalState((prevState) => {
             if (prevState === 'down') {
-                // console.log('illegal down')
                 return 'down'
             }
 
@@ -108,12 +103,9 @@ export default function Player({translateX, translateY}: PlayerProps) {
                     toValue: translateY.__getValue() - 100,
                     duration: 200,
                     useNativeDriver: true,
-                }).start(() => {
-                    // console.log("HILL: Finished moving up")
-                })
+                }).start()
             }, 400)
 
-            // console.log("moved down", translateY)
             // Returns the new state
             // return prevState === 'normal' ? 'up' : 'normal'
             return 'normal'
@@ -129,33 +121,27 @@ export default function Player({translateX, translateY}: PlayerProps) {
             return
         }
         
-        // console.log("locked", originalX, originalY, translateX, translateY)
-
+        // Allows the player to move again 800ms after the previous move
         setTimeout(() => {
             cooldown.current = false
-            // console.log("unlocked")
-        }, 800);
+        }, 800)
 
         if (Math.abs(velocityX) > Math.abs(velocityY)) {
                 setDirectionLock('horizontal')
             if (translationX > 50 && directionLock !== 'vertical') {
-                // console.log('swiped right');
-                moveRight();
+                moveRight()
             } else if (translationX < -50 && directionLock !== 'vertical') {
-                // console.log('swiped left');
-                moveLeft();
+                moveLeft()
             }
         } else {
             setDirectionLock('vertical')
             // Handle vertical swipe
             if (translationY > 50 && directionLock !== 'horizontal') {
-                // console.log('swiped down');
                 cooldown.current = true
-                moveDown();
+                moveDown()
             } else if (translationY < -50 && directionLock !== 'horizontal') {
-                // console.log('swiped up');
                 cooldown.current = true
-                moveUp();
+                moveUp()
             }
         }
     

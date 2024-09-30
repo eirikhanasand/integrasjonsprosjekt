@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import CoinSpawner from "./coins"
 import Player from "./player"
 import { useDispatch, useSelector } from "react-redux"
-import { addCoins, setAlive, setStartTime } from "@redux/game"
+import { addCoins, setAlive, setScore as storeScore, setStartTime } from "@redux/game"
 import ObstacleSpawner from "./obstacles"
 import { AnimatedValue } from "@/interfaces"
 
@@ -15,25 +15,47 @@ type GameProps = {
     paused: boolean
     playerX: AnimatedValue
     playerY: AnimatedValue
+    kill: () => void
 }
 
 export default function Gameplay() {
-    const { startTime } = useSelector((state: ReduxState) => state.game)
+    const { startTime, multiplier } = useSelector((state: ReduxState) => state.game)
     
     // Game states
     const [score, setScore] = useState(0)
-    const [multiplier, setMultiplier] = useState(31)
     const [paused, setPaused] = useState(false)
     const [pauseTime, setPauseTime] = useState<number>(0)
     const originalX = Dimensions.get('window').width * 0.5 - 25
     const originalY = Dimensions.get('window').height * 0.73
     const playerX = useRef(new Animated.Value(originalX)).current as AnimatedValue
     const playerY = useRef(new Animated.Value(originalY)).current as AnimatedValue
+    const scoreRef = useRef(0)
     const dispatch = useDispatch()
 
     // Helper functions
     function updateScore() {
-        setScore((prev) => prev + 1 * multiplier)
+        setScore((prev) => prev + 1 * (multiplier || 31))
+    }
+
+    // Pauses the game
+    function handlePause() {
+        setPauseTime(Date.now())
+        dispatch(storeScore(score))
+        console.log("Game Paused")
+        setPaused(true)
+    }
+    
+    // Resumes the game
+    function handleResume() {
+        dispatch(setStartTime(startTime + (pauseTime - startTime)))
+        setPauseTime(0)
+        console.log("Game Resumed")
+        setPaused(false)
+    }
+
+    // Kills the player
+    function kill() {
+        dispatch(setAlive(false))
     }
 
     // Handle score updates based on the paused state
@@ -49,29 +71,22 @@ export default function Gameplay() {
             }
         }
     }, [paused, multiplier])
-
-    // Pauses the game
-    function handlePause() {
-        setPauseTime(Date.now())
-        console.log("Game Paused")
-        setPaused(true)
-    }
     
-    // Resumes the game
-    function handleResume() {
-        dispatch(setStartTime(startTime + (pauseTime - startTime)))
-        setPauseTime(0)
-        console.log("Game Resumed")
-        setPaused(false)
-    }
+    // Stores score when the component is unmounted
+    useEffect(() => {
+        return () => {
+            dispatch(storeScore(scoreRef.current))
+        }
+    }, [])
+
+    // Updates scoreRef to equal score
+    useEffect(() => {
+        scoreRef.current = score
+    }, [score])
 
     return (
         <>
-            <PauseButton
-                score={score}
-                onPause={handlePause} 
-                onResume={handleResume} 
-            />
+            <PauseButton onPause={handlePause} onResume={handleResume} />
             <RightCorner score={score} />
             <View style={{
                 position: "absolute",
@@ -83,12 +98,12 @@ export default function Gameplay() {
             }}>
                 <Map />
             </View>
-            <Game paused={paused} playerX={playerX} playerY={playerY} />
+            <Game paused={paused} playerX={playerX} playerY={playerY} kill={kill} />
         </>
     )
 }
 
-function Game({playerX, playerY, paused}: GameProps) {
+function Game({playerX, playerY, paused, kill}: GameProps) {
     const { startTime } = useSelector((state: ReduxState) => state.game)
     const dispatch = useDispatch()
 
@@ -96,14 +111,10 @@ function Game({playerX, playerY, paused}: GameProps) {
         dispatch(addCoins(1))
     }
 
-    function kill() {
-        dispatch(setAlive(false))
-    }
-
     return (
         <GameEngine
             style={{flex: 1}}
-            // systems={[CoinSpawner, ObstacleSpawner]}
+            systems={[CoinSpawner, ObstacleSpawner]}
             entities={{
                 player: { 
                     position: [playerX, playerY], 

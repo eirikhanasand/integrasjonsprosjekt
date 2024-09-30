@@ -29,15 +29,17 @@ export default function ObstacleSpawner(entities: Entities, { time }: { time: { 
     let player = entities["player"] as Entity
     const kill = entities.kill
     const lineLength = 5
-    const lanes = [
-        Math.floor(Math.random() * 2), 
-        Math.floor(Math.random() * 2), 
-        Math.floor(Math.random() * 2)
-    ]
+    const lanes = [0, 0, 0];
+    // 0-2 lanes will be populated
+    const numLanesToSpawn = Math.floor(Math.random() * 3)
+    const lanesToFill = new Set<number>()
+    while (lanesToFill.size < numLanesToSpawn) {
+        // Randomly fills lanes
+        lanesToFill.add(Math.floor(Math.random() * 3))
+    }
 
-    if (lanes[0] === 1 && lanes[1] === 1 && lanes[2] === 1) {
-        const freeLane = Math.floor(Math.random() * 3)
-        lanes[freeLane] = 0
+    for (const lane of lanesToFill) {
+        lanes[lane] = 1
     }
  
     // Interpolates obstacles toward the player
@@ -82,9 +84,9 @@ export default function ObstacleSpawner(entities: Entities, { time }: { time: { 
 
     engine.nextObstacleSpawn -= time.delta
     if (engine.nextObstacleSpawn <= 0) {
-        lanes[0] && spawnLine(0, entities, lineLength)
-        lanes[1] && spawnLine(1, entities, lineLength)
-        lanes[2] && spawnLine(2, entities, lineLength)
+        lanes[0] && spawnObstacle(0, entities)
+        lanes[1] && spawnObstacle(1, entities)
+        lanes[2] && spawnObstacle(2, entities)
 
         // Resets the spawn timer (spawns every second / lineLength)
         engine.nextObstacleSpawn = 2000 * lineLength
@@ -107,14 +109,6 @@ export function Obstacle({ style, location }: CoinProps) {
             zIndex: 50
         }} />
     )
-}
-
-function spawnLine(lane: number, entities: Entities, length: number) {
-    for (let index = 0; index < length; index++) {
-        setTimeout(() => {
-            spawnObstacle(lane, entities)
-        }, index * 10000)
-    }
 }
 
 function spawnObstacle(lane: number, entities: Entities) {

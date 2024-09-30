@@ -22,6 +22,10 @@ type ReduxState = {
         coins: number
         startTime: number
         inGame: boolean
+        alive: boolean
+        score: number
+        highscore: number
+        multiplier: number
     }
 }
 

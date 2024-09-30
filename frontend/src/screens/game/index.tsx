@@ -3,8 +3,8 @@ import Swipe from "@components/nav/swipe"
 import { useSelector } from "react-redux"
 import { View } from "react-native"
 import Gameplay from "@components/game/game"
-import { useState } from "react"
 import StartGame from "@components/game/startGame"
+import EndScreen from "./endScreen"
 
 /**
  * Parent GameScreen component
@@ -18,7 +18,7 @@ import StartGame from "@components/game/startGame"
 export default function GameScreen(): JSX.Element {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
-    const { inGame } = useSelector((state: ReduxState) => state.game)
+    const { inGame, alive } = useSelector((state: ReduxState) => state.game)
 
     // Game states
     const left = inGame ? undefined : "ShopNav"
@@ -34,7 +34,8 @@ export default function GameScreen(): JSX.Element {
                     backgroundColor: theme.darker
                 }}>
                     <StartGame />
-                    {inGame && <Gameplay  />}
+                    {inGame && alive && <Gameplay  />}
+                    {inGame && !alive && <EndScreen />}
                 </View>
             </View>
         </Swipe>

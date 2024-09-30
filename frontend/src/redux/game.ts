@@ -10,6 +10,9 @@ export const GameSlice = createSlice({
        startTime: 0,
        inGame: false,
        alive: false,
+       score: 0,
+       highscore: 0,
+       multiplier: 31,
     },
     // Declares slice reducer
     reducers: {
@@ -28,6 +31,16 @@ export const GameSlice = createSlice({
         },
         setAlive(state, action) {
             state.alive = action.payload
+        },
+        setScore(state, action) {
+            state.score = action.payload
+        },
+        setHighScore(state, action) {
+            console.log("highscore updated")
+            state.highscore = action.payload
+        },
+        setMultiplier(state, action) {
+            state.multiplier = action.payload
         }
     }
 })
@@ -38,7 +51,10 @@ export const {
     removeCoins,
     setStartTime,
     setInGame,
-    setAlive
+    setAlive,
+    setScore,
+    setHighScore,
+    setMultiplier
 } = GameSlice.actions
 
 // Exports the language slice

@@ -5,18 +5,17 @@ import { Text, TouchableOpacity } from "react-native"
 import { useSelector } from "react-redux"
 
 type PauseButtonProps = {
-    score: number
     onPause: () => void
     onResume: () => void
 }
 
-export default function PauseButton({ score, onPause, onResume }: PauseButtonProps) {
+export default function PauseButton({ onPause, onResume }: PauseButtonProps) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const navigation: Navigation = useNavigation()
 
     function handlePress() {
         onPause()
-        navigation.navigate("PauseScreen", { score, onResume })
+        navigation.navigate("PauseScreen", { onResume })
     }
 
     return (
