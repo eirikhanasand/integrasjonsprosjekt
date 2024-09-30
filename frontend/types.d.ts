@@ -66,3 +66,8 @@ type Theme = {
 type Direction = VerticalDirection | HorizontalDirection
 type VerticalDirection = 'up' | 'down' | 'normal'
 type HorizontalDirection = 'left' | 'right' | 'middle'
+
+type Song = {
+    uri: string
+    nextSongs: string[]
+}
