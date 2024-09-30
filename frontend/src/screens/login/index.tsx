@@ -3,6 +3,7 @@ import Swipe from "@components/nav/swipe"
 import { useDispatch, useSelector } from "react-redux"
 import { Text, TouchableOpacity, View } from "react-native"
 import { authenticate } from "@redux/user"
+import handleLogin from "@components/login/login"
 
 /**
  * Parent GameScreen component
@@ -16,19 +17,6 @@ import { authenticate } from "@redux/user"
 export default function LoginScreen(): JSX.Element {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
-    const dispatch = useDispatch()
-
-    // Login with Dicord
-    function handleLogin() {
-        // Send to Discord login page
-        dispatch(authenticate())
-        // Should redirect to GameNav not ShopNav here
-    }
-
-    function handleRegister() {
-        // Send to Discord register page
-        // Then either authenticate and send to gamenav or send to loginscreen
-    }
 
     // --- DISPLAYS THE LOGINSCREEN ---
     return (

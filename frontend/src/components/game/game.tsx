@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import CoinSpawner from "./coins"
 import Player from "./player"
 import { useDispatch, useSelector } from "react-redux"
-import { addCoins, setAlive, setScore as storeScore, setStartTime, setHighScore } from "@redux/game"
+import { addCoins, setAlive, setScore as storeScore, setStartTime } from "@redux/game"
 import ObstacleSpawner from "./obstacles"
 import { AnimatedValue } from "@/interfaces"
 

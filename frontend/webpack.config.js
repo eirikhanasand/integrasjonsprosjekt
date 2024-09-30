@@ -6,7 +6,6 @@ const { presets, plugins } = require(`${appDirectory}/babel.config.js`)
 const compileNodeModules = [
     // Add every react-native package that needs compiling
     'react-native-game-engine',
-    'expo-gl',
     'expo-three',
     'three',
     'expo-modules-core'
