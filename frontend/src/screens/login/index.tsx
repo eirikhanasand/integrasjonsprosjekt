@@ -16,6 +16,7 @@ import handleLogin from "@components/login/login"
 export default function LoginScreen(): JSX.Element {
     // Redux states
     const { theme } = useSelector((state: ReduxState) => state.theme)
+    const dispatch = useDispatch()
 
     // --- DISPLAYS THE LOGINSCREEN ---
     return (
@@ -37,7 +38,7 @@ export default function LoginScreen(): JSX.Element {
                             padding: 12,
                             borderRadius: 12
                         }}
-                        onPress={handleLogin}
+                        onPress={() => handleLogin({dispatch})}
                     >
                         <Text style={{ color: 'white', fontSize: 16 }}>
                             Login with Discord

@@ -2,10 +2,11 @@ import GS from '@styles/globalStyles'
 import Swipe from '@components/nav/swipe'
 import { useSelector, useDispatch } from 'react-redux'
 import SHS from '@styles/shopStyles'
-import { consumableItem, skinItem, StoreItem, upgradeItem } from '@/interfaces'
+import { consumableItem, skinItem, upgradeItem } from '@/interfaces'
 import Space from '@components/shared/utils'
 import { consumables, skins, upgrades } from './items'
 import { removeCoins, increaseCoinMultiplier } from '../../redux/game'
+import { ScrollView } from "react-native-gesture-handler"
 import { 
     View, 
     Text, 
@@ -29,11 +30,11 @@ export default function ShopScreen(): JSX.Element {
 
             if (coins >= currentCost) {
                 // Deduct coins
-                dispatch(removeCoins(currentCost));
-                alert(`${item.name} upgraded to level ${item.currentLevel + 1}!`);
+                dispatch(removeCoins(currentCost))
+                alert(`${item.name} upgraded to level ${item.currentLevel + 1}!`)
 
                 // Increase the upgrade level of the item
-                item.currentLevel += 1;
+                item.currentLevel += 1
 
                 // Apply multiplier if it's a multiplier upgrade
                 if (item.name === 'Coin Multiplier') {
@@ -42,12 +43,12 @@ export default function ShopScreen(): JSX.Element {
                 }
 
             } else {
-                alert("Not enough coins to upgrade this item.");
+                alert("Not enough coins to upgrade this item.")
             }
         } else {
-            alert("Maximum upgrade level reached.");
+            alert("Maximum upgrade level reached.")
         }
-    };
+    }
 
     // Render function for store items
     const renderItem = ({ item }: { item: upgradeItem | consumableItem | skinItem }) => (
@@ -78,40 +79,45 @@ export default function ShopScreen(): JSX.Element {
                 <Space height={Dimensions.get("window").height / 8.1} />
                 <Text style={{ ...GS.title, color: theme.textColor }}>Coins: {coins}</Text>
                 <Text style={{ ...GS.title, color: theme.textColor }}>Multiplier: {multiplier}</Text>
-                {upgrades.map((section) => (
-                    <View key={section.title} style={SHS.sectionContainer}>
-                        <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
-                        <FlatList
-                            data={section.data}
-                            renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
-                            numColumns={2}
-                        />
-                    </View>
-                ))}
-                {consumables.map((section) => (
-                    <View key={section.title} style={SHS.sectionContainer}>
-                        <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
-                        <FlatList
-                            data={section.data}
-                            renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
-                            numColumns={2}
-                        />
-                    </View>
-                ))}
-                {skins.map((section) => (
-                    <View key={section.title} style={SHS.sectionContainer}>
-                        <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
-                        <FlatList
-                            data={section.data}
-                            renderItem={renderItem}
-                            keyExtractor={(item) => item.id}
-                            numColumns={2}
-                        />
-                    </View>
-                ))}
+                <ScrollView>
+                    {upgrades.map((section) => (
+                        <View key={section.title} style={SHS.sectionContainer}>
+                            <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
+                            <FlatList
+                                scrollEnabled={false}
+                                data={section.data}
+                                renderItem={renderItem}
+                                keyExtractor={(item) => item.id}
+                                numColumns={2}
+                            />
+                        </View>
+                    ))}
+                    {consumables.map((section) => (
+                        <View key={section.title} style={SHS.sectionContainer}>
+                            <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
+                            <FlatList
+                                scrollEnabled={false}
+                                data={section.data}
+                                renderItem={renderItem}
+                                keyExtractor={(item) => item.id}
+                                numColumns={2}
+                            />
+                        </View>
+                    ))}
+                    {skins.map((section) => (
+                        <View key={section.title} style={SHS.sectionContainer}>
+                            <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
+                            <FlatList
+                                scrollEnabled={false}
+                                data={section.data}
+                                renderItem={renderItem}
+                                keyExtractor={(item) => item.id}
+                                numColumns={2}
+                            />
+                        </View>
+                    ))}
+                </ScrollView>
             </View>
         </Swipe>
-    );
+    )
 }
