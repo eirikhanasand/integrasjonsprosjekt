@@ -52,6 +52,9 @@ func (server *Server) StartServer() {
 		{
 			game.GET("/deaths", server.GetGameDeaths)
 			game.GET("/scores", server.GetGameScores)
+			game.HEAD("/status", server.GameStatus)
+			game.POST("/create", server.CreateGame)
+			game.POST("/start", server.StartGame)
 		}
 	}
 	err := r.Run()

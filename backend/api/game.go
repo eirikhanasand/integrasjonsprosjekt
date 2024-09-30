@@ -2,12 +2,16 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
+	"time"
 )
 
 type Game struct {
-	PlayerMap map[string]Player
-	Playing   bool
+	PlayerMap   map[string]Player
+	LobbyLeader string
+	Playing     bool
+	StartTime   *time.Time
 }
 
 type Player struct {
@@ -25,6 +29,81 @@ type GamePostRequestParam struct {
 	Player string `form:"player" binding:"required"`
 	Died   *bool  `form:"died"`
 	Score  *int32 `form:"score"`
+}
+
+type GameCreationParam struct {
+	LobbyLeader string `form:"lobbyLeader" binding:"required"`
+}
+
+func (server *Server) CreateGame(ctx *gin.Context) {
+	var req GameCreationParam
+
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, "Malformed param request")
+		return
+	}
+
+	game := Game{
+		Playing:     false,
+		LobbyLeader: req.LobbyLeader,
+	}
+
+	playerMap := make(map[string]Player)
+
+	playerMap[req.LobbyLeader] = Player{
+		Id:    req.LobbyLeader,
+		Alive: true,
+		Score: 0,
+	}
+	gameId := uuid.New().String()
+
+	server.GameMap[gameId] = game
+
+	ctx.JSON(http.StatusOK, gameId)
+}
+
+func (server *Server) StartGame(ctx *gin.Context) {
+	var req GameRequestParam
+
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, "Malformed param request")
+		return
+	}
+
+	game, found := server.GameMap[req.GameId]
+
+	if found == false {
+		ctx.Status(http.StatusNotFound)
+		return
+	}
+	timeIn5Seconds := time.Now().Add(5 * time.Second)
+	game.StartTime = &timeIn5Seconds
+
+	server.GameMap[req.GameId] = game
+}
+
+func (server *Server) GameStatus(ctx *gin.Context) {
+	var req GameRequestParam
+
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+	game, found := server.GameMap[req.GameId]
+
+	if found == false {
+		ctx.Status(http.StatusNotFound)
+		return
+	}
+
+	if game.StartTime != nil {
+		ctx.Header("start-time", game.StartTime.String())
+	}
+	if game.Playing == true {
+		ctx.Status(http.StatusOK)
+		return
+	}
+	ctx.Status(http.StatusAccepted)
 }
 
 func (server *Server) GetGameDeaths(ctx *gin.Context) {

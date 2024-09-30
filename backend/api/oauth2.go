@@ -29,7 +29,7 @@ func (server *Server) DiscordLogin(ctx *gin.Context) {
 		return
 	}
 
-	var state, _ = uuid.NewRandom()
+	var state = uuid.New()
 	stateMap[state.String()] = req.Id
 
 	ctx.JSON(http.StatusOK, server.Oauth2Config.AuthCodeURL(state.String()))
