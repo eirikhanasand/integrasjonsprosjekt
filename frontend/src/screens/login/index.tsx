@@ -1,8 +1,7 @@
 import GS from "@styles/globalStyles"
 import Swipe from "@components/nav/swipe"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { Text, TouchableOpacity, View } from "react-native"
-import { authenticate } from "@redux/user"
 import handleLogin from "@components/login/login"
 
 /**
