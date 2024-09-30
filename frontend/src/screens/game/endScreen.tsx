@@ -9,18 +9,24 @@ export default function EndScreen() {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang } = useSelector((state: ReduxState) => state.lang)
     const { coins, highscore, score } = useSelector((state: ReduxState) => state.game)
-    const highScoreText = score > highscore ? handleNewHighScore() : `Highscore: ${highscore}`
-    const dispatch = useDispatch()
+    let highScoreText = ''
     const navigation: Navigation = useNavigation()
+    const dispatch = useDispatch()
 
     function handleExitEndScreen() {
         dispatch(setInGame(false))
         navigation.navigate("GameScreen")
     }
     
-    function handleNewHighScore() {
+    function HighScore() {
         dispatch(setHighScore(score))
-        return `New highscore: ${highscore}`
+        if (score >= (highscore || 0)) {
+            highScoreText = lang ? `Ny rekord: ${highscore}!` : `New highscore: ${highscore}!`
+        } else {
+            highScoreText = lang ? `Rekord: ${highscore}` : `Highscore: ${highscore}`
+        }
+
+        return <Text style={{...styles.text, color: theme.textColor}}>{highScoreText}</Text>
     }
 
     return (
@@ -31,12 +37,10 @@ export default function EndScreen() {
             <Text style={{...styles.gameOver, color: theme.textColor}}>
                 {lang ? 'Spillet er slutt!' : 'Game over!'}
             </Text>
-            {highscore && <Text style={{...styles.text, color: theme.textColor}}>
-                {highScoreText}
-            </Text>}
-            <Text style={{...styles.text, color: theme.textColor}}>
+            <HighScore />
+            {score >= (highscore || 0) ? null : <Text style={{...styles.text, color: theme.textColor}}>
                 {lang ? 'Poengsum' : 'Score'}: {score}
-            </Text>
+            </Text>}
             <Text style={{...styles.text, color: theme.textColor}}>
                 {lang ? 'Mynter' : 'Coins'}: {coins}
             </Text>

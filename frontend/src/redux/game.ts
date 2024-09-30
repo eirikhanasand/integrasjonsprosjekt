@@ -36,7 +36,6 @@ export const GameSlice = createSlice({
             state.score = action.payload
         },
         setHighScore(state, action) {
-            console.log("highscore updated")
             state.highscore = action.payload
         },
         setMultiplier(state, action) {
