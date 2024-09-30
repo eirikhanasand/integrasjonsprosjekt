@@ -33,7 +33,7 @@ func main() {
 	err = server.InitServer()
 
 	if err != nil {
-		log.Println("Failed to initialize server with environment variables.")
+		log.Printf("Failed to initialize server with environment variables: %s", err.Error())
 		return
 	}
 	server.StartServer()
