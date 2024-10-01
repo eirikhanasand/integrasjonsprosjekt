@@ -31,12 +31,17 @@ type GamePostRequestParam struct {
 	Score  *int32 `form:"score"`
 }
 
-type GameCreationParam struct {
+type GameCreationRequest struct {
 	LobbyLeader string `form:"lobbyLeader" binding:"required"`
 }
 
+type GameJoinLeaveRequest struct {
+	GameId string `uri:"gameId" binding:"required"`
+	UserId string `uri:"userId" binding:"required"`
+}
+
 func (server *Server) CreateGame(ctx *gin.Context) {
-	var req GameCreationParam
+	var req GameCreationRequest
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, "Malformed param request")
@@ -55,11 +60,21 @@ func (server *Server) CreateGame(ctx *gin.Context) {
 		Alive: true,
 		Score: 0,
 	}
-	gameId := uuid.New().String()
+	gameId := uuid.New().String()[:6]
 
-	server.GameMap[gameId] = game
+	server.SetGame(gameId, game)
 
 	ctx.JSON(http.StatusOK, gameId)
+}
+
+func (server *Server) JoinGame(ctx *gin.Context) {
+	var req GameJoinLeaveRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, "Malformed uri")
+		return
+	}
+
 }
 
 func (server *Server) StartGame(ctx *gin.Context) {
@@ -70,16 +85,17 @@ func (server *Server) StartGame(ctx *gin.Context) {
 		return
 	}
 
-	game, found := server.GameMap[req.GameId]
+	game, found := server.GetGame(req.GameId)
 
 	if found == false {
 		ctx.Status(http.StatusNotFound)
 		return
 	}
+
 	timeIn5Seconds := time.Now().Add(5 * time.Second)
 	game.StartTime = &timeIn5Seconds
 
-	server.GameMap[req.GameId] = game
+	server.SetGame(req.GameId, game)
 }
 
 func (server *Server) GameStatus(ctx *gin.Context) {
@@ -89,7 +105,7 @@ func (server *Server) GameStatus(ctx *gin.Context) {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	game, found := server.GameMap[req.GameId]
+	game, found := server.GetGame(req.GameId)
 
 	if found == false {
 		ctx.Status(http.StatusNotFound)
@@ -114,7 +130,7 @@ func (server *Server) GetGameDeaths(ctx *gin.Context) {
 		return
 	}
 
-	game, exists := server.GameMap[req.GameId]
+	game, exists := server.GetGame(req.GameId)
 
 	if exists == false {
 		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
@@ -136,7 +152,7 @@ func (server *Server) GetGameScores(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Malformed param request")
 		return
 	}
-	game, exists := server.GameMap[req.GameId]
+	game, exists := server.GetGame(req.GameId)
 
 	if exists == false {
 		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
@@ -163,7 +179,7 @@ func (server *Server) PostGameDeath(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "No death query-param provided.")
 	}
 
-	game, exists := server.GameMap[req.GameId]
+	game, exists := server.GetGame(req.GameId)
 
 	if exists == false {
 		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
@@ -181,7 +197,7 @@ func (server *Server) PostGameDeath(ctx *gin.Context) {
 
 	game.PlayerMap[req.Player] = player
 
-	server.GameMap[req.GameId] = game
+	server.SetGame(req.GameId, game)
 
 	ctx.JSON(http.StatusOK, "request accepted")
 }
@@ -197,7 +213,7 @@ func (server *Server) PostGameScore(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "No score query-param provided.")
 	}
 
-	game, exists := server.GameMap[req.GameId]
+	game, exists := server.GetGame(req.GameId)
 
 	if exists == false {
 		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
@@ -215,7 +231,7 @@ func (server *Server) PostGameScore(ctx *gin.Context) {
 
 	game.PlayerMap[req.Player] = player
 
-	server.GameMap[req.GameId] = game
+	server.SetGame(req.GameId, game)
 
 	ctx.JSON(http.StatusOK, "request accepted")
 }

@@ -27,9 +27,7 @@ func main() {
 		log.Fatalf("Failed to setup mongodb store.")
 		return
 	}
-	var server = api.Server{
-		GameMap: make(map[string]api.Game),
-	}
+	var server = api.CreateServer()
 	err = server.InitServer()
 
 	if err != nil {

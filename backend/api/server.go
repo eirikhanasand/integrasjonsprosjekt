@@ -6,13 +6,21 @@ import (
 	"github.com/ravener/discord-oauth2"
 	"golang.org/x/oauth2"
 	"os"
+	"sync"
 )
 
 type Server struct {
 	UserCollection string
+	gameMap        map[string]Game
+	GameMapLock    sync.RWMutex
+	Oauth2Config   oauth2.Config
 	// TODO add more fields.
-	GameMap      map[string]Game
-	Oauth2Config oauth2.Config
+}
+
+func CreateServer() Server {
+	return Server{
+		gameMap: make(map[string]Game),
+	}
 }
 
 func (server *Server) InitServer() error {
@@ -54,7 +62,7 @@ func (server *Server) StartServer() {
 			game.GET("/scores", server.GetGameScores)
 			game.HEAD("/status", server.GameStatus)
 			game.POST("/create", server.CreateGame)
-			game.POST("/start", server.StartGame)
+			game.PUT("/start/", server.StartGame)
 		}
 	}
 	err := r.Run()
@@ -62,4 +70,19 @@ func (server *Server) StartServer() {
 	if err != nil {
 		return
 	}
+}
+
+func (s *Server) GetGame(gameID string) (Game, bool) {
+	s.GameMapLock.RLock()         // Acquire read lock
+	defer s.GameMapLock.RUnlock() // Ensure unlocking after read operation
+
+	game, ok := s.gameMap[gameID] // Safely read from the map
+	return game, ok
+}
+
+func (s *Server) SetGame(gameID string, game Game) {
+	s.GameMapLock.Lock()         // Acquire write lock
+	defer s.GameMapLock.Unlock() // Ensure unlocking after write operation
+
+	s.gameMap[gameID] = game // Safely write to the map
 }
