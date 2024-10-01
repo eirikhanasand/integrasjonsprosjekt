@@ -1,26 +1,73 @@
-// Sample data for the store items
-const storeSections = [
+// items.ts
+
+import { upgradeItem, consumableItem, skinItem } from '@/interfaces';
+
+export const upgrades: { title: string; data: upgradeItem[] }[] = [
     {
         title: 'Upgrades',
         data: [
-            { id: '1', name: 'Bag upgrade', price: 200, image: require('@assets/shop/school-bag.png') },
-            { id: '2', name: 'Coin multiplier', price: 200, image: require('@assets/shop/calculator.png') },
+            {
+                id: '1',
+                name: 'Bag Upgrade',
+                type: 'upgradeItem',
+                price: [10, 20, 30, 40, 50],
+                currentLevel: 0,
+                maxLevel: 5,
+                image: require('@assets/shop/school-bag.png'),
+            },
+            {
+                id: '2',
+                name: 'Coin Multiplier',
+                type: 'upgradeItem',
+                price: [10, 20, 30, 40, 50],
+                currentLevel: 0,
+                maxLevel: 5,
+                image: require('@assets/shop/calculator.png'),
+            },
         ],
     },
+];
+
+export const consumables: { title: string; data: consumableItem[] }[] = [
     {
         title: 'Consumables',
         data: [
-            { id: '3', name: 'Start boost', price: 200, image: require('@assets/shop/coffee-cup.png') },
-            { id: '4', name: 'Electric Scooter', price: 200, image: require('@assets/shop/electric-scooter.png') },
+            {
+                id: '3',
+                name: 'Start Boost',
+                type: 'consumableItem',
+                price: [10],
+                image: require('@assets/shop/coffee-cup.png'),
+            },
+            {
+                id: '4',
+                name: 'Electric Scooter',
+                type: 'consumableItem',
+                price: [15],
+                image: require('@assets/shop/electric-scooter.png'),
+            },
         ],
     },
+];
+
+export const skins: { title: string; data: skinItem[] }[] = [
     {
         title: 'Skins',
         data: [
-            { id: '5', name: 'Skin 1', price: 200, image: require('@assets/shop/boy.png') },
-            { id: '6', name: 'Skin 2', price: 200, image: require('@assets/shop/boy.png') },
+            {
+                id: '5',
+                name: 'Cool Skin',
+                type: 'skinItem',
+                price: [20],
+                image: require('@assets/shop/boy.png'),
+            },
+            {
+                id: '6',
+                name: 'Cool Skin',
+                type: 'skinItem',
+                price: [20],
+                image: require('@assets/shop/boy.png'),
+            },
         ],
     },
-]
-
-export default storeSections
+];

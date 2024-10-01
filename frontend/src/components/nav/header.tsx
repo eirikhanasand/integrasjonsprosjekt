@@ -1,17 +1,18 @@
 import GS from '@styles/globalStyles'
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { Dimensions, Platform, View, Text } from 'react-native'
 import { HeaderProps} from '@/interfaces'
 import { useSelector } from 'react-redux'
-import React from 'react'
+import no from '@text/no.json'
+import en from '@text/en.json'
 
 export default function Header({ options, route }: HeaderProps): ReactNode {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang  } = useSelector((state: ReduxState) => state.lang)
     const GameScreen = route.name === "GameScreen"
-    const [title, setTitle] = useState<string>(route.name && (lang
-        ? require('@text/no.json').screens[route.name]
-        : require('@text/en.json').screens[route.name]))
+
+    // @ts-expect-error
+    const title = route.name && lang ? no.screens[route.name] : en.screens[route.name]
 
     if (GameScreen) {
         return
