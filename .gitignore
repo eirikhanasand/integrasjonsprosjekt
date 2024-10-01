@@ -2,3 +2,5 @@
 /backend/.env
 /backend/main
 /backend/.idea/
+.package-json
+.vscode
