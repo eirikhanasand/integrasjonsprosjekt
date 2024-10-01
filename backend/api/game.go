@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"integrasjon/service"
 	"net/http"
 	"time"
 )
@@ -75,6 +77,31 @@ func (server *Server) JoinGame(ctx *gin.Context) {
 		return
 	}
 
+	game, found := server.GetGame(req.GameId)
+
+	if found == false {
+		ctx.String(http.StatusNotFound, "game does not exist")
+		return
+	}
+
+	user, err := service.FetchTypeFromKeyValue[User]("userId", req.UserId, server.UserCollection)
+
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, fmt.Sprintf("database error: %s", err.Error()))
+		return
+	}
+
+	if user == nil {
+		ctx.String(http.StatusNotFound, "user does not exist")
+		return
+	}
+
+	game.PlayerMap[user.UserID] = Player{
+		Id:    user.UserID,
+		Alive: true,
+		Score: 0,
+	}
+	server.SetGame(req.GameId, game)
 }
 
 func (server *Server) StartGame(ctx *gin.Context) {
@@ -101,7 +128,7 @@ func (server *Server) StartGame(ctx *gin.Context) {
 func (server *Server) GameStatus(ctx *gin.Context) {
 	var req GameRequestParam
 
-	if err := ctx.ShouldBindQuery(&req); err != nil {
+	if err := ctx.ShouldBindHeader(&req); err != nil {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
