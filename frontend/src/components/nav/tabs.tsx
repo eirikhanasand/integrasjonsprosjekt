@@ -18,6 +18,9 @@ import {
 import { createStackNavigator } from "@react-navigation/stack"
 import LoginScreen from "@screens/login"
 import { useSelector } from "react-redux"
+import ShopIcon from "@components/shared/shop"
+import SettingsIcon from "@components/shared/gear"
+import PlayIcon from "@components/shared/play"
 
 // Declares Tab to equal CBTN function
 const Root = createStackNavigator<RootStackParamList>()
@@ -71,6 +74,7 @@ function Menu() {
 function Tabs(): JSX.Element {
     const { authenticated } = useSelector((state: ReduxState) => state.user)
     const { inGame } = useSelector((state: ReduxState) => state.game)
+    const { theme } = useSelector((state: ReduxState) => state.theme)
 
     if (!authenticated) {
         return (
@@ -104,10 +108,10 @@ function Tabs(): JSX.Element {
                 name="ShopNav" 
                 component={Shop} 
                 options={({
-                    tabBarIcon: () => (
-                        <Image
-                            style={MS.bMenuIcon} 
-                            source={require("@assets/menu/calendar-orange.png")} 
+                    tabBarIcon: ({focused}) => (
+                        <ShopIcon 
+                            color={focused ? theme.orange : theme.oppositeTextColor} 
+                            style={{...MS.bMenuIcon, padding: 15}}    
                         />
                     )
                 })}
@@ -116,10 +120,10 @@ function Tabs(): JSX.Element {
                 name="GameNav" 
                 component={Game} 
                 options={({
-                    tabBarIcon: () => (
-                        <Image
-                            style={MS.bMenuIcon} 
-                            source={require("@assets/menu/business-orange.png")}
+                    tabBarIcon: ({focused}) => (
+                        <PlayIcon
+                            color={focused ? theme.orange : theme.oppositeTextColor} 
+                            style={{...MS.bMenuIcon, padding: 8}}
                         />
                     )
                 })}
@@ -128,10 +132,10 @@ function Tabs(): JSX.Element {
                 name="MenuNav" 
                 component={Menu}
                 options={({
-                    tabBarIcon: () => (
-                        <Image
-                            style={MS.bMenuIcon} 
-                            source={require("@assets/menu/calendar-orange.png")}
+                    tabBarIcon: ({focused}) => (
+                        <SettingsIcon 
+                            color={focused ? theme.orange : theme.oppositeTextColor} 
+                            style={{...MS.bMenuIcon, padding: 18}}
                         />
                     )
             })}
