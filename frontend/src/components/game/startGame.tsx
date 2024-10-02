@@ -29,12 +29,6 @@ export default function StartGame() {
     // Game states
     const text = lang ? "Trykk for å starte" : "Tap to Play"
 
-    // Helper functions
-    // Hides start game text while playing
-    if (inGame) {
-        return null
-    }
-
     function handleStart() {
         dispatch(setStartTime(Date.now()))
         dispatch(setInGame(true))
@@ -51,11 +45,11 @@ export default function StartGame() {
             <TouchableOpacity
                 onPress={handleStart}
                 style={{
-                   
-                    top: height * 0.6,
+                    // top: height * 0.2,
                     width: width * 0.8,
                     alignSelf: 'center',
                     height: 200,
+                    bottom: 0
                 }}
             >
                 <Text style={{
@@ -63,7 +57,7 @@ export default function StartGame() {
                     color: theme.textColor,
                     fontWeight: '600',
                     alignSelf: 'center',
-                    marginVertical: 'auto'
+                    top: height * 0.8
                 }}>
                     {text}
                 </Text>

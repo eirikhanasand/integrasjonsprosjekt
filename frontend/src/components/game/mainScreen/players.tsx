@@ -1,8 +1,8 @@
-import { Dimensions, View } from "react-native";
+import { Dimensions, View } from "react-native"
 
 export default function Players({players}: {players: any[]}) {
     const height = Dimensions.get('window').height
-    const originalHeight = height * 0.8
+    const originalHeight = height * 0.71
     const playerCount = players.length
     const row = Math.floor((playerCount - 1) / 5)
 
@@ -12,12 +12,14 @@ export default function Players({players}: {players: any[]}) {
     }
 
     return(
-        <View style={{zIndex: -100, height}}>
+        <View style={{zIndex: -100, height, position: 'absolute', width: '100%'}}>
             {/* Player Representation */}
             <View style={{ 
                 flexDirection: 'row', 
                 justifyContent: 'center', 
-                flexWrap: 'wrap', 
+                alignContent: 'center',
+                alignItems: 'center',
+                flexWrap: 'wrap-reverse', 
                 top: getHeight()
             }}>
                 {players.map((player, index) => (
