@@ -1,21 +1,6 @@
 import { AnimatedValue } from "@/interfaces"
 import { Animated, Dimensions, StyleProp, ViewStyle } from "react-native"
 
-type Entity = {
-    position: [number, number]
-    renderer: JSX.Element
-}
-
-type EngineEntity = {
-    nextCoinSpawn: number
-}
-
-type Entities = {
-    [key: string]: Entity | EngineEntity
-    engine: EngineEntity
-    player: Entity
-}
-
 type CoinProps = {
     style?: StyleProp<ViewStyle>
     location?: {
@@ -43,9 +28,7 @@ export default function CoinSpawner(entities: Entities, { time }: { time: { delt
             let [pxValue, pyValue] = player.position
             // Moves coin towards the player based on delta time
             const speed = 1 * (time.delta / 16.67)
-            // @ts-expect-error (hidden method on player position)
             const px = pxValue.__getValue()
-            // @ts-expect-error (hidden method on player position)
             const py = pyValue.__getValue()
             const newX = cx
             const newY = cy + speed
@@ -57,7 +40,7 @@ export default function CoinSpawner(entities: Entities, { time }: { time: { delt
             coin.location.y.setValue(newY)
 
             // Despawns the coin - picked up by player
-            if (Math.abs(cy - py) < 10 && Math.abs(cx - px) < 10) {
+            if (Math.abs((cy - 50) - py) < 10 && Math.abs(cx - px) < 10) {
                 // @ts-expect-error
                 addCoin()
                 delete entities[key]

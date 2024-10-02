@@ -72,3 +72,18 @@ type Song = {
     uri: string
     nextSongs: string[]
 }
+
+type Entity = {
+    position: [AnimatedValue, AnimatedValue]
+    renderer: JSX.Element
+}
+
+type EngineEntity = {
+    nextCoinSpawn: number
+}
+
+type Entities = {
+    [key: string]: Entity | EngineEntity
+    engine: EngineEntity
+    player: Entity
+}

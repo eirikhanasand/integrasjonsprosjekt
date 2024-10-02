@@ -1,8 +1,14 @@
 import { AnimatedValue } from "@/interfaces"
 import GS from "@styles/globalStyles"
-import { useEffect, useRef, useState } from "react"
-import { Animated } from "react-native"
 import { PanGestureHandler } from "react-native-gesture-handler"
+import { useState, useEffect, useRef, memo } from 'react'
+import { Asset } from 'expo-asset'
+import { Canvas } from '@react-three/fiber'
+import { useGLTF } from '@react-three/drei'
+import * as THREE from 'three'
+import { Animated, Platform, Text } from 'react-native'
+import * as Device from 'expo-device'
+import pixelStore from "./glPixelStorei"
 
 type PlayerProps = {
     translateX: AnimatedValue
@@ -162,17 +168,8 @@ export default function Player({translateX, translateY}: PlayerProps) {
       
     return (
         <PanGestureHandler onHandlerStateChange={onGestureEvent}>
-            <Animated.View 
-                style={{
-                    ...GS.content,
-                    paddingHorizontal: 5,
-                }}>
-                <Animated.View style={{
-                    backgroundColor: 'white', 
-                    width: 40, 
-                    height: 40,
-                    transform: [{translateX}, {translateY}]
-                }}/>
+            <Animated.View style={{ ...GS.content, width: '100%', paddingHorizontal: 5, position: 'absolute' }}>
+                <Character transform={[{translateX}, {translateY}]} />
             </Animated.View>
         </PanGestureHandler>
     )
@@ -199,3 +196,77 @@ function checkBounds(translateY: AnimatedValue, originalY: number, verticalState
         })
     }
 }
+
+function Character({transform}: {transform: any}) {
+    const [modelUri, setModelUri] = useState<string | null>(null)
+
+    // Preload the model
+    useEffect(() => {
+        async function loadModel() {
+            try {
+                const asset = Asset.fromModule(require("@assets/models/characters/player.glb"))
+                await asset.downloadAsync()
+                setModelUri(asset.localUri)
+                console.log('Player Model URI:', asset.localUri)
+            } catch (error) {
+                console.error('Error loading player model:', error)
+            }
+        }
+
+        loadModel()
+    }, [])
+
+    return (
+        <Animated.View style={{
+            width: 150, 
+            height: 300,
+            transform,
+            right: 55,
+        }}>
+
+            {modelUri ? (
+                <Canvas 
+                    // gl={{ physicallyCorrectLights: true }} 
+                    camera={{ position: [0, 5, 5], fov: 75 }}  
+                    onCreated={(state) => {
+                        // Supresses unsupported values
+                        const _gl = state.gl.getContext()
+                        const pixelStorei = _gl.pixelStorei.bind(_gl)
+                        _gl.pixelStorei = pixelStore(pixelStorei, _gl)
+                        console.log('Player canvas created');
+                    }}
+            >
+                <ambientLight intensity={0.6} />
+                <directionalLight position={[5, 10, 7.5]} intensity={1.5} castShadow />
+                <pointLight position={[10, 10, 10]} intensity={1} />
+                <Model modelUri={modelUri} />
+            </Canvas>
+            ) : (
+                <Text>Loading Player...</Text>
+            )}
+        </Animated.View>
+    )
+}
+
+const Model = memo(({ modelUri }: { modelUri: string }) => {
+    if (Platform.OS === 'ios' && !Device.isDevice) {
+        console.error("iOS simulators do not support loading glb files. Character will not be displayed.")
+        return null
+    }
+
+    console.log("Player model component called with URI:", modelUri)
+
+    const { scene } = useGLTF(modelUri, true)
+
+    useEffect(() => {
+        if (scene) {
+            console.log("Inside Player model useEffect - Character Loaded")
+            const bbox = new THREE.Box3().setFromObject(scene)
+            // const boxHelper = new THREE.BoxHelper(scene, 0xff0000)
+            // scene.add(boxHelper)
+            console.log('Player Bounding box:', bbox)
+        }
+    }, [scene])
+
+    return scene ? <primitive object={scene} scale={[4, 4, 4]} position={[0, -3.5, 0]} rotation={[0, Math.PI, 0]} /> : null;
+})

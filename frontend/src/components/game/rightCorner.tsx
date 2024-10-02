@@ -21,6 +21,7 @@ export default function RightCorner({ score }: RightCornerProps) {
             top: 60, 
             alignSelf: 'flex-end',
             borderRadius: 10,
+            right: 10
         }}>
             <Text style={{
                 ...T.text20,

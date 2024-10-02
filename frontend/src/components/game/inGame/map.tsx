@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { Platform, Text, View } from 'react-native'
-import * as Device from 'expo-device';
+import * as Device from 'expo-device'
 
 export default function Map() {
     const [modelUri, setModelUri] = useState<string | null>(null);
@@ -16,9 +16,9 @@ export default function Map() {
                 const asset = Asset.fromModule(require("@assets/models/map/Level.glb"))
                 await asset.downloadAsync()
                 setModelUri(asset.localUri)
-                console.log('Model URI:', asset.localUri)
+                console.log('Map Model URI:', asset.localUri)
             } catch (error) {
-                console.error('Error loading model:', error)
+                console.error('Error loading map model:', error)
             }
         }
 
@@ -31,13 +31,12 @@ export default function Map() {
                 <Canvas
                     camera={{ position: [0, 5, 10], fov: 75 }}
                     onCreated={() => {
-                        console.log('Canvas created')
+                        console.log('Map Canvas created')
                     }}
                 >
                     <ambientLight intensity={0.6} />
                     <directionalLight position={[5, 10, 7.5]} intensity={1.5} castShadow />
                     <pointLight position={[10, 10, 10]} intensity={1} />
-
                     <Model modelUri={modelUri} />
                 </Canvas>
             ) : (
@@ -49,22 +48,22 @@ export default function Map() {
 
 const Model = memo(({ modelUri }: { modelUri: string }) => {
     if (Platform.OS === 'ios' && !Device.isDevice) {
-        console.error("iOS simulators do not support loading glb files. Scene will not be displayed.")
+        console.error("iOS simulators do not support loading glb files. Map will not be displayed.")
         return null
     }
 
-    console.log("Model component called with URI:", modelUri)
+    console.log("Map Model component called with URI:", modelUri)
 
     // Use useGLTF to load the model
     const { scene } = useGLTF(modelUri, true)
 
     useEffect(() => {
         if (scene) {
-            console.log("Inside Model useEffect - Scene Loaded")
+            console.log("Inside Map Model useEffect - Map Loaded")
             const bbox = new THREE.Box3().setFromObject(scene)
-            console.log('Bounding box:', bbox)
+            console.log('Map Bounding box:', bbox)
         }
     }, [scene])
 
-    return scene ? <primitive object={scene} scale={[1, 1, 1]} position={[0, 1, 10]} /> : null
+    return scene ? <primitive object={scene} scale={[1, 1, 1]} position={[0, 1, 10]} rotation={[-0.1, 0, 0]} /> : null
 })

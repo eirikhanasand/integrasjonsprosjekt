@@ -45,7 +45,6 @@ export default function StartGame() {
             <TouchableOpacity
                 onPress={handleStart}
                 style={{
-                    // top: height * 0.2,
                     width: width * 0.8,
                     alignSelf: 'center',
                     height: 200,

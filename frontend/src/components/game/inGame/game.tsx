@@ -10,12 +10,29 @@ import { useDispatch, useSelector } from "react-redux"
 import { addCoins, setAlive, setScore as storeScore, setStartTime } from "@redux/game"
 import ObstacleSpawner from "./obstacles"
 import { AnimatedValue } from "@/interfaces"
+import Ghost from "./ghost"
+import { Asset } from "expo-asset"
 
 type GameProps = {
     paused: boolean
     playerX: AnimatedValue
     playerY: AnimatedValue
     kill: () => void
+}
+
+type TransformEntity = Entity & {
+    translateX: AnimatedValue
+    translateY: AnimatedValue
+    modelUri: string
+    name: string
+    score: number
+}
+
+type Ghost = {
+    x: AnimatedValue
+    y: AnimatedValue
+    name: string
+    score: number
 }
 
 export default function Gameplay() {
@@ -26,7 +43,7 @@ export default function Gameplay() {
     const [paused, setPaused] = useState(false)
     const [pauseTime, setPauseTime] = useState<number>(0)
     const originalX = Dimensions.get('window').width * 0.5 - 25
-    const originalY = Dimensions.get('window').height * 0.73
+    const originalY = Dimensions.get('window').height * 0.58
     const playerX = useRef(new Animated.Value(originalX)).current as AnimatedValue
     const playerY = useRef(new Animated.Value(originalY)).current as AnimatedValue
     const scoreRef = useRef(0)
@@ -55,7 +72,7 @@ export default function Gameplay() {
 
     // Kills the player
     function kill() {
-        dispatch(setAlive(false))
+        // dispatch(setAlive(false))
     }
 
     // Handle score updates based on the paused state
@@ -105,7 +122,34 @@ export default function Gameplay() {
 
 function Game({playerX, playerY, paused, kill}: GameProps) {
     const { startTime } = useSelector((state: ReduxState) => state.game)
+    const [modelUri, setModelUri] = useState<string | null>(null)
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        async function loadModel() {
+            try {
+                const asset = Asset.fromModule(require("@assets/models/characters/ghost.glb"))
+                await asset.downloadAsync()
+                setModelUri(asset.localUri)
+                console.log('Ghost Model URI:', asset.localUri)
+            } catch (error) {
+                console.error('Error loading ghost model:', error)
+            }
+        }
+
+        loadModel()
+    }, [])
+
+    if (!modelUri) {
+        console.log("Loading ghost...")
+        return null
+    } 
+
+    const ghosts: Ghost[] = [
+        {x: playerX, y: playerY, name: "ghost1", score: 200},
+        {x: new Animated.Value(150) as AnimatedValue, y: new Animated.Value(400) as AnimatedValue, name: "ghost2", score: 400},
+        {x: new Animated.Value(100) as AnimatedValue, y: new Animated.Value(200) as AnimatedValue, name: "ghost3", score: 400}
+    ]
 
     function addCoin() {
         dispatch(addCoins(1))
@@ -121,8 +165,41 @@ function Game({playerX, playerY, paused, kill}: GameProps) {
                     translateX: playerX, 
                     translateY: playerY,
                     // @ts-expect-error (expects translateX and translateY, but they are already passed)
-                    renderer: <Player /> 
+                    renderer: <Player />
                 },
+                ghost: {
+                    position: [new Animated.Value(100), new Animated.Value(100)], 
+                        translateX: new Animated.Value(100),
+                        translateY: new Animated.Value(100),
+                        modelUri,
+                        name: "gubbe",
+                        score: 400,
+                        // @ts-expect-error (expects translateX and translateY, but they are already passed)
+                        renderer: <Ghost key={"gubbe1"} />,
+                },
+                ghost2: {
+                    position: [new Animated.Value(300), new Animated.Value(300)], 
+                        translateX: new Animated.Value(300),
+                        translateY: new Animated.Value(300),
+                        modelUri,
+                        name: "ghost 2",
+                        score: 300,
+                        // @ts-expect-error (expects translateX and translateY, but they are already passed)
+                        renderer: <Ghost key="gubbe2" />,
+                },
+                // ...ghosts.reduce<Record<string, TransformEntity>>((acc, ghost) => {
+                //     acc[ghost.name] = {
+                //         position: [ghost.x, ghost.y], 
+                //         translateX: ghost.x,
+                //         translateY: ghost.y,
+                //         modelUri,
+                //         name: ghost.name,
+                //         score: ghost.score,
+                //         // @ts-expect-error (expects translateX and translateY, but they are already passed)
+                //         renderer: <Ghost />,
+                //     }
+                //     return acc
+                // }, {}),
                 engine: { 
                     nextCoinSpawn: startTime - Date.now(),
                     nextObstacleSpawn: startTime - Date.now()

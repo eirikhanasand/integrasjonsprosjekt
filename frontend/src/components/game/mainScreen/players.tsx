@@ -13,7 +13,6 @@ export default function Players({players}: {players: any[]}) {
 
     return(
         <View style={{zIndex: -100, height, position: 'absolute', width: '100%'}}>
-            {/* Player Representation */}
             <View style={{ 
                 flexDirection: 'row', 
                 justifyContent: 'center', 
