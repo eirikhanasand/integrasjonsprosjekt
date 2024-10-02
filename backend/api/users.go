@@ -41,8 +41,8 @@ type UserPatchRequest struct {
 }
 
 type UserPostRequest struct {
-	Id      string `form:"id"`
-	Balance *int32 `form:"balance"`
+	Id      string `json:"id"`
+	Balance *int32 `json:"balance"`
 }
 
 func (server *Server) GetUsers(ctx *gin.Context) {
@@ -78,8 +78,8 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 func (server *Server) PostUser(ctx *gin.Context) {
 	var req UserPostRequest
 
-	if err := ctx.ShouldBindJSON(req); err != nil {
-		ctx.JSON(http.StatusBadRequest, "Malformed JSON body")
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, fmt.Sprintf("Malformed JSON body: %s", err))
 		return
 	}
 	var balance int32 = 0
@@ -94,13 +94,19 @@ func (server *Server) PostUser(ctx *gin.Context) {
 		make([]int8, 0),
 		"no",
 	}
-	service.InsertDocument(user, server.UserCollection)
+	err := service.InsertDocument(user, server.UserCollection)
+
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, fmt.Sprintf("database error: %s", err.Error()))
+	} else {
+		ctx.Status(http.StatusOK)
+	}
 }
 
 func (server *Server) GetUserField(ctx *gin.Context) {
 	var req UserRequestParam
 
-	if err := ctx.ShouldBindQuery(req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, "Malformed id query")
 		return
 	}
@@ -150,14 +156,14 @@ func (server *Server) GetUserField(ctx *gin.Context) {
 func (server *Server) PatchUser(ctx *gin.Context) {
 	var queryReq UserRequestParam
 
-	if err := ctx.ShouldBindQuery(queryReq); err != nil {
+	if err := ctx.ShouldBindQuery(&queryReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, "Malformed id query")
 		return
 	}
 
 	var bodyReq UserPatchRequest
 
-	if err := ctx.ShouldBindJSON(bodyReq); err != nil {
+	if err := ctx.ShouldBindJSON(&bodyReq); err != nil {
 		ctx.JSON(http.StatusBadRequest, "Malformed json body")
 		return
 	}

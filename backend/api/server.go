@@ -12,7 +12,7 @@ import (
 type Server struct {
 	UserCollection string
 	gameMap        map[string]Game
-	GameMapLock    sync.RWMutex
+	GameMapLock    sync.Mutex
 	Oauth2Config   oauth2.Config
 	// TODO add more fields.
 }
@@ -60,9 +60,13 @@ func (server *Server) StartServer() {
 		{
 			game.GET("/deaths", server.GetGameDeaths)
 			game.GET("/scores", server.GetGameScores)
+			game.POST("/score", server.PostGameScore)
+			game.POST("/death", server.PostGameDeath)
 			game.HEAD("/status", server.GameStatus)
 			game.POST("/create", server.CreateGame)
-			game.PUT("/start/", server.StartGame)
+			game.PUT("/start", server.StartGame)
+			game.HEAD("/join/:gameId/:userId", server.JoinGame)
+			game.HEAD("/leave/:gameId/:userId", server.LeaveGame)
 		}
 	}
 	err := r.Run()
@@ -72,17 +76,26 @@ func (server *Server) StartServer() {
 	}
 }
 
-func (s *Server) GetGame(gameID string) (Game, bool) {
-	s.GameMapLock.RLock()         // Acquire read lock
-	defer s.GameMapLock.RUnlock() // Ensure unlocking after read operation
+func (s *Server) GetGameWithLock(gameID string) (Game, bool) {
+	s.GameMapLock.Lock() // Lock for exclusive access (read and subsequent write)
 
-	game, ok := s.gameMap[gameID] // Safely read from the map
-	return game, ok
+	game, ok := s.gameMap[gameID] // Safe read operation
+	return game, ok               // Keep the lock; do not unlock yet
+}
+
+func (s *Server) GetGame(gameID string) (Game, bool) {
+	s.GameMapLock.Lock() // Lock for exclusive access (read and subsequent write)
+	defer s.GameMapLock.Unlock()
+
+	game, ok := s.gameMap[gameID] // Safe read operation
+	return game, ok               // Keep the lock; do not unlock yet
 }
 
 func (s *Server) SetGame(gameID string, game Game) {
-	s.GameMapLock.Lock()         // Acquire write lock
-	defer s.GameMapLock.Unlock() // Ensure unlocking after write operation
+	// Since the lock is already acquired, we do not need to lock again
+	s.gameMap[gameID] = game // Safe write operation
+}
 
-	s.gameMap[gameID] = game // Safely write to the map
+func (s *Server) ReleaseGameMapLock() {
+	s.GameMapLock.Unlock() // Release the lock manually after you're done
 }

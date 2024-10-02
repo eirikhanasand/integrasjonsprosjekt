@@ -17,7 +17,7 @@ func SetupMongoStore() bool {
 	uri := os.Getenv("URI")
 	databaseName := os.Getenv("MONGO")
 
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
 
 	client, clientErr := mongo.NewClient(options.Client().ApplyURI(uri))
 
@@ -52,15 +52,15 @@ func ReplaceWithKeyValue(key string, value string, doc any, collection string) b
 	return true
 }
 
-func InsertDocument(doc any, collection string) bool {
+func InsertDocument(doc any, collection string) error {
 	col := database.Collection(collection)
 
 	_, err := col.InsertOne(ctx, doc)
 
 	if err != nil {
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func FetchTypeFromKeyValue[T any](key string, value string, collection string) (*T, error) {

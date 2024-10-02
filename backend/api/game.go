@@ -28,13 +28,13 @@ type GameRequestParam struct {
 
 type GamePostRequestParam struct {
 	GameId string `form:"gameId" binding:"required"`
-	Player string `form:"player" binding:"required"`
+	UserId string `form:"userId" binding:"required"`
 	Died   *bool  `form:"died"`
 	Score  *int32 `form:"score"`
 }
 
 type GameCreationRequest struct {
-	LobbyLeader string `form:"lobbyLeader" binding:"required"`
+	UserId string `form:"userId" binding:"required"`
 }
 
 type GameJoinLeaveRequest struct {
@@ -52,16 +52,17 @@ func (server *Server) CreateGame(ctx *gin.Context) {
 
 	game := Game{
 		Playing:     false,
-		LobbyLeader: req.LobbyLeader,
+		LobbyLeader: req.UserId,
 	}
 
 	playerMap := make(map[string]Player)
 
-	playerMap[req.LobbyLeader] = Player{
-		Id:    req.LobbyLeader,
+	playerMap[req.UserId] = Player{
+		Id:    req.UserId,
 		Alive: true,
 		Score: 0,
 	}
+	game.PlayerMap = playerMap
 	gameId := uuid.New().String()[:6]
 
 	server.SetGame(gameId, game)
@@ -77,7 +78,8 @@ func (server *Server) JoinGame(ctx *gin.Context) {
 		return
 	}
 
-	game, found := server.GetGame(req.GameId)
+	game, found := server.GetGameWithLock(req.GameId)
+	defer server.ReleaseGameMapLock()
 
 	if found == false {
 		ctx.String(http.StatusNotFound, "game does not exist")
@@ -92,7 +94,7 @@ func (server *Server) JoinGame(ctx *gin.Context) {
 	}
 
 	if user == nil {
-		ctx.String(http.StatusNotFound, "user does not exist")
+		ctx.String(http.StatusExpectationFailed, "user does not exist")
 		return
 	}
 
@@ -104,6 +106,32 @@ func (server *Server) JoinGame(ctx *gin.Context) {
 	server.SetGame(req.GameId, game)
 }
 
+func (server *Server) LeaveGame(ctx *gin.Context) {
+	var req GameJoinLeaveRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, "Malformed uri")
+		return
+	}
+
+	game, found := server.GetGameWithLock(req.GameId)
+	defer server.ReleaseGameMapLock()
+
+	if found == false {
+		ctx.String(http.StatusNotFound, "game does not exist")
+		return
+	}
+	player, exists := game.PlayerMap[req.UserId]
+
+	if exists == false {
+		ctx.String(http.StatusNotFound, "this player is not in this game")
+		return
+	}
+	delete(game.PlayerMap, player.Id)
+
+	server.SetGame(req.GameId, game)
+}
+
 func (server *Server) StartGame(ctx *gin.Context) {
 	var req GameRequestParam
 
@@ -112,7 +140,8 @@ func (server *Server) StartGame(ctx *gin.Context) {
 		return
 	}
 
-	game, found := server.GetGame(req.GameId)
+	game, found := server.GetGameWithLock(req.GameId)
+	defer server.ReleaseGameMapLock()
 
 	if found == false {
 		ctx.Status(http.StatusNotFound)
@@ -132,7 +161,8 @@ func (server *Server) GameStatus(ctx *gin.Context) {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	game, found := server.GetGame(req.GameId)
+	game, found := server.GetGameWithLock(req.GameId)
+	server.ReleaseGameMapLock()
 
 	if found == false {
 		ctx.Status(http.StatusNotFound)
@@ -156,7 +186,6 @@ func (server *Server) GetGameDeaths(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Malformed param request")
 		return
 	}
-
 	game, exists := server.GetGame(req.GameId)
 
 	if exists == false {
@@ -186,7 +215,7 @@ func (server *Server) GetGameScores(ctx *gin.Context) {
 		return
 	}
 
-	var scoreMap map[string]int32
+	var scoreMap = make(map[string]int32)
 
 	for s := range game.PlayerMap {
 		player := game.PlayerMap[s]
@@ -206,14 +235,15 @@ func (server *Server) PostGameDeath(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "No death query-param provided.")
 	}
 
-	game, exists := server.GetGame(req.GameId)
+	game, exists := server.GetGameWithLock(req.GameId)
+	defer server.ReleaseGameMapLock()
 
 	if exists == false {
 		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
 		return
 	}
 
-	player, found := game.PlayerMap[req.Player]
+	player, found := game.PlayerMap[req.UserId]
 
 	if found == false {
 		ctx.JSON(http.StatusNotFound, "No player with that ID in the game.")
@@ -222,7 +252,7 @@ func (server *Server) PostGameDeath(ctx *gin.Context) {
 
 	player.Alive = !(*req.Died) // Alive is negated value of died.
 
-	game.PlayerMap[req.Player] = player
+	game.PlayerMap[req.UserId] = player
 
 	server.SetGame(req.GameId, game)
 
@@ -240,14 +270,15 @@ func (server *Server) PostGameScore(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "No score query-param provided.")
 	}
 
-	game, exists := server.GetGame(req.GameId)
+	game, exists := server.GetGameWithLock(req.GameId)
+	defer server.ReleaseGameMapLock()
 
 	if exists == false {
 		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
 		return
 	}
 
-	player, found := game.PlayerMap[req.Player]
+	player, found := game.PlayerMap[req.UserId]
 
 	if found == false {
 		ctx.JSON(http.StatusNotFound, "No player with that ID in the game.")
@@ -256,7 +287,7 @@ func (server *Server) PostGameScore(ctx *gin.Context) {
 
 	player.Score = *req.Score
 
-	game.PlayerMap[req.Player] = player
+	game.PlayerMap[req.UserId] = player
 
 	server.SetGame(req.GameId, game)
 
