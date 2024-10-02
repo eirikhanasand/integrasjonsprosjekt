@@ -1,27 +1,70 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-// Declares Gmae Slice
+// Declares Game Slice
 export const GameSlice = createSlice({
     // Slice name
     name: "game",
     // Initial state
     initialState: {
-       coins: 0,
-       startTime: 0,
-       inGame: false,
-       alive: false,
-       score: 0,
-       highscore: 0,
-       multiplier: 31,
+        coins: 0,
+        startTime: 0,
+        inGame: false,
+        alive: false,
+        score: 0,
+        highscore: 0,
+        multiplier: 31,
+        coinMultiplier: 1
     },
     // Declares slice reducer
     reducers: {
         // Adds coins to the current balance
         addCoins(state, action) {
-            state.coins += action.payload
+            const coinsToAdd = action.payload;
+            // Check for valid multiplier
+            const effectiveMultiplier = 
+            typeof state.coinMultiplier === 'number' 
+            && !isNaN(state.coinMultiplier) ? state.coinMultiplier : 1;
+
+            if (typeof coinsToAdd === 'number' && !isNaN(coinsToAdd)) {
+                const coinsBefore = state.coins;
+                // Multiplies coins to add by the effective multiplier
+                const totalCoinsToAdd = coinsToAdd * effectiveMultiplier
+                const coinsAfter = coinsBefore + totalCoinsToAdd;
+
+                console.log("Adding coins:", {
+                    coinsToAdd,
+                    coinMultiplier: effectiveMultiplier,
+                    totalCoinsToAdd,
+                    coinsBefore,
+                    coinsAfter,
+                });
+
+                state.coins = coinsAfter;
+            } else {
+                console.error("Invalid coinsToAdd value:", coinsToAdd);
+            }
         },
+        // Removes coins from the current balance
         removeCoins(state, action) {
-            state.coins -= action.payload
+            const coinsToRemove = action.payload;
+            if (
+                typeof coinsToRemove === 'number' &&
+                !isNaN(coinsToRemove) &&
+                state.coins >= coinsToRemove
+            ) {
+                const coinsBefore = state.coins;
+                const coinsAfter = coinsBefore - coinsToRemove;
+
+                console.log("Removing coins:", {
+                    coinsToRemove,
+                    coinsBefore,
+                    coinsAfter,
+                })
+
+                state.coins = coinsAfter
+            } else {
+                console.error("Invalid coinsToRemove value:", coinsToRemove)
+            }
         },
         setStartTime(state, action) {
             state.startTime = action.payload
@@ -40,12 +83,31 @@ export const GameSlice = createSlice({
         },
         setMultiplier(state, action) {
             state.multiplier = action.payload
-        }
-    }
-})
+        },
+        setCoinMultiplier(state, action) {
+            const newMultiplier = action.payload;
+            if (typeof newMultiplier === 'number' && newMultiplier >= 0) {
+                console.log("Setting new coinMultiplier:", newMultiplier);
+                state.multiplier = newMultiplier;
+            } else {
+                console.error("Invalid coinMultiplier value:", newMultiplier);
+            }
+        },
+        // New action to increment the scoreMultiplier by a given value
+        increaseCoinMultiplier(state, action) {
+            const incrementValue = action.payload;
+            if (typeof incrementValue === 'number' && incrementValue > 0) {
+                console.log("Increasing coin multiplier by:", incrementValue);
+                state.coinMultiplier += incrementValue;
+            } else {
+                console.error("Invalid incrementValue:", incrementValue);
+            }
+        },
+    },
+});
 
 // Exports the change function
-export const { 
+export const {
     addCoins,
     removeCoins,
     setStartTime,
@@ -53,8 +115,10 @@ export const {
     setAlive,
     setScore,
     setHighScore,
-    setMultiplier
-} = GameSlice.actions
+    setMultiplier,
+    setCoinMultiplier,
+    increaseCoinMultiplier,
+} = GameSlice.actions;
 
-// Exports the language slice
-export default GameSlice.reducer
+// Exports the game slice
+export default GameSlice.reducer;
