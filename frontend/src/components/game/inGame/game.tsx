@@ -1,6 +1,6 @@
 import Map from "./map"
 import PauseButton from "./pause"
-import RightCorner from "./rightCorner"
+import RightCorner from "../rightCorner"
 import { GameEngine } from "react-native-game-engine"
 import { Animated, Dimensions, View } from "react-native"
 import { useEffect, useRef, useState } from "react"

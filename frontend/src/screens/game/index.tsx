@@ -2,7 +2,7 @@ import GS from "@styles/globalStyles"
 import Swipe from "@components/nav/swipe"
 import { useSelector } from "react-redux"
 import { View } from "react-native"
-import Gameplay from "@components/game/game"
+import Gameplay from "@components/game/inGame/game"
 import StartGame from "@components/game/startGame"
 import EndScreen from "./endScreen"
 

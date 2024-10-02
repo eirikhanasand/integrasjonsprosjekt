@@ -1,6 +1,6 @@
 import { Text, View } from "react-native"
 import { useSelector } from "react-redux"
-import { Coin } from "./coins"
+import { Coin } from "./inGame/coins"
 import T from "@styles/text"
 
 type RightCornerProps = {
