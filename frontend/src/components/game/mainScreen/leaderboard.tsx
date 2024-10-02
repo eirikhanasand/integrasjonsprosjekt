@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Dimensions, Text, TouchableOpacity, View } from "react-native"
 import { useSelector } from "react-redux"
 import Trophy from "./trophy"
-import { ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler"
+import { ScrollView } from "react-native-gesture-handler"
 
 export default function Leaderboard() {
     const { theme } = useSelector((state: ReduxState) => state.theme)
@@ -22,14 +22,18 @@ export default function Leaderboard() {
                 position: 'absolute',
                 borderRadius: 20,
             }}>
-                <TouchableOpacity onPress={handlePress} activeOpacity={1} style={{
-                    justifyContent: 'center',
-                    alignItems: 'flex-end',
-                    backgroundColor: theme.contrast, 
-                    width: 40, 
-                    height: 40,
-                    borderRadius: 8,
-                }}>
+                <TouchableOpacity 
+                    onPress={handlePress} 
+                    activeOpacity={1} 
+                    style={{
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
+                        backgroundColor: theme.contrast, 
+                        width: 40, 
+                        height: 40,
+                        borderRadius: 8,
+                    }}
+                >
                     <Trophy color="none" style={{width: 30, height: 30, alignSelf: 'center'}} />
                 </TouchableOpacity>
             </View>
@@ -58,26 +62,34 @@ function List({handlePress}: {handlePress: () => void}) {
         {name: 'sindre', score: 1},
     ]
     return (
-        <TouchableWithoutFeedback onPress={() => {console.log("pressed bru")}} style={{
-            width, 
-            height,
-            alignSelf: 'center',
-            backgroundColor: theme.transparentAndroid, 
-            position: 'absolute', 
-            zIndex: 100,
-            borderRadius: 20,
-        }}>
-            {/* Header */}
-            <View style={{
-                width: width * 0.8, 
-                height: height * 0.7, 
+        <TouchableOpacity
+            onPress={handlePress}
+            activeOpacity={1}
+            style={{
+                width, 
+                height,
                 alignSelf: 'center',
-                backgroundColor: theme.contrast, 
+                backgroundColor: theme.transparentAndroid, 
                 position: 'absolute', 
                 zIndex: 100,
                 borderRadius: 20,
-                top: (height - height * 0.7) / 2,
-            }}>
+            }}
+        >
+            {/* Header */}
+            <View  
+                onStartShouldSetResponder={() => true}
+                onTouchEnd={(e) => e.stopPropagation()} 
+                style={{
+                    width: width * 0.8, 
+                    height: height * 0.7, 
+                    alignSelf: 'center',
+                    backgroundColor: theme.contrast, 
+                    position: 'absolute', 
+                    zIndex: 100,
+                    borderRadius: 20,
+                    top: (height - height * 0.7) / 2,
+                }}
+            >
                 {/* Header content */}
                 <View style={{
                     width: '100%', 
@@ -109,7 +121,7 @@ function List({handlePress}: {handlePress: () => void}) {
                     })}
                 </ScrollView>
             </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
     )
 }
 
