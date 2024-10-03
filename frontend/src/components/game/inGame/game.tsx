@@ -143,12 +143,14 @@ function Game({playerX, playerY, paused, kill}: GameProps) {
     if (!modelUri) {
         console.log("Loading ghost...")
         return null
-    } 
+    }
 
     const ghosts: Ghost[] = [
         {x: playerX, y: playerY, name: "ghost1", score: 200},
-        {x: new Animated.Value(150) as AnimatedValue, y: new Animated.Value(400) as AnimatedValue, name: "ghost2", score: 400},
-        {x: new Animated.Value(100) as AnimatedValue, y: new Animated.Value(200) as AnimatedValue, name: "ghost3", score: 400}
+        // @ts-expect-error - temporary till this data moves to db
+        {x: playerX.__getValue() + 100, y: playerY, name: "ghost2", score: 400},
+        // @ts-expect-error - temporary till this data moves to db
+        {x: playerX.__getValue() - 100, y: playerY, name: "ghost3", score: 400}
     ]
 
     function addCoin() {
@@ -167,39 +169,19 @@ function Game({playerX, playerY, paused, kill}: GameProps) {
                     // @ts-expect-error (expects translateX and translateY, but they are already passed)
                     renderer: <Player />
                 },
-                ghost: {
-                    position: [new Animated.Value(100), new Animated.Value(100)], 
-                        translateX: new Animated.Value(100),
-                        translateY: new Animated.Value(100),
+                ...ghosts.reduce<Record<string, TransformEntity>>((acc, ghost) => {
+                    acc[ghost.name] = {
+                        position: [ghost.x, ghost.y], 
+                        translateX: ghost.x,
+                        translateY: ghost.y,
                         modelUri,
-                        name: "gubbe",
-                        score: 400,
+                        name: ghost.name,
+                        score: ghost.score,
                         // @ts-expect-error (expects translateX and translateY, but they are already passed)
-                        renderer: <Ghost key={"gubbe1"} />,
-                },
-                ghost2: {
-                    position: [new Animated.Value(300), new Animated.Value(300)], 
-                        translateX: new Animated.Value(300),
-                        translateY: new Animated.Value(300),
-                        modelUri,
-                        name: "ghost 2",
-                        score: 300,
-                        // @ts-expect-error (expects translateX and translateY, but they are already passed)
-                        renderer: <Ghost key="gubbe2" />,
-                },
-                // ...ghosts.reduce<Record<string, TransformEntity>>((acc, ghost) => {
-                //     acc[ghost.name] = {
-                //         position: [ghost.x, ghost.y], 
-                //         translateX: ghost.x,
-                //         translateY: ghost.y,
-                //         modelUri,
-                //         name: ghost.name,
-                //         score: ghost.score,
-                //         // @ts-expect-error (expects translateX and translateY, but they are already passed)
-                //         renderer: <Ghost />,
-                //     }
-                //     return acc
-                // }, {}),
+                        renderer: <Ghost />,
+                    }
+                    return acc
+                }, {}),
                 engine: { 
                     nextCoinSpawn: startTime - Date.now(),
                     nextObstacleSpawn: startTime - Date.now()
