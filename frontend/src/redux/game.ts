@@ -31,13 +31,13 @@ export const GameSlice = createSlice({
                 const totalCoinsToAdd = coinsToAdd * effectiveMultiplier
                 const coinsAfter = coinsBefore + totalCoinsToAdd;
 
-                console.log("Adding coins:", {
-                    coinsToAdd,
-                    coinMultiplier: effectiveMultiplier,
-                    totalCoinsToAdd,
-                    coinsBefore,
-                    coinsAfter,
-                });
+                // console.log("Adding coins:", {
+                //     coinsToAdd,
+                //     coinMultiplier: effectiveMultiplier,
+                //     totalCoinsToAdd,
+                //     coinsBefore,
+                //     coinsAfter,
+                // });
 
                 state.coins = coinsAfter;
             } else {

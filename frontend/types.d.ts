@@ -87,3 +87,10 @@ type Entities = {
     engine: EngineEntity
     player: Entity
 }
+
+type Score = {
+    x: number 
+    y: number
+    name: string
+    score: number
+}

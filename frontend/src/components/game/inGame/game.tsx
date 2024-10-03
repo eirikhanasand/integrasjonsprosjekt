@@ -12,6 +12,8 @@ import ObstacleSpawner from "./obstacles"
 import { AnimatedValue } from "@/interfaces"
 import Ghost from "./ghost"
 import { Asset } from "expo-asset"
+import { getCurrentScores } from "@utils/getRoundScore"
+import { setScore as saveScore } from "@redux/game"
 
 type GameProps = {
     paused: boolean
@@ -21,8 +23,8 @@ type GameProps = {
 }
 
 type TransformEntity = Entity & {
-    translateX: AnimatedValue
-    translateY: AnimatedValue
+    translateX: AnimatedValue | number
+    translateY: AnimatedValue | number
     modelUri: string
     name: string
     score: number
@@ -99,6 +101,7 @@ export default function Gameplay() {
     // Updates scoreRef to equal score
     useEffect(() => {
         scoreRef.current = score
+        dispatch(saveScore(score))
     }, [score])
 
     return (
@@ -122,6 +125,7 @@ export default function Gameplay() {
 
 function Game({playerX, playerY, paused, kill}: GameProps) {
     const { startTime } = useSelector((state: ReduxState) => state.game)
+    const [ghosts, setGhosts] = useState<Score[]>([])
     const [modelUri, setModelUri] = useState<string | null>(null)
     const dispatch = useDispatch()
 
@@ -140,18 +144,22 @@ function Game({playerX, playerY, paused, kill}: GameProps) {
         loadModel()
     }, [])
 
+    useEffect(() => {
+        async function loadGhosts() {
+            const current = await getCurrentScores()
+
+            if (current) {
+                setGhosts(current)
+            }
+        }
+
+        loadGhosts()
+    }, [])
+
     if (!modelUri) {
         console.log("Loading ghost...")
         return null
     }
-
-    const ghosts: Ghost[] = [
-        {x: playerX, y: playerY, name: "ghost1", score: 200},
-        // @ts-expect-error - temporary till this data moves to db
-        {x: playerX.__getValue() + 100, y: playerY, name: "ghost2", score: 400},
-        // @ts-expect-error - temporary till this data moves to db
-        {x: playerX.__getValue() - 100, y: playerY, name: "ghost3", score: 400}
-    ]
 
     function addCoin() {
         dispatch(addCoins(1))

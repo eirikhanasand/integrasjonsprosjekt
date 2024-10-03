@@ -1,1 +1,3 @@
-const API_LOGIN_URL = 'http://localhost:8080/api/user'
+const API = 'http://10.212.168.213:8080/api'
+
+export { API }
