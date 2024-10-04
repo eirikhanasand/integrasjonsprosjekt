@@ -63,6 +63,23 @@ func InsertDocument(doc any, collection string) error {
 	return nil
 }
 
+func FetchDocuments[T any](collection string) ([]T, error) {
+	col := database.Collection(collection)
+
+	filter := bson.D{}
+
+	cursor, err := col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	var results []T
+
+	if err := cursor.All(context.TODO(), &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
 func FetchTypeFromKeyValue[T any](key string, value string, collection string) (*T, error) {
 	col := database.Collection(collection)
 

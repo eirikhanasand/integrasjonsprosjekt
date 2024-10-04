@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"github.com/joho/godotenv"
 	"integrasjon/api"
 	"integrasjon/service"
@@ -23,16 +21,7 @@ func main() {
 		log.Println("No .env file found")
 		return
 	}
-	redis, err := service.InitRedis()
-	if err != nil {
-		return
-	}
-
-	pong, err := redis.Ping(context.Background()).Result()
-	if err != nil {
-		println("no response")
-	}
-	fmt.Println("Redis PING Response:", pong)
+	service.InitRedis()
 
 	setup := service.SetupMongoStore()
 

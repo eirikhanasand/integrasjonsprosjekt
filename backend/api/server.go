@@ -6,20 +6,23 @@ import (
 	"github.com/ravener/discord-oauth2"
 	"golang.org/x/oauth2"
 	"os"
+	"strconv"
 	"sync"
 )
 
 type Server struct {
-	UserCollection string
-	gameMap        map[string]Game
-	GameMapLock    sync.Mutex
-	Oauth2Config   oauth2.Config
+	UserCollection        string
+	gameMap               map[string]Game
+	GameMapLock           sync.Mutex
+	Oauth2Config          oauth2.Config
+	LeaderboardPageLength uint8
 	// TODO add more fields.
 }
 
 func CreateServer() Server {
 	return Server{
-		gameMap: make(map[string]Game),
+		gameMap:               make(map[string]Game),
+		LeaderboardPageLength: 10,
 	}
 }
 
@@ -37,7 +40,12 @@ func (server *Server) InitServer() error {
 		Scopes:       []string{discord.ScopeIdentify},
 		Endpoint:     discord.Endpoint,
 	}
+	pageLength, err := strconv.Atoi(os.Getenv("LEADERBOARD_PAGE_LENGTH"))
 
+	if err != nil {
+		return err
+	}
+	server.LeaderboardPageLength = uint8(pageLength)
 	return nil
 }
 
@@ -46,6 +54,7 @@ func (server *Server) StartServer() {
 
 	api := r.Group("/api")
 	{
+
 		api.GET("/login", server.DiscordLogin)
 		api.GET("/callback", server.DiscordCallback)
 		api.GET("/user", server.GetDiscordInfo)
@@ -54,6 +63,12 @@ func (server *Server) StartServer() {
 		{
 			users.GET("/", server.GetUsers)
 			users.POST("/", server.PostUser)
+		}
+
+		leaderboard := api.Group("/leaderboard")
+		{
+			leaderboard.GET("/", server.GetLeaderboardPage)
+			leaderboard.GET("/stats", server.GetLeaderboardStats)
 		}
 
 		game := api.Group("/game")
@@ -69,6 +84,8 @@ func (server *Server) StartServer() {
 			game.HEAD("/leave/:gameId/:userId", server.LeaveGame)
 		}
 	}
+	server.PopulateLeaderboard()
+
 	err := r.Run()
 
 	if err != nil {
