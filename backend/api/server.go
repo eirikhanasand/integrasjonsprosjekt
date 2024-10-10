@@ -27,20 +27,46 @@ func CreateServer() Server {
 }
 
 func (server *Server) InitServer() error {
-	if _, found := os.LookupEnv("USER_COLLECTION"); found != false {
-		server.UserCollection = os.Getenv("USER_COLLECTION")
-	} else {
-		return errors.New("no user-collection in the .env file")
+	userCollection, found := os.LookupEnv("USER_COLLECTION")
+
+	if found == false {
+		return errors.New("no USER-COLLECTION environment variable")
+	}
+
+	server.UserCollection = userCollection
+
+	loginRedirect, found := os.LookupEnv("LOGIN_REDIRECT")
+
+	if found == false {
+		return errors.New("no LOGIN_REDIRECT environment variable")
+	}
+
+	clientId, found := os.LookupEnv("CLIENT_ID")
+
+	if found == false {
+		return errors.New("no CLIENT_ID environment variable")
+	}
+
+	clientSecret, found := os.LookupEnv("CLIENT_SECRET")
+
+	if found == false {
+		return errors.New("no CLIENT_SECRET environment variable")
 	}
 
 	server.Oauth2Config = oauth2.Config{
-		RedirectURL:  os.Getenv("LOGIN_REDIRECT"),
-		ClientID:     os.Getenv("CLIENT_ID"),
-		ClientSecret: os.Getenv("CLIENT_SECRET"),
+		RedirectURL:  loginRedirect,
+		ClientID:     clientId,
+		ClientSecret: clientSecret,
 		Scopes:       []string{discord.ScopeIdentify},
 		Endpoint:     discord.Endpoint,
 	}
-	pageLength, err := strconv.Atoi(os.Getenv("LEADERBOARD_PAGE_LENGTH"))
+	leaderboardPageLength, found := os.LookupEnv("LEADERBOARD_PAGE_LENGTH")
+
+	if found == false {
+		return errors.New("no LEADERBOARD_PAGE_LENGTH environment variable")
+	}
+
+	pageLength, err := strconv.Atoi(leaderboardPageLength)
 
 	if err != nil {
 		return err
