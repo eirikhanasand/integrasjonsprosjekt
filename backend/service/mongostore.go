@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -13,33 +15,38 @@ import (
 var database mongo.Database
 var ctx context.Context
 
-func SetupMongoStore() bool {
-	uri := os.Getenv("URI")
-	databaseName := os.Getenv("MONGO")
+func SetupMongoStore() error {
+	uri, found := os.LookupEnv("URI")
+
+	if found == false {
+		return errors.New("missing URI environment variable")
+	}
+
+	databaseName, found := os.LookupEnv("MONGO")
+
+	if found == false {
+		return errors.New("missing MONGO environment variable")
+	}
 
 	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
 
 	client, clientErr := mongo.NewClient(options.Client().ApplyURI(uri))
 
 	if clientErr != nil {
-		log.Fatalf("failed to client %v", clientErr)
-		return false
+		return fmt.Errorf("failed to client %v", clientErr)
 	}
 
 	err := client.Connect(ctx)
 
 	if err != nil {
-		log.Fatalf("failed to connect, %v", err)
-		return false
+		return fmt.Errorf("failed to connect, %v", err)
 	}
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		log.Fatal("Could not connect to the MongoDB server: ", err)
+		return fmt.Errorf("could not connect to the MongoDB server: %v", err)
 	}
-
-	println(client.NumberSessionsInProgress())
 	database = *client.Database(databaseName, &options.DatabaseOptions{})
-	return true
+	return nil
 }
 
 func ReplaceWithKeyValue(key string, value string, doc any, collection string) bool {

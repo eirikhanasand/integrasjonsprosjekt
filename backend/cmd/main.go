@@ -21,12 +21,17 @@ func main() {
 		log.Println("No .env file found")
 		return
 	}
-	service.InitRedis()
+	err = service.InitRedis()
 
-	setup := service.SetupMongoStore()
+	if err != nil {
+		log.Fatalf("Failed to setup redis-store")
+		return
+	}
 
-	if setup == false {
-		log.Fatalf("Failed to setup mongodb store.")
+	err = service.SetupMongoStore()
+
+	if err != nil {
+		log.Fatalf("Failed to setup mongodb-store: %v", err.Error())
 		return
 	}
 	var server = api.CreateServer()

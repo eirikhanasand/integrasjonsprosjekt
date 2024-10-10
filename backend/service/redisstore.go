@@ -3,18 +3,45 @@ package service
 import (
 	"errors"
 	"github.com/redis/go-redis/v9"
+	"os"
+	"strconv"
 )
 
 var client *redis.Client
 
-func InitRedis() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "10.212.168.213:6379", // Redis address
-		Password: "gubb123gubb",         // No password by default
-		DB:       0,                     // Default DB
-	})
+func InitRedis() error {
+	addr, found := os.LookupEnv("REDIS_ADDR")
 
+	if found == false {
+		return errors.New("no REDIS_ADDR environment variable")
+	}
+
+	password, found := os.LookupEnv("REDIS_PASS")
+
+	if found == false {
+		return errors.New("no REDIS_PASS environment variable")
+	}
+
+	id, found := os.LookupEnv("REDIS_DB_ID")
+
+	if found == false {
+		return errors.New("no REDIS_DB_ID environment variable")
+	}
+
+	db, err := strconv.Atoi(id)
+
+	if err != nil {
+		return errors.New("REDIS_DB_ID should be an integer")
+	}
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     addr,
+		Password: password,
+		DB:       db,
+	})
 	client = rdb
+
+	return nil
 }
 
 func GetLeaderboardSize(leaderboard string) (int64, error) {
