@@ -5,15 +5,53 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func InitRedis() (*redis.Client, error) {
+var client *redis.Client
+
+func InitRedis() {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Redis address
-		Password: "",               // No password by default
-		DB:       0,                // Default DB
+		Addr:     "10.212.168.213:6379", // Redis address
+		Password: "gubb123gubb",         // No password by default
+		DB:       0,                     // Default DB
 	})
 
-	if rdb == nil {
-		return nil, errors.New("failed to instatiate redis server")
+	client = rdb
+}
+
+func GetLeaderboardSize(leaderboard string) (int64, error) {
+	if client == nil {
+		return 0, errors.New("client not instantiated")
 	}
-	return rdb, nil
+	size, err := client.ZCard(ctx, leaderboard).Result()
+
+	if err != nil {
+		return 0, err
+	}
+	return size, nil
+}
+
+func SetScore(leaderboard string, user string, score float64) error {
+	if client == nil {
+		return errors.New("client not instantiated")
+	}
+	err := client.ZAdd(ctx, leaderboard, redis.Z{
+		Score:  score,
+		Member: user,
+	}).Err()
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetWithRange(leaderboard string, bottom int64, top int64) ([]redis.Z, error) {
+	if client == nil {
+		return nil, errors.New("client not instantiated")
+	}
+	result, err := client.ZRevRangeWithScores(ctx, leaderboard, bottom, top-1).Result()
+
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
