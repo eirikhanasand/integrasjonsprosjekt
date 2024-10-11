@@ -4,3 +4,5 @@
 /backend/.idea/
 .package-json
 .vscode
+.expo/README.md
+.expo/settings.json
