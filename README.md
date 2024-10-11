@@ -1,9 +1,9 @@
 # Integrasjonsprosjekt
-##Oversikt
+## Oversikt
 Dette prosjektet er et integrasjonsprosjekt som består av to hoveddeler: en backend-tjeneste og en frontend-brukergrensesnitt. Backend er bygget med Go og tilbyr API-er for funksjoner som brukerpålogging, spillmekanismer og topplister. Frontend er utviklet med React og TypeScript, og gir brukergrensesnittet for spillet og relaterte funksjoner.  
 
-##Prosjektstruktur
-###Backend
+## Prosjektstruktur
+### Backend
 Backend er bygget i Go og tilbyr REST-API-er for:
 
 - Autentisering (OAuth2-integrasjon)
@@ -17,7 +17,7 @@ Nøkkelfiler:
 - Dockerfile: Definerer containerbildet for backend.
 - docker-compose.yml: Brukes for å sette opp og kjøre tjenesten med Docker Compose.  
 
-###Frontend  
+### Frontend  
 Frontend er bygget med React Native og gir et plattformuavhengig grensesnitt for iOS, Android og web. Den inkluderer funksjoner for:
 - Pålogging og brukerpålogging
 - Spillgrensesnitt og interaksjoner
@@ -29,17 +29,17 @@ Nøkkelfiler:
 - redux/: Håndterer global tilstandshåndtering ved hjelp av Redux.
 - styles/: Gir globale og skjermspesifikke stiler.
 - utils/: Inneholder hjelpefunksjoner for forskjellige funksjoner.
-##Forutsetninger
-###Backend
+## Forutsetninger
+### Backend
 Docker og Docker Compose  
 Go 1.18 eller nyere  
 
-###Frontend
+### Frontend
 Node.js 16 eller nyere  
 npm  
 Expo CLI for å kjøre React Native-prosjektet  
-##Oppsett
-###Backend
+## Oppsett
+### Backend
 Installer Go-avhengigheter:
 ```bash
 cd backend
@@ -50,7 +50,7 @@ Kjør med Docker Compose:
 docker-compose up
 ```  
 Backend vil være tilgjengelig på http://localhost:8080.  
-###Frontend  
+### Frontend  
 Installer Node.js-avhengigheter:
 ```bash
 npm Install
