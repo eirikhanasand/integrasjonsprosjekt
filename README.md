@@ -1,12 +1,12 @@
 # Integrasjonsprosjekt
 ## Oversikt
-Dette prosjektet er et integrasjonsprosjekt som består av to hoveddeler: en backend-tjeneste og en frontend-brukergrensesnitt. Backend er bygget med Go og tilbyr API-er for funksjoner som brukerpålogging, spillmekanismer og topplister. Frontend er utviklet med React og TypeScript, og gir brukergrensesnittet for spillet og relaterte funksjoner.  
+Dette prosjektet er et integrasjonsprosjekt som består av to hoveddeler: en backend-tjeneste og en frontend-brukergrensesnitt. Backend er bygget med Go og tilbyr API-er for funksjoner som brukerpålogging, spillmekanismer og topplister. Frontend er utviklet med React Native og TypeScript, og gir brukergrensesnittet for spillet og relaterte funksjoner.  
 
 ## Prosjektstruktur
 ### Backend
 Backend er bygget i Go og tilbyr REST-API-er for:
 
-- Autentisering (OAuth2-integrasjon)
+- Autentisering 
 - Spillhåndtering (starte spill, avslutte spill, hente poengsummer)
 - Topplister
 - Brukerhåndtering
