@@ -23,8 +23,8 @@ Frontend er bygget med React Native og gir et plattformuavhengig grensesnitt for
 - Spillgrensesnitt og interaksjoner
 - Butikk for kjøp av in-game-elementer
 - Innstillinger og tilpasning
-- Visning av topplister
-Nøkkelfiler:
+- Visning av topplister  
+Nøkkelfiler:  
 - src/: Inneholder kildekoden for forskjellige skjermer som game, login, menu og shop.
 - redux/: Håndterer global tilstandshåndtering ved hjelp av Redux.
 - styles/: Gir globale og skjermspesifikke stiler.
