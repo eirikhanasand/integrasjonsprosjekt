@@ -54,6 +54,9 @@ docker-compose up
 ```  
 Backend vil være tilgjengelig på http://localhost:8080.  
 ### Frontend  
+```bash
+cd frontens
+```  
 Installer Node.js-avhengigheter:
 ```bash
 npm Install
