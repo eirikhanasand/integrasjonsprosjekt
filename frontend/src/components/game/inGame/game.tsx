@@ -81,6 +81,9 @@ export default function Gameplay() {
     // Kills the player
     function kill() {
         // dispatch(setAlive(false))
+        if (gameId === true) {
+            sendDeath(true, userId, gameId)
+        }
     }
 
     // Handle score updates based on the paused state
@@ -223,6 +226,26 @@ async function sendScore(score: number, userId: string, gameId: string) {
     const params = new URLSearchParams({
         userId: userId,
         score: score.toString(),
+        gameId: gameId,
+    }).toString();
+    try {
+        const response = await fetch(`${API}/game/score?${params}`, {
+            method: 'POST',
+        });
+        if (!response.ok) {
+            console.error('Failed to send score:', response.status);
+        } else {
+            console.log('Score sent successfully');
+        }
+    } catch (error) {
+        console.error('Error sending score:', error);
+    }
+}
+
+async function sendDeath(death: boolean, userId: string, gameId: string) {
+    const params = new URLSearchParams({
+        userId: userId,
+        died: death.toString(),
         gameId: gameId,
     }).toString();
     try {
