@@ -14,6 +14,7 @@ import Ghost from "./ghost"
 import { Asset } from "expo-asset"
 import { getCurrentScores } from "@utils/getRoundScore"
 import { setScore as saveScore } from "@redux/game"
+import {API} from "@/constants";
 
 type GameProps = {
     paused: boolean
