@@ -51,6 +51,11 @@ export default function Gameplay() {
     const scoreRef = useRef(0)
     const dispatch = useDispatch()
 
+    const { userId, gameId } = useSelector((state: ReduxState) => ({
+        userId: state.user.userID,
+        gameId: state.game.gameId,
+    }));
+
     // Helper functions
     function updateScore() {
         setScore((prev) => prev + 1 * (multiplier || 31))
@@ -106,11 +111,13 @@ export default function Gameplay() {
 
     // Send score to api
     const handleSendScore = () => {
-        sendScore(score, "", "");
+        sendScore(score, userId, "");
     };
     useEffect(() => {
-        const interval = setInterval(handleSendScore, 1000);
-        return () => clearInterval(interval);
+        if (gameId === true) {
+            const interval = setInterval(handleSendScore, 1000);
+            return () => clearInterval(interval);
+        }
     }, [])
 
     return (
