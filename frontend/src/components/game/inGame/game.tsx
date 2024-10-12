@@ -104,6 +104,15 @@ export default function Gameplay() {
         dispatch(saveScore(score))
     }, [score])
 
+    // Send score to api
+    const handleSendScore = () => {
+        sendScore(score, "", "");
+    };
+    useEffect(() => {
+        const interval = setInterval(handleSendScore, 1000);
+        return () => clearInterval(interval);
+    }, [])
+
     return (
         <>
             <PauseButton onPause={handlePause} onResume={handleResume} />
@@ -200,4 +209,24 @@ function Game({playerX, playerY, paused, kill}: GameProps) {
             running={!paused}
         />
     )
+}
+
+async function sendScore(score: number, userId: string, gameId: string) {
+    const params = new URLSearchParams({
+        userId: userId,
+        score: score.toString(),
+        gameId: gameId,
+    }).toString();
+    try {
+        const response = await fetch(`${API}/game/score?${params}`, {
+            method: 'POST',
+        });
+        if (!response.ok) {
+            console.error('Failed to send score:', response.status);
+        } else {
+            console.log('Score sent successfully');
+        }
+    } catch (error) {
+        console.error('Error sending score:', error);
+    }
 }
