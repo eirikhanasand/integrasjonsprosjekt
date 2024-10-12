@@ -1,19 +1,19 @@
 import Map from "./map"
 import PauseButton from "./pause"
 import RightCorner from "../rightCorner"
-import { GameEngine } from "react-native-game-engine"
-import { Animated, Dimensions, View } from "react-native"
-import { useEffect, useRef, useState } from "react"
+import {GameEngine} from "react-native-game-engine"
+import {Animated, Dimensions, View} from "react-native"
+import {useEffect, useRef, useState} from "react"
 import CoinSpawner from "./coins"
 import Player from "./player"
-import { useDispatch, useSelector } from "react-redux"
-import { addCoins, setAlive, setScore as storeScore, setStartTime } from "@redux/game"
+import {useDispatch, useSelector} from "react-redux"
+import {addCoins, setScore as storeScore, setScore as saveScore, setStartTime} from "@redux/game"
 import ObstacleSpawner from "./obstacles"
-import { AnimatedValue } from "@/interfaces"
+import {AnimatedValue} from "@/interfaces"
 import Ghost from "./ghost"
-import { Asset } from "expo-asset"
-import { getCurrentScores } from "@utils/getRoundScore"
-import { setScore as saveScore } from "@redux/game"
+import {Asset} from "expo-asset"
+import {getCurrentScores} from "@utils/getRoundScore"
+import { API } from '@/constants'
 
 type GameProps = {
     paused: boolean
@@ -103,6 +103,17 @@ export default function Gameplay() {
         scoreRef.current = score
         dispatch(saveScore(score))
     }, [score])
+
+    // Send score to api
+    const handleSendScore = () => {
+        sendScore(score, "", "");
+    };
+
+    useEffect(() => {
+        const interval = setInterval(handleSendScore, 1000);
+
+        return () => clearInterval(interval);
+    }, [])
 
     return (
         <>
@@ -200,4 +211,26 @@ function Game({playerX, playerY, paused, kill}: GameProps) {
             running={!paused}
         />
     )
+}
+
+async function sendScore(score: number, userId: string, gameId: string) {
+    const params = new URLSearchParams({
+        userId: userId,
+        score: score.toString(),
+        gameId: gameId,
+    }).toString();
+
+    try {
+        const response = await fetch(`${API}/game/score?${params}`, {
+            method: 'POST',
+        });
+
+        if (!response.ok) {
+            console.error('Failed to send score:', response.status);
+        } else {
+            console.log('Score sent successfully');
+        }
+    } catch (error) {
+        console.error('Error sending score:', error);
+    }
 }
