@@ -14,6 +14,7 @@ import Ghost from "./ghost"
 import { Asset } from "expo-asset"
 import { getCurrentScores } from "@utils/getRoundScore"
 import { setScore as saveScore } from "@redux/game"
+import {API} from "@/constants";
 
 type GameProps = {
     paused: boolean
@@ -51,6 +52,11 @@ export default function Gameplay() {
     const scoreRef = useRef(0)
     const dispatch = useDispatch()
 
+    const { userId, gameId } = useSelector((state: ReduxState) => ({
+        userId: state.user.userID,
+        gameId: state.game.gameId,
+    }));
+
     // Helper functions
     function updateScore() {
         setScore((prev) => prev + 1 * (multiplier || 31))
@@ -75,6 +81,9 @@ export default function Gameplay() {
     // Kills the player
     function kill() {
         // dispatch(setAlive(false))
+        if (gameId === true) {
+            sendDeath(true, userId, gameId)
+        }
     }
 
     // Handle score updates based on the paused state
@@ -103,6 +112,17 @@ export default function Gameplay() {
         scoreRef.current = score
         dispatch(saveScore(score))
     }, [score])
+
+    // Send score to api
+    const handleSendScore = () => {
+        sendScore(score, userId, "");
+    };
+    useEffect(() => {
+        if (gameId === true) {
+            const interval = setInterval(handleSendScore, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [])
 
     return (
         <>
@@ -200,4 +220,44 @@ function Game({playerX, playerY, paused, kill}: GameProps) {
             running={!paused}
         />
     )
+}
+
+async function sendScore(score: number, userId: string, gameId: string) {
+    const params = new URLSearchParams({
+        userId: userId,
+        score: score.toString(),
+        gameId: gameId,
+    }).toString();
+    try {
+        const response = await fetch(`${API}/game/score?${params}`, {
+            method: 'POST',
+        });
+        if (!response.ok) {
+            console.error('Failed to send score:', response.status);
+        } else {
+            console.log('Score sent successfully');
+        }
+    } catch (error) {
+        console.error('Error sending score:', error);
+    }
+}
+
+async function sendDeath(death: boolean, userId: string, gameId: string) {
+    const params = new URLSearchParams({
+        userId: userId,
+        died: death.toString(),
+        gameId: gameId,
+    }).toString();
+    try {
+        const response = await fetch(`${API}/game/score?${params}`, {
+            method: 'POST',
+        });
+        if (!response.ok) {
+            console.error('Failed to send score:', response.status);
+        } else {
+            console.log('Score sent successfully');
+        }
+    } catch (error) {
+        console.error('Error sending score:', error);
+    }
 }

@@ -11,6 +11,7 @@ export const GameSlice = createSlice({
         inGame: false,
         alive: false,
         score: 0,
+        gameId: null,
         highscore: 0,
         multiplier: 31,
         coinMultiplier: 1
@@ -84,6 +85,9 @@ export const GameSlice = createSlice({
         setMultiplier(state, action) {
             state.multiplier = action.payload
         },
+        setGameId(state, action) {
+            state.gameId = action.payload
+        },
         setCoinMultiplier(state, action) {
             const newMultiplier = action.payload;
             if (typeof newMultiplier === 'number' && newMultiplier >= 0) {
@@ -116,6 +120,7 @@ export const {
     setScore,
     setHighScore,
     setMultiplier,
+    setGameId,
     setCoinMultiplier,
     increaseCoinMultiplier,
 } = GameSlice.actions;
