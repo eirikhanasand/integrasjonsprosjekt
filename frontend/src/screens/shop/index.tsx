@@ -44,7 +44,6 @@ export default function ShopScreen(): JSX.Element {
 
                     // Apply multiplier if it's a multiplier upgrade
                     if (item.name === 'Coin Multiplier') {
-                        console.log("Dispatching increaseMultiplier with value:", 1);
                         dispatch(increaseCoinMultiplier(1));
                     }
                 } else {
@@ -59,15 +58,23 @@ export default function ShopScreen(): JSX.Element {
             if (coins >= price) {
                 dispatch(removeCoins(price));
                 alert(`${item.name} purchased!`);
-                // Add logic to grant the consumable or skin to the player
             } else {
                 alert("Not enough coins to purchase this item.");
             }
         }
     }
 
-    // Render function for store items
     function renderItem({ item }: { item: upgradeItem | consumableItem | skinItem }) {
+        const maxLevel = 5;  // Define the maximum level for upgrades
+        let filledBlocks = 0;
+        let emptyBlocks = maxLevel;
+    
+        // Only calculate the progress bar if the item is an upgradeItem
+        if (isUpgradeItem(item)) {
+            filledBlocks = item.currentLevel;  // Number of filled blocks based on current level
+            emptyBlocks = maxLevel - filledBlocks;  // Remaining empty blocks
+        }
+    
         return (
             <View style={{ ...SHS.itemContainer, backgroundColor: theme.contrast }}>
                 <Image source={item.image} style={SHS.itemImage} />
@@ -77,6 +84,21 @@ export default function ShopScreen(): JSX.Element {
                         ? `Level ${item.currentLevel + 1} Cost: ${item.price[item.currentLevel] * (item.currentLevel + 1)}`
                         : 'Max Level Reached'}
                 </Text>
+    
+                {/* Progress Bar */}
+                {isUpgradeItem(item) && (
+                    <View style={SHS.progressBarContainer}>
+                        {/* Render filled blocks */}
+                        {Array.from({ length: filledBlocks }).map((_, index) => (
+                            <View key={`filled-${index}`} style={SHS.progressBlockFilled} />
+                        ))}
+                        {/* Render empty blocks */}
+                        {Array.from({ length: emptyBlocks }).map((_, index) => (
+                            <View key={`empty-${index}`} style={SHS.progressBlockEmpty} />
+                        ))}
+                    </View>
+                )}
+    
                 <TouchableOpacity
                     onPress={() => handlePurchase(item)}
                     style={SHS.buyButton}
@@ -89,27 +111,34 @@ export default function ShopScreen(): JSX.Element {
             </View>
         );
     }
+    
+    
 
     // Displays the ShopScreen UI
     return (
         <Swipe right="GameNav">
             <View style={{ ...GS.content, backgroundColor: theme.darker }}>
-                <Space height={Dimensions.get("window").height / 8.1} />
-                <Text style={{ ...GS.title, color: theme.textColor }}>Coins: {coins}</Text>
-                <Text style={{ ...GS.title, color: theme.textColor }}>Multiplier: {multiplier}</Text>
+                {/* Top section for coins and multiplier */}
+                <View style={SHS.statsContainer}>
+                    <Text style={{ ...GS.title, color: theme.textColor }}>Coins: {coins}</Text>
+                    <Text style={{ ...GS.title, color: theme.textColor }}>Multiplier: {multiplier}</Text>
+                </View>
+
                 <ScrollView>
-                    {[...upgrades, ...consumables, ...skins].map((section) => (
-                        <View key={section.title} style={SHS.sectionContainer}>
-                            <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
-                            <FlatList
-                                scrollEnabled={false}
-                                data={section.data}
-                                renderItem={renderItem}
-                                keyExtractor={(item) => item.id}
-                                numColumns={2}
-                            />
-                        </View>
-                    ))}
+                    <View style={SHS.shopContainer}>
+                        {[...upgrades, ...consumables, ...skins].map((section) => (
+                            <View key={section.title} style={SHS.sectionContainer}>
+                                <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
+                                <FlatList
+                                    scrollEnabled={false}
+                                    data={section.data}
+                                    renderItem={renderItem}
+                                    keyExtractor={(item) => item.id}
+                                    numColumns={2}  // For two items per row
+                                />
+                            </View>
+                        ))}
+                    </View>
                 </ScrollView>
             </View>
         </Swipe>

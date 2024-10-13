@@ -1,42 +1,35 @@
-import { setAlive, setInGame, setStartTime } from "@redux/game"
-import T from "@styles/text"
-import { Dimensions, Text, TouchableOpacity, View } from "react-native"
-import { useDispatch, useSelector } from "react-redux"
-import PlayerMode from "./mainScreen/playerMode"
-import Coins from "./mainScreen/coins"
-import PlayerList from "./mainScreen/playerList"
-import Scoreboard from "./mainScreen/leaderboard"
-import { useState } from 'react';
-import { ScrollView } from "react-native"
-import Players from "./mainScreen/players"
+import { setAlive, setInGame, setStartTime } from "@redux/game";
+import T from "@styles/text";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import PlayerMode from "./mainScreen/playerMode";
+import Coins from "./mainScreen/coins";
+import PlayerList from "./mainScreen/playerList";
+import Scoreboard from "./mainScreen/leaderboard";
+import { useState } from "react";
+import Players from "./mainScreen/players";
 
 export default function StartGame() {
     // Redux states
-    const { theme } = useSelector((state: ReduxState) => state.theme)
-    const { lang } = useSelector((state: ReduxState) => state.lang)
-    const { inGame } = useSelector((state: ReduxState) => state.game)
-    const [players, setPlayers] = useState([lang ? "Spiller 1" : 'Player 1'])
-    const height = Dimensions.get('window').height
-    const width = Dimensions.get('window').width
-    const dispatch = useDispatch()
+    const { theme } = useSelector((state: ReduxState) => state.theme);
+    const { lang } = useSelector((state: ReduxState) => state.lang);
+    const { inGame } = useSelector((state: ReduxState) => state.game);
+    const [players, setPlayers] = useState([lang ? "Spiller 1" : "Player 1"]);
+    const height = Dimensions.get("window").height;
+    const width = Dimensions.get("window").width;
+    const dispatch = useDispatch();
 
     // Helper functions
-    // Hides start game text while playing
-    if (inGame) {
-        return null
-    }
-
-    // Game states
-    const text = lang ? "Trykk for å starte" : "Tap to Play"
+    const text = lang ? "Trykk for å starte" : "Tap to Play";
 
     function handleStart() {
-        dispatch(setStartTime(Date.now()))
-        dispatch(setInGame(true))
-        dispatch(setAlive(true))
+        dispatch(setStartTime(Date.now()));
+        dispatch(setInGame(true));
+        dispatch(setAlive(true));
     }
 
     return (
-        <View>
+        <View style={{ display: inGame ? 'none' : 'flex' }}>
             <PlayerMode />
             <Coins />
             <PlayerList players={players} setPlayers={setPlayers} />
@@ -46,21 +39,23 @@ export default function StartGame() {
                 onPress={handleStart}
                 style={{
                     width: width * 0.8,
-                    alignSelf: 'center',
+                    alignSelf: "center",
                     height: 200,
-                    bottom: 0
+                    bottom: 0,
                 }}
             >
-                <Text style={{
-                    ...T.text30,
-                    color: theme.textColor,
-                    fontWeight: '600',
-                    alignSelf: 'center',
-                    top: height * 0.8
-                }}>
+                <Text
+                    style={{
+                        ...T.text30,
+                        color: theme.textColor,
+                        fontWeight: "600",
+                        alignSelf: "center",
+                        top: height * 0.8,
+                    }}
+                >
                     {text}
                 </Text>
             </TouchableOpacity>
         </View>
-    )
+    );
 }

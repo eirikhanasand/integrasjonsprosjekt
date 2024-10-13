@@ -1,22 +1,37 @@
 import { StyleSheet } from 'react-native';
 
-const SS =  StyleSheet.create({
+const SHS = StyleSheet.create({
+    // Container for the stats section at the top
+    statsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: '#2a2a2a',
+        borderRadius: 10,
+        margin: 10,
+    },
+    // Wrapper for the entire shop content
+    shopContainer: {
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+    },
     sectionContainer: {
-        marginVertical: 10,
+        marginBottom: 20,
     },
     sectionTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
-        textAlign: 'center',
         marginBottom: 10,
-        color: '#fff',
+        paddingLeft: 10,
     },
     itemContainer: {
-        flex: 1,
-        padding: 10,
+        backgroundColor: '#f5f5f5',
+        padding: 15,
         margin: 5,
+        borderRadius: 10,
         alignItems: 'center',
-        borderRadius: 8,
+        width: '45%',  // Ensures two items per row
     },
     itemImage: {
         width: 50,
@@ -25,22 +40,45 @@ const SS =  StyleSheet.create({
     },
     itemName: {
         fontSize: 16,
+        fontWeight: 'bold',
     },
     itemPrice: {
         fontSize: 14,
-    },
-    currencyIcon: {
-        width: 16,
-        height: 16,
-    },
-    buyButtonText: {
-        color: 'purple'
+        color: '#888',
+        marginVertical: 5,
     },
     buyButton: {
-        width: 50,
-        height: 50,
-        backgroundColor: 'red'
-    }
-    });
+        backgroundColor: '#4CAF50',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+    },
+    buyButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    // Container for the progress bar
+    progressBarContainer: {
+        flexDirection: 'row',
+        marginTop: 10,
+        marginBottom: 5,
+    },
+    // Style for filled blocks in the progress bar
+    progressBlockFilled: {
+        width: 15,
+        height: 10,
+        backgroundColor: '#4CAF50',  // Green for filled blocks
+        marginRight: 2,
+        borderRadius: 2,
+    },
+    // Style for empty blocks in the progress bar
+    progressBlockEmpty: {
+        width: 15,
+        height: 10,
+        backgroundColor: '#ddd',  // Light gray for empty blocks
+        marginRight: 2,
+        borderRadius: 2,
+    },
+});
 
-export default SS;
+export default SHS;

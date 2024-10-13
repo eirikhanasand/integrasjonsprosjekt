@@ -1,8 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
 // Declares Game Slice
 export const GameSlice = createSlice({
-    // Slice name
     name: "game",
     // Initial state
     initialState: {
@@ -14,45 +13,42 @@ export const GameSlice = createSlice({
         gameId: null,
         highscore: 0,
         multiplier: 31,
-        coinMultiplier: 1
+        coinMultiplier: 1,
     },
     // Declares slice reducer
     reducers: {
-        // Adds coins to the current balance
         addCoins(state, action) {
             const coinsToAdd = action.payload;
+            console.log("Action: addCoins, Payload:", coinsToAdd);
             // Check for valid multiplier
-            const effectiveMultiplier = 
-            typeof state.coinMultiplier === 'number' 
-            && !isNaN(state.coinMultiplier) ? state.coinMultiplier : 1;
+            const effectiveMultiplier =
+                typeof state.coinMultiplier === "number" && !isNaN(state.coinMultiplier)
+                    ? state.coinMultiplier
+                    : 1;
 
-            if (typeof coinsToAdd === 'number' && !isNaN(coinsToAdd)) {
+            if (typeof coinsToAdd === "number" && !isNaN(coinsToAdd)) {
                 const coinsBefore = state.coins;
                 // Multiplies coins to add by the effective multiplier
-                const totalCoinsToAdd = coinsToAdd * effectiveMultiplier
+                const totalCoinsToAdd = coinsToAdd * effectiveMultiplier;
                 const coinsAfter = coinsBefore + totalCoinsToAdd;
 
-                // console.log("Adding coins:", {
-                //     coinsToAdd,
-                //     coinMultiplier: effectiveMultiplier,
-                //     totalCoinsToAdd,
-                //     coinsBefore,
-                //     coinsAfter,
-                // });
+                console.log("Adding coins:", {
+                    coinsToAdd,
+                    coinMultiplier: effectiveMultiplier,
+                    totalCoinsToAdd,
+                    coinsBefore,
+                    coinsAfter,
+                });
 
                 state.coins = coinsAfter;
             } else {
                 console.error("Invalid coinsToAdd value:", coinsToAdd);
             }
         },
-        // Removes coins from the current balance
         removeCoins(state, action) {
             const coinsToRemove = action.payload;
-            if (
-                typeof coinsToRemove === 'number' &&
-                !isNaN(coinsToRemove) &&
-                state.coins >= coinsToRemove
-            ) {
+            console.log("Action: removeCoins, Payload:", coinsToRemove);
+            if (typeof coinsToRemove === "number" && !isNaN(coinsToRemove) && state.coins >= coinsToRemove) {
                 const coinsBefore = state.coins;
                 const coinsAfter = coinsBefore - coinsToRemove;
 
@@ -60,48 +56,54 @@ export const GameSlice = createSlice({
                     coinsToRemove,
                     coinsBefore,
                     coinsAfter,
-                })
+                });
 
-                state.coins = coinsAfter
+                state.coins = coinsAfter;
             } else {
-                console.error("Invalid coinsToRemove value:", coinsToRemove)
+                console.error("Invalid coinsToRemove value:", coinsToRemove);
             }
         },
         setStartTime(state, action) {
-            state.startTime = action.payload
+            console.log("Action: setStartTime, Payload:", action.payload);
+            state.startTime = action.payload;
         },
         setInGame(state, action) {
-            state.inGame = action.payload
+            console.log("Action: setInGame, Payload:", action.payload);
+            state.inGame = action.payload;
         },
         setAlive(state, action) {
-            state.alive = action.payload
+            console.log("Action: setAlive, Payload:", action.payload);
+            state.alive = action.payload;
         },
         setScore(state, action) {
-            state.score = action.payload
+            console.log("Action: setScore, Payload:", action.payload);
+            state.score = action.payload;
         },
         setHighScore(state, action) {
-            state.highscore = action.payload
+            console.log("Action: setHighScore, Payload:", action.payload);
+            state.highscore = action.payload;
         },
         setMultiplier(state, action) {
-            state.multiplier = action.payload
+            console.log("Action: setMultiplier, Payload:", action.payload);
+            state.multiplier = action.payload;
         },
         setGameId(state, action) {
-            state.gameId = action.payload
+            console.log("Action: setGameId, Payload:", action.payload);
+            state.gameId = action.payload;
         },
         setCoinMultiplier(state, action) {
             const newMultiplier = action.payload;
-            if (typeof newMultiplier === 'number' && newMultiplier >= 0) {
-                console.log("Setting new coinMultiplier:", newMultiplier);
-                state.multiplier = newMultiplier;
+            console.log("Action: setCoinMultiplier, Payload:", newMultiplier);
+            if (typeof newMultiplier === "number" && newMultiplier >= 0) {
+                state.coinMultiplier = newMultiplier;
             } else {
                 console.error("Invalid coinMultiplier value:", newMultiplier);
             }
         },
-        // New action to increment the scoreMultiplier by a given value
         increaseCoinMultiplier(state, action) {
             const incrementValue = action.payload;
-            if (typeof incrementValue === 'number' && incrementValue > 0) {
-                console.log("Increasing coin multiplier by:", incrementValue);
+            console.log("Action: increaseCoinMultiplier, Payload:", incrementValue);
+            if (typeof incrementValue === "number" && incrementValue > 0) {
                 state.coinMultiplier += incrementValue;
             } else {
                 console.error("Invalid incrementValue:", incrementValue);

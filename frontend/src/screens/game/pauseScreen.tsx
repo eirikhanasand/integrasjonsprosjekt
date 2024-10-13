@@ -1,33 +1,34 @@
-import { GameStackParamList } from "@/interfaces"
-import { StackScreenProps } from "@react-navigation/stack"
-import { Text, View, TouchableOpacity, StyleSheet } from "react-native"
-import GS from "@styles/globalStyles"
-import { useDispatch, useSelector } from "react-redux"
-import { setInGame } from "@redux/game"
+import { GameStackParamList } from "@/interfaces";
+import { StackScreenProps } from "@react-navigation/stack";
+import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import GS from "@styles/globalStyles";
+import { useDispatch, useSelector } from "react-redux";
+import { setInGame } from "@redux/game";
 
-type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">
+type PauseScreenProps = StackScreenProps<GameStackParamList, "PauseScreen">;
 
 export default function PauseScreen({ route, navigation }: PauseScreenProps) {
-    const { onResume } = route.params
-    const { theme } = useSelector((state: ReduxState) => state.theme)
-    const { lang } = useSelector((state: ReduxState) => state.lang)
-    const { coins, score } = useSelector((state: ReduxState) => state.game)
-    const dispatch = useDispatch()
+    const { onResume } = route.params;
+    const { theme } = useSelector((state: ReduxState) => state.theme);
+    const { lang } = useSelector((state: ReduxState) => state.lang);
+    const { coins, score } = useSelector((state: ReduxState) => state.game);
+    const dispatch = useDispatch();
 
     function handleUnpause() {
         if (onResume) {
-            onResume()
+            onResume();
         }
-        navigation.goBack()
+        navigation.goBack();
     }
 
     function handleGoToShop() {
-        // navigation.navigate("ShopScreen")
+        // Uncomment when shop navigation is enabled
+        // navigation.navigate("ShopScreen");
     }
 
     function handleExitGame() {
-        dispatch(setInGame(false))
-        navigation.navigate("GameScreen")
+        dispatch(setInGame(false));
+        navigation.navigate("GameScreen");
     }
 
     return (
@@ -43,20 +44,18 @@ export default function PauseScreen({ route, navigation }: PauseScreenProps) {
             </Text>
             
             {/* Button to resume game */}
-            <Button handler={handleUnpause} text={lang ? 'Fortsett spillet' : 'Return to Game'} />
+            <Button handler={handleUnpause} text={lang ? 'Fortsett spillet' : 'Return to Game'} theme={theme} />
 
             {/* Button to navigate to shop screen */}
-            <Button handler={handleGoToShop} text={lang ? 'Gå til butikken' : 'Go to Shop'} />
+            <Button handler={handleGoToShop} text={lang ? 'Gå til butikken' : 'Go to Shop'} theme={theme} />
 
             {/* Button to exit the game and return to start screen */}
-            <Button handler={handleExitGame} text={lang ? 'Avslutt spillet' : 'Exit to Main menu'} />
+            <Button handler={handleExitGame} text={lang ? 'Avslutt spillet' : 'Exit to Main menu'} theme={theme} />
         </View>
     );
 }
 
-function Button({handler, text}: { handler: () => void, text: string }) {
-    const { theme } = useSelector((state: ReduxState) => state.theme)
-
+function Button({ handler, text, theme }: { handler: () => void, text: string, theme: any }) {
     return (
         <TouchableOpacity 
             style={{...styles.button, backgroundColor: theme.contrast}} 
@@ -66,7 +65,7 @@ function Button({handler, text}: { handler: () => void, text: string }) {
                 {text}
             </Text>
         </TouchableOpacity>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -93,4 +92,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center'
     },
-})
+});

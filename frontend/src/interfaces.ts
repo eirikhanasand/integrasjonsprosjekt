@@ -165,9 +165,10 @@ export type upgradeItem = {
 export type consumableItem = {
     id: string;
     name: string;
-    type: "consumableItem"; // Added type property to identify the item type
+    type: "consumableItem"; // Identify the item type
     price: number[];
     image: ImageSourcePropType;
+    quantity: number;  // Add this property to track the quantity of consumable items
 };
 
 export type skinItem = {

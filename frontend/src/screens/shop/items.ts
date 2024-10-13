@@ -1,5 +1,3 @@
-// items.ts
-
 import { upgradeItem, consumableItem, skinItem } from '@/interfaces';
 
 export const upgrades: { title: string; data: upgradeItem[] }[] = [
@@ -26,7 +24,7 @@ export const upgrades: { title: string; data: upgradeItem[] }[] = [
             },
         ],
     },
-];
+]
 
 export const consumables: { title: string; data: consumableItem[] }[] = [
     {
@@ -37,6 +35,7 @@ export const consumables: { title: string; data: consumableItem[] }[] = [
                 name: 'Start Boost',
                 type: 'consumableItem',
                 price: [10],
+                quantity: 50,  // Added quantity for Start Boost
                 image: require('@assets/shop/coffee-cup.png'),
             },
             {
@@ -44,11 +43,12 @@ export const consumables: { title: string; data: consumableItem[] }[] = [
                 name: 'Electric Scooter',
                 type: 'consumableItem',
                 price: [15],
+                quantity: 30,  // Added quantity for Electric Scooter
                 image: require('@assets/shop/electric-scooter.png'),
             },
         ],
     },
-];
+]
 
 export const skins: { title: string; data: skinItem[] }[] = [
     {
@@ -70,4 +70,4 @@ export const skins: { title: string; data: skinItem[] }[] = [
             },
         ],
     },
-];
+]
