@@ -76,7 +76,6 @@ export const GameSlice = createSlice({
             state.alive = action.payload;
         },
         setScore(state, action) {
-            console.log("Action: setScore, Payload:", action.payload);
             state.score = action.payload;
         },
         setHighScore(state, action) {

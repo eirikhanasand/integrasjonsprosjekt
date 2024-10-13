@@ -14,6 +14,7 @@ export default function PauseButton({ onPause, onResume }: PauseButtonProps) {
     const navigation: Navigation = useNavigation()
 
     function handlePress() {
+        console.log("Pause button pressed")  // Log when the button is pressed
         onPause()
         navigation.navigate("PauseScreen", { onResume })
     }
