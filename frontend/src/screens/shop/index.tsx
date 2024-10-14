@@ -1,146 +1,202 @@
-import GS from '@styles/globalStyles';
-import Swipe from '@components/nav/swipe';
-import { useSelector, useDispatch } from 'react-redux';
-import SHS from '@styles/shopStyles';
-import { consumableItem, skinItem, upgradeItem } from '@/interfaces';
-import Space from '@components/shared/utils';
-import { consumables, skins, upgrades } from './items';
-import { removeCoins, increaseCoinMultiplier } from '../../redux/game';
-import { ScrollView } from "react-native-gesture-handler";
+// index.tsx (frontend/src/screens/shop/index.tsx)
+
+import React from "react";
+import { View, Text, Image, SectionList, TouchableOpacity } from "react-native";
+import GS from "@styles/globalStyles";
+import SHS from "@styles/shopStyles";
+import Swipe from "@components/nav/swipe";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
-    View,
-    Text,
-    Image,
-    FlatList,
-    Dimensions,
-    TouchableOpacity
-} from 'react-native';
+  purchaseConsumable,
+  upgradeItem as upgradeItemAction,
+  purchaseSkin,
+} from "@/redux/game";
+import {
+  UpgradeItem,
+  ConsumableItem,
+  SkinItem,
+  ShopItem,
+} from "@/interfaces";
+import { upgrades, consumables, skins } from "./items";
 
 export default function ShopScreen(): JSX.Element {
-    const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const { theme } = useAppSelector((state) => state.theme);
+  const {
+    coins,
+    consumables: consumablesState,
+    upgrades: upgradesState,
+    skins: skinsState,
+  } = useAppSelector((state) => state.game);
 
-    // Redux states
-    const { theme } = useSelector((state: ReduxState) => state.theme);
-    const { coins, multiplier } = useSelector((state: ReduxState) => state.game);
+  // Prepare sections for SectionList
+  const sections = [
+    {
+      title: "Upgrades",
+      data: upgrades[0]?.data ?? [],
+    },
+    {
+      title: "Consumables",
+      data: consumables[0]?.data ?? [],
+    },
+    {
+      title: "Skins",
+      data: skins[0]?.data ?? [],
+    },
+  ];
 
-    // Type guard to check if item is upgradeItem
-    function isUpgradeItem(item: upgradeItem | consumableItem | skinItem): item is upgradeItem {
-        return item.type === 'upgradeItem';
+  // Type guards
+  function isUpgradeItem(item: ShopItem): item is UpgradeItem {
+    return item.type === "upgradeItem";
+  }
+
+  function isConsumableItem(item: ShopItem): item is ConsumableItem {
+    return item.type === "consumableItem";
+  }
+
+  function isSkinItem(item: ShopItem): item is SkinItem {
+    return item.type === "skinItem";
+  }
+
+  // Function to handle item purchase or upgrade
+  function handlePurchase(item: ShopItem) {
+    if (isConsumableItem(item)) {
+      const price = item.price[0];
+      if (coins >= price) {
+        dispatch(purchaseConsumable({ id: item.id, price }));
+      } else {
+        alert("Not enough coins to purchase this item.");
+      }
+    } else if (isUpgradeItem(item)) {
+      const upgradeState = upgradesState[item.id];
+      const currentLevel = upgradeState?.currentLevel ?? 0;
+      const price = item.price[currentLevel];
+      if (coins >= price) {
+        dispatch(upgradeItemAction({ id: item.id }));
+      } else {
+        alert("Not enough coins to upgrade this item.");
+      }
+    } else if (isSkinItem(item)) {
+      const price = item.price[0];
+      if (coins >= price && !skinsState[item.id]?.unlocked) {
+        dispatch(purchaseSkin({ id: item.id, price }));
+      } else if (skinsState[item.id]?.unlocked) {
+        alert("Skin already owned.");
+      } else {
+        alert("Not enough coins to purchase this skin.");
+      }
+    }
+  }
+
+  function renderItem({
+    item,
+    index,
+    section,
+  }: {
+    item: ShopItem;
+    index: number;
+    section: any;
+  }) {
+    if (!item) {
+      console.warn(
+        `Item at index ${index} in section ${section.title} is undefined.`
+      );
+      return null;
     }
 
-    // Function to handle item purchase or upgrade
-    function handlePurchase(item: upgradeItem | consumableItem | skinItem) {
-        if (isUpgradeItem(item)) {
-            if (item.currentLevel < item.maxLevel) {
-                const currentCost = item.price[item.currentLevel] * (item.currentLevel + 1);
+    // Initialize variables
+    let filledBlocks = 0;
+    let emptyBlocks = 0;
 
-                if (coins >= currentCost) {
-                    // Deduct coins
-                    dispatch(removeCoins(currentCost));
-                    alert(`${item.name} upgraded to level ${item.currentLevel + 1}!`);
-
-                    // Increase the upgrade level of the item
-                    item.currentLevel += 1;
-
-                    // Apply multiplier if it's a multiplier upgrade
-                    if (item.name === 'Coin Multiplier') {
-                        dispatch(increaseCoinMultiplier(1));
-                    }
-                } else {
-                    alert("Not enough coins to upgrade this item.");
-                }
-            } else {
-                alert("Maximum upgrade level reached.");
-            }
-        } else {
-            // Handle consumables and skins
-            const price = item.price[0];
-            if (coins >= price) {
-                dispatch(removeCoins(price));
-                alert(`${item.name} purchased!`);
-            } else {
-                alert("Not enough coins to purchase this item.");
-            }
-        }
+    if (isUpgradeItem(item)) {
+      const maxLevel = item.maxLevel;
+      const upgradeState = upgradesState[item.id];
+      const currentLevel = upgradeState?.currentLevel ?? 0;
+      filledBlocks = currentLevel;
+      emptyBlocks = maxLevel - filledBlocks;
     }
 
-    function renderItem({ item }: { item: upgradeItem | consumableItem | skinItem }) {
-        const maxLevel = 5;  // Define the maximum level for upgrades
-        let filledBlocks = 0;
-        let emptyBlocks = maxLevel;
-    
-        // Only calculate the progress bar if the item is an upgradeItem
-        if (isUpgradeItem(item)) {
-            filledBlocks = item.currentLevel;  // Number of filled blocks based on current level
-            emptyBlocks = maxLevel - filledBlocks;  // Remaining empty blocks
-        }
-    
-        return (
-            <View style={{ ...SHS.itemContainer, backgroundColor: theme.contrast }}>
-                <Image source={item.image} style={SHS.itemImage} />
-                <Text style={{ ...SHS.itemName, color: theme.textColor }}>{item.name}</Text>
-                <Text style={{ ...SHS.itemPrice, color: theme.textColor }}>
-                    {isUpgradeItem(item) && item.currentLevel < item.maxLevel
-                        ? `Level ${item.currentLevel + 1} Cost: ${item.price[item.currentLevel] * (item.currentLevel + 1)}`
-                        : 'Max Level Reached'}
-                </Text>
-    
-                {/* Progress Bar */}
-                {isUpgradeItem(item) && (
-                    <View style={SHS.progressBarContainer}>
-                        {/* Render filled blocks */}
-                        {Array.from({ length: filledBlocks }).map((_, index) => (
-                            <View key={`filled-${index}`} style={SHS.progressBlockFilled} />
-                        ))}
-                        {/* Render empty blocks */}
-                        {Array.from({ length: emptyBlocks }).map((_, index) => (
-                            <View key={`empty-${index}`} style={SHS.progressBlockEmpty} />
-                        ))}
-                    </View>
-                )}
-    
-                <TouchableOpacity
-                    onPress={() => handlePurchase(item)}
-                    style={SHS.buyButton}
-                    disabled={isUpgradeItem(item) && item.currentLevel >= item.maxLevel}
-                >
-                    <Text style={SHS.buyButtonText}>
-                        {isUpgradeItem(item) && item.currentLevel < item.maxLevel ? 'Upgrade' : 'Buy'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
-    
-    
-
-    // Displays the ShopScreen UI
     return (
-        <Swipe right="GameNav">
-            <View style={{ ...GS.content, backgroundColor: theme.darker }}>
-                {/* Top section for coins and multiplier */}
-                <View style={SHS.statsContainer}>
-                    <Text style={{ ...GS.title, color: theme.textColor }}>Coins: {coins}</Text>
-                    <Text style={{ ...GS.title, color: theme.textColor }}>Multiplier: {multiplier}</Text>
-                </View>
+      <View style={[SHS.itemContainer, { backgroundColor: theme.contrast }]}>
+        {item.image ? (
+          <Image source={item.image} style={SHS.itemImage} />
+        ) : (
+          <Text>No Image</Text>
+        )}
+        <Text style={[SHS.itemName, { color: theme.textColor }]}>
+          {item.name || "Unnamed Item"}
+        </Text>
 
-                <ScrollView>
-                    <View style={SHS.shopContainer}>
-                        {[...upgrades, ...consumables, ...skins].map((section) => (
-                            <View key={section.title} style={SHS.sectionContainer}>
-                                <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>{section.title}</Text>
-                                <FlatList
-                                    scrollEnabled={false}
-                                    data={section.data}
-                                    renderItem={renderItem}
-                                    keyExtractor={(item) => item.id}
-                                    numColumns={2}  // For two items per row
-                                />
-                            </View>
-                        ))}
-                    </View>
-                </ScrollView>
-            </View>
-        </Swipe>
+        {isConsumableItem(item) && (
+          <Text style={{ color: theme.textColor }}>
+            Quantity: {consumablesState[item.id]?.quantity ?? 0}
+          </Text>
+        )}
+
+        {isUpgradeItem(item) && (
+          <View style={SHS.progressBarContainer}>
+            {Array.from({ length: filledBlocks }).map((_, index) => (
+              <View key={`filled-${index}`} style={SHS.progressBlockFilled} />
+            ))}
+            {Array.from({ length: emptyBlocks }).map((_, index) => (
+              <View key={`empty-${index}`} style={SHS.progressBlockEmpty} />
+            ))}
+          </View>
+        )}
+
+        <TouchableOpacity
+          onPress={() => handlePurchase(item)}
+          style={SHS.buyButton}
+          disabled={
+            (isUpgradeItem(item) &&
+              upgradesState[item.id]?.currentLevel >= item.maxLevel) ||
+            (isSkinItem(item) && skinsState[item.id]?.unlocked)
+          }
+        >
+          <Text style={SHS.buyButtonText}>
+            {isUpgradeItem(item) &&
+            upgradesState[item.id]?.currentLevel < item.maxLevel
+              ? `Upgrade (${item.price[upgradesState[item.id]?.currentLevel]} coins)`
+              : isSkinItem(item) && skinsState[item.id]?.unlocked
+              ? "Owned"
+              : `Buy (${item.price[0]} coins)`}
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
+  }
+
+  function renderSectionHeader({
+    section,
+  }: {
+    section: { title: string };
+  }) {
+    return (
+      <Text style={{ ...SHS.sectionTitle, color: theme.textColor }}>
+        {section.title}
+      </Text>
+    );
+  }
+
+  return (
+    <Swipe right="GameNav">
+      <View style={{ ...GS.content, backgroundColor: theme.darker }}>
+        <View style={SHS.statsContainer}>
+          <Text style={{ ...GS.title, fontSize: 24, color: "yellow" }}>
+            Coins: {coins}
+          </Text>
+        </View>
+
+        <SectionList
+          sections={sections}
+          renderSectionHeader={renderSectionHeader}
+          renderItem={renderItem}
+          keyExtractor={(item, index) =>
+            item && item.id ? item.id : `key-${index}`
+          }
+          contentContainerStyle={SHS.shopContainer}
+        />
+      </View>
+    </Swipe>
+  );
 }

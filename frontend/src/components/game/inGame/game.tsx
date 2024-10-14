@@ -1,3 +1,5 @@
+// game.tsx (frontend/src/components/game/inGame)
+
 import Map from "./map";
 import PauseButton from "./pause";
 import RightCorner from "../rightCorner";
@@ -7,38 +9,52 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import CoinSpawner from "./coins";
 import Player from "./player";
 import { useDispatch, useSelector } from "react-redux";
-import { addCoins, setAlive, setScore as storeScore, setStartTime } from "@redux/game";
+import {
+  addCoins,
+  setAlive,
+  setScore as storeScore,
+  setStartTime,
+} from "@redux/game";
 import ObstacleSpawner from "./obstacles";
-import { AnimatedValue } from "@/interfaces";
 import Ghost from "./ghost";
 import { Asset } from "expo-asset";
 import { getCurrentScores } from "@utils/getRoundScore";
 import { setScore as saveScore } from "@redux/game";
 import { API } from "@/constants";
 
-type GameProps = {
-  paused: boolean;
-  playerX: AnimatedValue;
-  playerY: AnimatedValue;
-  kill: () => void;
-};
+// Remove custom AnimatedValue type and use Animated.Value directly
+// type AnimatedValue = Animated.Value;
 
-type Entity = {
-  position: [AnimatedValue, AnimatedValue];
-  translateX: AnimatedValue;
-  translateY: AnimatedValue;
-  renderer: JSX.Element;
-};
-
-type TransformEntity = Entity & {
-  modelUri: string;
+// Rename Score to GhostScore to avoid conflicts
+type GhostScore = {
+  x: number;
+  y: number;
   name: string;
   score: number;
 };
 
-type Score = {
-  x: AnimatedValue;
-  y: AnimatedValue;
+// Update GameProps to include originalX and originalY
+type GameProps = {
+  paused: boolean;
+  playerX: Animated.Value;
+  playerY: Animated.Value;
+  kill: () => void;
+  score: number;
+  originalX: number;
+  originalY: number;
+};
+
+// Entity type with correct Animated.Value types
+type Entity = {
+  position: [Animated.Value, Animated.Value];
+  translateX: Animated.Value;
+  translateY: Animated.Value;
+  renderer: JSX.Element;
+};
+
+// TransformEntity with correct types
+type TransformEntity = Entity & {
+  modelUri: string;
   name: string;
   score: number;
 };
@@ -51,8 +67,8 @@ export default function Gameplay() {
   const [pauseTime, setPauseTime] = useState<number>(0);
   const originalX = Dimensions.get("window").width * 0.5 - 25;
   const originalY = Dimensions.get("window").height * 0.58;
-  const playerX = useRef(new Animated.Value(originalX)).current as AnimatedValue;
-  const playerY = useRef(new Animated.Value(originalY)).current as AnimatedValue;
+  const playerX = useRef(new Animated.Value(originalX)).current;
+  const playerY = useRef(new Animated.Value(originalY)).current;
   const scoreRef = useRef(0);
   const dispatch = useDispatch();
 
@@ -60,10 +76,6 @@ export default function Gameplay() {
     userId: state.user.userID,
     gameId: state.game.gameId,
   }));
-
-  //function updateScore() {
-  //  setScore((prev) => prev + 1 * (multiplier || 31));
-  //}
 
   function handlePause() {
     setPauseTime(Date.now());
@@ -88,7 +100,7 @@ export default function Gameplay() {
   useEffect(() => {
     if (!paused) {
       const interval = setInterval(() => {
-        //updateScore();
+        // updateScore();
       }, 50);
 
       return () => clearInterval(interval);
@@ -109,7 +121,7 @@ export default function Gameplay() {
   const handleSendScore = () => {
     sendScore(score, userId, "");
   };
-  
+
   useEffect(() => {
     if (gameId) {
       const interval = setInterval(handleSendScore, 1000);
@@ -133,23 +145,43 @@ export default function Gameplay() {
       >
         <Map />
       </View>
-      <Game paused={paused} playerX={playerX} playerY={playerY} kill={kill} />
+      <Game
+        paused={paused}
+        playerX={playerX}
+        playerY={playerY}
+        kill={kill}
+        score={score}
+        originalX={originalX}
+        originalY={originalY}
+      />
     </>
   );
 }
 
-function Game({ playerX, playerY, paused, kill }: GameProps) {
+function Game({
+  playerX,
+  playerY,
+  paused,
+  kill,
+  score,
+  originalX,
+  originalY,
+}: GameProps) {
   const { startTime } = useSelector((state: ReduxState) => state.game);
-  const [ghosts, setGhosts] = useState<Score[]>([]);
-  const [modelUri, setModelUri] = useState<string | null>(null);
+  const [ghosts, setGhosts] = useState<GhostScore[]>([]);
+  const [modelUri, setModelUri] = useState<string>("");
+  const [playerModelUri, setPlayerModelUri] = useState<string>("");
   const dispatch = useDispatch();
 
+  // Load Ghost model
   useEffect(() => {
     async function loadModel() {
       try {
-        const asset = Asset.fromModule(require("@assets/models/characters/ghost.glb"));
+        const asset = Asset.fromModule(
+          require("@assets/models/characters/ghost.glb")
+        );
         await asset.downloadAsync();
-        setModelUri(asset.localUri);
+        setModelUri(asset.localUri || "");
         console.log("Ghost Model URI:", asset.localUri);
       } catch (error) {
         console.error("Error loading ghost model:", error);
@@ -159,6 +191,25 @@ function Game({ playerX, playerY, paused, kill }: GameProps) {
     loadModel();
   }, []);
 
+  // Load Player model
+  useEffect(() => {
+    async function loadPlayerModel() {
+      try {
+        const asset = Asset.fromModule(
+          require("@assets/models/characters/player.glb")
+        );
+        await asset.downloadAsync();
+        setPlayerModelUri(asset.localUri || "");
+        console.log("Player Model URI:", asset.localUri);
+      } catch (error) {
+        console.error("Error loading player model:", error);
+      }
+    }
+
+    loadPlayerModel();
+  }, []);
+
+  // Load ghosts' scores and positions
   useEffect(() => {
     async function loadGhosts() {
       const current = await getCurrentScores();
@@ -167,26 +218,39 @@ function Game({ playerX, playerY, paused, kill }: GameProps) {
       }
     }
 
-    //loadGhosts();
+    // Uncomment to load ghosts periodically
+    // loadGhosts();
   }, []);
 
+  // Create ghost entities
   const ghostEntities = useMemo(() => {
     return ghosts.reduce<Record<string, TransformEntity>>((acc, ghost) => {
+      const ghostX = new Animated.Value(ghost.x);
+      const ghostY = new Animated.Value(ghost.y);
+
       acc[ghost.name] = {
-        position: [ghost.x, ghost.y],
-        translateX: ghost.x,
-        translateY: ghost.y,
+        position: [ghostX, ghostY],
+        translateX: ghostX,
+        translateY: ghostY,
         modelUri,
         name: ghost.name,
         score: ghost.score,
-        renderer: <Ghost />,
+        renderer: (
+          <Ghost
+            translateX={ghostX}
+            translateY={ghostY}
+            name={ghost.name}
+            score={ghost.score}
+            modelUri={modelUri}
+          />
+        ),
       };
       return acc;
     }, {});
   }, [ghosts, modelUri]);
 
-  if (!modelUri) {
-    console.log("Loading ghost...");
+  if (!modelUri || !playerModelUri) {
+    console.log("Loading models...");
     return null;
   }
 
@@ -203,7 +267,20 @@ function Game({ playerX, playerY, paused, kill }: GameProps) {
           position: [playerX, playerY],
           translateX: playerX,
           translateY: playerY,
-          renderer: <Player />,
+          name: "PlayerName", // Replace with actual player name
+          score: score,
+          modelUri: playerModelUri,
+          renderer: (
+            <Player
+              translateX={playerX}
+              translateY={playerY}
+              name="PlayerName"
+              score={score}
+              modelUri={playerModelUri}
+              originalX={originalX}
+              originalY={originalY}
+            />
+          ),
         },
         ...ghostEntities,
         engine: {
@@ -249,11 +326,11 @@ async function sendDeath(death: boolean, userId: string, gameId: string) {
       method: "POST",
     });
     if (!response.ok) {
-      console.error("Failed to send score:", response.status);
+      console.error("Failed to send death:", response.status);
     } else {
-      console.log("Score sent successfully");
+      console.log("Death sent successfully");
     }
   } catch (error) {
-    console.error("Error sending score:", error);
+    console.error("Error sending death:", error);
   }
 }
