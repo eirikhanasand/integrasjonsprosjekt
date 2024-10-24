@@ -95,7 +95,7 @@ function Item({ item, index }: RenderItemProps) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { consumables, upgrades, skins, coins } = useSelector((state: ReduxState) => state.game)
     const ownedItem = upgrades.find((a) => a.id === item.id) || { level: 0 }
-    console.log(ownedItem)
+
     if (!item) {
         console.warn(
             `Item at index ${index} is undefined.`
@@ -121,7 +121,7 @@ function Item({ item, index }: RenderItemProps) {
 
             {isConsumableItem(item) &&
                 <Text style={{ color: theme.textColor }}>
-                    Quantity: {consumables[item.id]?.quantity ?? 0}
+                    Quantity: {consumables.find((consumable) => consumable.id === item.id)?.quantity ?? 0}
                 </Text>
             }
             
@@ -150,11 +150,10 @@ function Item({ item, index }: RenderItemProps) {
                         ownedItem.level < item.maxLevel
                         ? `${item.price[upgrades.find((upgrade) => upgrade.id === item.id)?.level || 0]}`
                         : isSkinItem(item) && skins.includes(item.id)
-                            ? "Owned"
-                            : `Buy (${item.price[0]} coins)`
+                            ? "Owned" : `${item.price[0]}`
                     }
                     <View style={{paddingLeft: 5, top: 5}}>
-                    <Coin style={{height: 15, width: 15, backgroundColor: 'yellow', borderRadius: 20}} />
+                    {!skins.includes(item.id) && <Coin style={{height: 15, width: 15, backgroundColor: 'yellow', borderRadius: 20}} />}
                     </View>
                 </Text>
             </TouchableOpacity>

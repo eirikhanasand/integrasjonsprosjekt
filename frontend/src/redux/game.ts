@@ -42,18 +42,32 @@ export const gameSlice = createSlice({
         },
         purchaseConsumable(state, action: PayloadAction<Item>) {
             const { id, price } = action.payload
+            const newConsumables = []
             if (state.coins >= price) {
                 state.coins -= price
-                const item = state.consumables.find((consumable) => consumable.id === id)
-                if (item) {
-                    item.quantity += 1
+                const consumable = state.consumables.find((consumable) => consumable.id === id) || { id, quantity: 1 }
+                
+                if (state.consumables.length && state.consumables.find((consumable) => consumable.id === id)) {
+                    consumable.quantity += 1
+
+                    for (const item of state.consumables) {
+                        if (item.id === id) {
+                            newConsumables.push(consumable)
+                        } else {
+                            newConsumables.push(item)
+                        }
+                    }
+
+                    state.consumables = newConsumables
+                } else {
+                    state.consumables.push(consumable)
                 }
             }
         },
         upgradeItem(state, action: PayloadAction<{ id: number }>) {
             const { id } = action.payload
             const upgrade = state.upgrades[id] || { id, level: 0 }
-            const newOwned = []
+            const newUpgrades = []
             const item = gameUpgrades[0].data.find((item) => item.id === id)
 
             if (upgrade && item && upgrade.level < item.maxLevel) {
@@ -66,13 +80,13 @@ export const gameSlice = createSlice({
                 if (state.upgrades.length && state.upgrades.find((a) => a.id === id)) {
                     for (const item of state.upgrades) {
                         if (item.id === id) {
-                            newOwned.push(upgrade)
+                            newUpgrades.push(upgrade)
                         } else {
-                            newOwned.push(item)
+                            newUpgrades.push(item)
                         }
                     }
                     
-                    state.upgrades = newOwned
+                    state.upgrades = newUpgrades
                 } else {
                     state.upgrades.push(upgrade)
                 }
