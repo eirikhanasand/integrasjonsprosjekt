@@ -3,6 +3,8 @@ import { Dispatch } from "react"
 import { Linking } from "react-native"
 import { UnknownAction } from "redux"
 
+const API_LOGIN_URL = ""
+
 type HandleLoginProps = {
     dispatch: Dispatch<UnknownAction>
 }

@@ -8,8 +8,11 @@ const compileNodeModules = [
     'react-native-game-engine',
     'expo-three',
     'three',
-    'expo-modules-core'
-    // 'react-native-gesture-handler',
+    'expo-modules-core',
+    '@react-three/fiber',
+    '@react-three/drei',
+    'react-native-gesture-handler',
+    '@react-native/assets-registry'
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`))
 
 const babelLoaderConfiguration = {
@@ -56,18 +59,27 @@ const imageLoaderConfiguration = {
 
 const tsLoaderConfiguration = {
     test: /\.(ts)x?$/,
-    // this line as well
     exclude: /node_modules|\.d\.ts$/,
     use: {
         loader: 'ts-loader',
         options: {
             compilerOptions: {
-                // this option will solve the issue
                 noEmit: false,
             },
         },
     },
 }
+
+const glbLoaderConfiguration = {
+    test: /\.(glb|gltf)$/,
+    use: {
+        loader: 'file-loader',
+        options: {
+            outputPath: 'assets/models/',
+            name: '[name].[ext]',
+        },
+    },
+};
 
 module.exports = {
     entry: {
@@ -83,6 +95,9 @@ module.exports = {
         alias: {
             "react-native$": "react-native-web",
         },
+        fallback: {
+            crypto: false,
+        },
     },
     module: {
         rules: [
@@ -90,6 +105,7 @@ module.exports = {
             imageLoaderConfiguration,
             svgLoaderConfiguration,
             tsLoaderConfiguration,
+            glbLoaderConfiguration
         ],
     },
     plugins: [
