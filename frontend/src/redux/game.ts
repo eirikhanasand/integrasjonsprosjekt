@@ -1,44 +1,32 @@
-// game.ts (frontend/src/redux/game.ts)
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { GameState, UpgradeItem, ConsumableItem, SkinItem } from "@/interfaces"
-import { upgrades, consumables, skins } from "@/screens/shop/items"
+import { 
+    upgrades as gameUpgrades, 
+    consumables as gameConsumables, 
+    skins as gameSkins, 
+} from "@/screens/shop/items"
 
-// Initialize dynamic properties in the state
-const initialUpgradesState: { [id: string]: { currentLevel: number } } = {}
-upgrades[0]?.data.forEach((item: UpgradeItem) => {
-    initialUpgradesState[item.id] = { currentLevel: 0 }
-})
-
-const initialConsumablesState: { [id: string]: { quantity: number } } = {}
-consumables[0]?.data.forEach((item: ConsumableItem) => {
-    initialConsumablesState[item.id] = { quantity: 0 }
-})
-
-const initialSkinsState: { [id: string]: { unlocked: boolean } } = {}
-skins[0]?.data.forEach((item: SkinItem) => {
-    initialSkinsState[item.id] = { unlocked: false }
-})
-
-const initialState: GameState = {
-    coins: 0,
-    startTime: 0,
-    inGame: false,
-    alive: true,
-    score: 0,
-    gameId: null,
-    highscore: 0,
-    multiplier: 1,
-    coinMultiplier: 1,
-    consumables: initialConsumablesState,
-    upgrades: initialUpgradesState,
-    skins: initialSkinsState,
+type Item = {
+    id: number
+    price: number
 }
 
-// Create the slice
+// Declares Game Slice
 export const gameSlice = createSlice({
     name: "game",
-    initialState,
+    initialState: {
+        coins: 0,
+        startTime: 0,
+        inGame: false,
+        alive: true,
+        score: 0,
+        gameId: null,
+        highscore: 0,
+        multiplier: 1,
+        coinMultiplier: 1,
+        consumables: [] as OwnedConsumable[],
+        upgrades: [] as OwnedUpgrade[],
+        skins: [] as number[]
+    },
     reducers: {
         setAlive(state, action: PayloadAction<boolean>) {
             state.alive = action.payload
@@ -52,35 +40,49 @@ export const gameSlice = createSlice({
         addCoins(state, action: PayloadAction<number>) {
             state.coins += action.payload
         },
-        purchaseConsumable(
-            state,
-            action: PayloadAction<{ id: string, price: number }>
-        ) {
+        purchaseConsumable(state, action: PayloadAction<Item>) {
             const { id, price } = action.payload
             if (state.coins >= price) {
                 state.coins -= price
-                state.consumables[id].quantity += 1
-            }
-        },
-        upgradeItem(state, action: PayloadAction<{ id: string }>) {
-            const { id } = action.payload
-            const upgrade = state.upgrades[id]
-            const item = upgrades[0]?.data.find((item) => item.id === id)
-
-            if (upgrade && item && upgrade.currentLevel < item.maxLevel) {
-                const price = item.price[upgrade.currentLevel]
-                if (state.coins >= price) {
-                    state.coins -= price
-                    upgrade.currentLevel += 1
+                const item = state.consumables.find((consumable) => consumable.id === id)
+                if (item) {
+                    item.quantity += 1
                 }
             }
         },
-        purchaseSkin(state, action: PayloadAction<{ id: string, price: number }>) {
+        upgradeItem(state, action: PayloadAction<{ id: number }>) {
+            const { id } = action.payload
+            const upgrade = state.upgrades[id] || { id, level: 0 }
+            const newOwned = []
+            const item = gameUpgrades[0].data.find((item) => item.id === id)
+
+            if (upgrade && item && upgrade.level < item.maxLevel) {
+                const price = item.price[upgrade.level]
+                if (state.coins >= price) {
+                    state.coins -= price
+                    upgrade.level += 1
+                }
+
+                if (state.upgrades.length && state.upgrades.find((a) => a.id === id)) {
+                    for (const item of state.upgrades) {
+                        if (item.id === id) {
+                            newOwned.push(upgrade)
+                        } else {
+                            newOwned.push(item)
+                        }
+                    }
+                    
+                    state.upgrades = newOwned
+                } else {
+                    state.upgrades.push(upgrade)
+                }
+            }
+        },
+        purchaseSkin(state, action: PayloadAction<Item>) {
             const { id, price } = action.payload
-            const skin = state.skins[id]
-            if (state.coins >= price && skin && !skin.unlocked) {
+            if (state.coins >= price) {
                 state.coins -= price
-                skin.unlocked = true
+                state.skins.push(id)
             }
         },
         setInGame(state, action) {
@@ -112,7 +114,24 @@ export const gameSlice = createSlice({
                 console.error("Invalid incrementValue:", incrementValue)
             }
         },
-
+        setConsumables(state, action) {
+            state.consumables = action.payload
+        },
+        setUpgrades(state, action) {
+            state.upgrades = action.payload
+        },
+        setSkins(state, action) {
+            state.skins = action.payload
+        },
+        addConsumable(state, action) {
+            state.consumables.push(action.payload)
+        },
+        addUpgrades(state, action) {
+            state.upgrades.push(action.payload)
+        },
+        addSkin(state, action) {
+            state.skins.push(action.payload)
+        }
     },
 })
 
@@ -131,6 +150,12 @@ export const {
     setGameId,
     setCoinMultiplier,
     increaseCoinMultiplier,
+    setConsumables,
+    setUpgrades,
+    setSkins,
+    addConsumable,
+    addUpgrades,
+    addSkin
 } = gameSlice.actions
 
 // Export reducer

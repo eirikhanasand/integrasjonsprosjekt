@@ -10,7 +10,7 @@ export const UserSlice = createSlice({
         authenticated: false,
         username: "",
         userID: "",
-        highscore: 0
+        highscore: 0,
     },
     // Declares slice reducer
     reducers: {
@@ -30,7 +30,7 @@ export const UserSlice = createSlice({
         // Sets the user ID
         setUserID(state, action) {
             state.userID = action.payload
-        }
+        },
     }
 })
 
@@ -39,7 +39,7 @@ export const {
     authenticate, 
     logout,
     setUsername,
-    setUserID
+    setUserID,
 } = UserSlice.actions
 
 // Exports the language slice

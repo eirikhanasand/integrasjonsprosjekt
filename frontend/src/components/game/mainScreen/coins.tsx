@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { useSelector } from "react-redux";
-import { Coin } from "../inGame/coins";
+import { useState } from "react"
+import { Text, TouchableOpacity, View } from "react-native"
+import { useSelector } from "react-redux"
+import { Coin } from "../inGame/coins"
 
 export default function Coins() {
     const { theme } = useSelector((state: ReduxState) => state.theme)
