@@ -55,10 +55,15 @@ export default function PlayerMode({ mode, setMode }) {
     )
 }
 
-async function createLobby(userId: string): Promise<string> {
+async function createLobby(id: string): Promise<string> {
     const params = new URLSearchParams({
-        userId: userId
+        userId: id
     }).toString();
+
+    console.log("user: " + id)
+
+    console.log(params)
+
     try {
         const response = await fetch(`${API}/game/create?${params}`, {
             method: 'POST',
