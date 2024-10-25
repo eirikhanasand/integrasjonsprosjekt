@@ -7,6 +7,7 @@ import { Platform, Text, View } from 'react-native'
 import * as Device from 'expo-device'
 
 export default function Map() {
+
     const [modelUri, setModelUri] = useState<string | null>(null)
 
     // Preload the model
@@ -54,6 +55,9 @@ export default function Map() {
 }
 
 const InfiniteMovingCorridor = memo(({ modelUri }: { modelUri: string }) => {
+
+    const [lastframetime, setTime] = useState(new Date().getTime());
+
     if (Platform.OS === 'ios' && !Device.isDevice) {
         console.error("iOS simulators do not support loading glb files. Map will not be displayed.")
         return null
@@ -69,15 +73,18 @@ const InfiniteMovingCorridor = memo(({ modelUri }: { modelUri: string }) => {
 
     // Move the corridor forward (towards the camera) to simulate the motion
     useFrame(() => {
+        const timenow = new Date().getTime();
         if (corridorRef.current) {
+            const deltaTime = timenow - lastframetime;
             // Adjust the speed of the movement (increase/decrease as needed)
-            corridorRef.current.position.z += 0.1  // Moving forward along the Z-axis
+            corridorRef.current.position.z += 0.01 * deltaTime  // Moving forward along the Z-axis
 
             // Reset the corridor position when it reaches the camera
-            if (corridorRef.current.position.z > 10) {
+            if (corridorRef.current.position.z > 30) {
                 corridorRef.current.position.z = 0  // Reset the position for an infinite loop
             }
         }
+        setTime(timenow)
     })
 
     useEffect(() => {
