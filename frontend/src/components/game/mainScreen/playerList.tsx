@@ -5,13 +5,12 @@ import { useSelector } from "react-redux"
 export default function PlayerList({players, setPlayers}: {players: any[], setPlayers: (_: any) => void}) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const height = Dimensions.get('window').height
-
+    const gameId = useSelector((state: ReduxState) =>  state.game.gameId)
 
 
     function handlePress() {
         setPlayers([...players, `Spiller ${players.length + 1}`])
         console.log("Clicked invite button (unimplemented)")
-        const gameId = useSelector((state: ReduxState) =>  state.game.gameId)
 
         navigator.clipboard.writeText(gameId)
     }
