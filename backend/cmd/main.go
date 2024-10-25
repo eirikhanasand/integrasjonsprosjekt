@@ -24,7 +24,7 @@ func main() {
 	err = service.InitRedis()
 
 	if err != nil {
-		log.Fatalf("Failed to setup redis-store")
+		log.Fatalf("Failed to setup redis-store: %s", err)
 		return
 	}
 
