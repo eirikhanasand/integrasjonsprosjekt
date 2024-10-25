@@ -2,12 +2,14 @@ package api
 
 import (
 	"errors"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/ravener/discord-oauth2"
 	"golang.org/x/oauth2"
 	"os"
 	"strconv"
 	"sync"
+	"time"
 )
 
 type Server struct {
@@ -77,6 +79,15 @@ func (server *Server) InitServer() error {
 
 func (server *Server) StartServer() {
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},  // Allows all origins
+		AllowMethods:     []string{"*"},  // Allows all HTTP methods
+		AllowHeaders:     []string{"*"},  // Allows all headers
+		ExposeHeaders:    []string{"*"},  // Exposes all headers
+		AllowCredentials: true,           // Allows cookies and credentials
+		MaxAge:           12 * time.Hour, // Caches preflight request results for 12 hours
+	}))
 
 	api := r.Group("/api")
 	{
