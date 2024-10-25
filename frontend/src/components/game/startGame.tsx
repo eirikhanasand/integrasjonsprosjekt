@@ -111,13 +111,14 @@ async function startGame(gameId: string): Promise<boolean> {
         const response = await fetch(`${API}/game/start?${params}`, {
             method: 'PUT',
         })
+
         if (!response.ok) {
-            console.error('Failed to start game:', response.status)
+            console.error('Failed to start game:', response)
             return false
-        } else {
-            console.log('Score sent successfully')
-            return true
-        }
+        } 
+        
+        console.log('Score sent successfully')
+        return true
     } catch (error) {
         console.error('Error sending score:', error)
         return false
@@ -125,6 +126,7 @@ async function startGame(gameId: string): Promise<boolean> {
 }
 
 async function fetchGameStartStatus(gameId: string) : Promise<Date | null> {
+    console.log("STARTING WITH GAMEID", gameId)
     const params = new URLSearchParams({
         gameId: gameId,
     }).toString()
@@ -132,17 +134,19 @@ async function fetchGameStartStatus(gameId: string) : Promise<Date | null> {
         const response = await fetch(`${API}/game/status?${params}`, {
             method: 'HEAD',
         })
+
         const time = response.headers.get("time-start")
         if (time !== null) {
             return new Date(time)
         }
+
         if (!response.ok) {
-            console.error('Failed to start game:', response.status)
+            console.error('Failed to start game:', response)
             return null
-        } else {
-            console.log('Score sent successfully')
-            return null
-        }
+        } 
+        
+        console.log('Score sent successfully')
+        return null
     } catch (error) {
         console.error('Error sending score:', error)
         return null
