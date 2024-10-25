@@ -25,7 +25,8 @@ export const gameSlice = createSlice({
         coinMultiplier: 1,
         consumables: [] as OwnedConsumable[],
         upgrades: [] as OwnedUpgrade[],
-        skins: [] as number[]
+        skins: [] as number[],
+        multiplayer: false,
     },
     reducers: {
         setAlive(state, action: PayloadAction<boolean>) {
@@ -108,6 +109,9 @@ export const gameSlice = createSlice({
         setMultiplier(state, action) {
             state.multiplier = action.payload
         },
+        setMultiplayer(state, action) {
+            state.multiplayer = action.payload
+        },
         setGameId(state, action) {
             state.gameId = action.payload
         },
@@ -167,6 +171,7 @@ export const {
     setConsumables,
     setUpgrades,
     setSkins,
+    setMultiplayer,
     addConsumable,
     addUpgrades,
     addSkin

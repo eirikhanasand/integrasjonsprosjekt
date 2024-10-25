@@ -28,6 +28,7 @@ type ReduxState = {
         highscore: number
         multiplier: number
         coinMultiplier: number
+        multiplayer: boolean
         consumables: OwnedConsumable[]
         upgrades: OwnedUpgrade[]
         skins: number[]
