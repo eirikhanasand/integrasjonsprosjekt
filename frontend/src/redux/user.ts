@@ -9,7 +9,7 @@ export const UserSlice = createSlice({
         // true is Logged in, false is logged out
         authenticated: false,
         username: "",
-        userID: "gubben",
+        userID: "",
         highscore: 0,
     },
     // Declares slice reducer
