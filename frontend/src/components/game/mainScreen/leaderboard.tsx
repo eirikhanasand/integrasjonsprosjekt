@@ -4,6 +4,12 @@ import { useSelector } from "react-redux"
 import Trophy from "./trophy"
 import { ScrollView } from "react-native-gesture-handler"
 
+type ButtonProps = {
+    handler: () => void
+    title: string
+    selected: boolean
+}
+
 export default function Leaderboard() {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const [displayLeaderboard, setDisplayLeaderboard] = useState<boolean>(false)
@@ -14,14 +20,16 @@ export default function Leaderboard() {
 
     return (
         <>
-            <View style={{ 
-                width: 40, 
-                height: 40, 
-                top: 100, 
-                right: 20, 
-                position: 'absolute',
-                borderRadius: 20,
-            }}>
+            <View 
+                style={{ 
+                    width: 40, 
+                    height: 40, 
+                    top: 100, 
+                    right: 20, 
+                    position: 'absolute',
+                    borderRadius: 20,
+                }}
+            >
                 <TouchableOpacity 
                     onPress={handlePress} 
                     activeOpacity={1} 
@@ -47,8 +55,9 @@ function List({handlePress}: {handlePress: () => void}) {
     const height = Dimensions.get('window').height
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const { lang } = useSelector((state: ReduxState) => state.lang)
-
-    const gubber = [
+    const [board, setBoard] = useState<'weekly' | 'alltime'>('alltime')
+    
+    const alltime = [
         {name: 'eirik', score: 40000},
         {name: 'gubbe 2', score: 39000},
         {name: 'gubbe 3', score: 24000},
@@ -61,6 +70,34 @@ function List({handlePress}: {handlePress: () => void}) {
         {name: 'gubbe 10', score: 1000},
         {name: 'sindre', score: 1},
     ]
+    
+    const weekly = [
+        {name: 'eirik denne uka', score: 40000},
+        {name: 'gubbe 2', score: 39000},
+        {name: 'gubbe 3', score: 24000},
+        {name: 'gubbe 4', score: 15000},
+        {name: 'gubbe 5', score: 14000},
+        {name: 'gubbe 6', score: 8000},
+        {name: 'gubbe 7', score: 5000},
+        {name: 'gubbe 8', score: 3000},
+        {name: 'gubbe 9', score: 2000},
+        {name: 'gubbe 10', score: 1000},
+        {name: 'sindre denne uka', score: 1},
+    ]
+    
+    const [players, setPlayers] = useState(alltime)
+
+    function buttonHandler(clicked: string) {
+        if (clicked === 'alltime') {
+            setBoard('alltime')
+            setPlayers(alltime)
+        }
+        if (clicked === 'weekly') {
+            setBoard('weekly')
+            setPlayers(weekly)
+        }
+    }
+
     return (
         <TouchableOpacity
             onPress={handlePress}
@@ -95,16 +132,25 @@ function List({handlePress}: {handlePress: () => void}) {
                     width: '100%', 
                     height: 40, 
                     borderRadius: 12,
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                 }}>
-                    <Text style={{
-                        textAlign: 'center', 
-                        color: theme.textColor,
-                        fontWeight: 'bold',
-                        fontSize: 20
+                    <View style={{
+                        flexDirection: 'row', 
+                        justifyContent: 'space-between', 
+                        width: '70%', 
+                        alignSelf: 'center'
                     }}>
-                        {lang ? 'Toppliste' : 'Leaderboard'}
-                    </Text>
+                        <Button 
+                            handler={() => buttonHandler('alltime')} 
+                            title={lang ? "Toppliste" : "Leaderboard"}
+                            selected={board === 'alltime' ? true : false}
+                        />
+                        <Button 
+                            handler={() => buttonHandler('weekly')} 
+                            title={lang ? "Ukentlig" : "Weekly"}
+                            selected={board === 'weekly' ? true : false} 
+                        />
+                    </View>
                     <TouchableOpacity
                         style={{position: 'absolute', right: 12, bottom: 10}}
                         onPress={handlePress}
@@ -114,9 +160,9 @@ function List({handlePress}: {handlePress: () => void}) {
                 </View>
                 {/* Body */}
                 <ScrollView>
-                    {gubber.map((gubbe, index) => {
+                    {players.map((player, index) => {
                         return (
-                            <ListView gubbe={gubbe} index={index} />
+                            <ListView player={player} index={index} />
                         )
                     })}
                 </ScrollView>
@@ -125,7 +171,31 @@ function List({handlePress}: {handlePress: () => void}) {
     )
 }
 
-function ListView({gubbe, index}: {gubbe: any, index: number}) {
+function Button({handler, title, selected}: ButtonProps) {
+    const { theme } = useSelector((state: ReduxState) => state.theme)
+
+    return (
+        <TouchableOpacity 
+            onPress={handler} 
+            style={{
+                backgroundColor: selected ? undefined : theme.oppositeTextColor, 
+                padding: 2, 
+                paddingHorizontal: 10, 
+                borderRadius: 10
+            }}>
+            <Text style={{
+                textAlign: 'center', 
+                color: theme.textColor,
+                fontWeight: 'bold',
+                fontSize: 18
+            }}>
+                {title}
+            </Text>
+        </TouchableOpacity>
+    )
+}
+
+function ListView({player, index}: {player: any, index: number}) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
 
     return (
@@ -139,7 +209,7 @@ function ListView({gubbe, index}: {gubbe: any, index: number}) {
             borderRadius: 4,
             flexDirection: 'row',
         }}>
-            <LeftListView gubbe={gubbe} index={index} />
+            <LeftListView player={player} index={index} />
             <View style={{flexDirection: 'row', marginVertical: 'auto'}}>
                 <Text style={{
                     color: 'white', 
@@ -147,7 +217,7 @@ function ListView({gubbe, index}: {gubbe: any, index: number}) {
                     fontWeight: 'bold', 
                     marginRight: 5,
                     marginVertical: 'auto'
-                }}>{gubbe.score}
+                }}>{player.score}
                 </Text>
                 <Trophy color="none" style={{width: 28, height: 28}} />
             </View>
@@ -155,7 +225,7 @@ function ListView({gubbe, index}: {gubbe: any, index: number}) {
     )
 }
 
-function LeftListView({gubbe, index}: {gubbe: any, index: number}) {
+function LeftListView({player, index}: {player: any, index: number}) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     return (
         <View style={{flexDirection: 'row'}}>
@@ -185,7 +255,7 @@ function LeftListView({gubbe, index}: {gubbe: any, index: number}) {
                 marginLeft: 5,
                 marginVertical: 'auto'
             }}>
-                {gubbe.name}
+                {player.name}
             </Text>
         </View>
     )

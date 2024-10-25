@@ -33,7 +33,7 @@ function Shop() {
         <ShopStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
-            header: props => <Header {...props}/>
+            header: props => <Header {...props} />
         }}>
             <ShopStack.Screen name="ShopScreen" component={ShopScreen}/>
         </ShopStack.Navigator>
@@ -45,7 +45,7 @@ function Game() {
         <GameStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
-            header: props => <Header {...props}/>
+            header: props => <Header {...props} />
         }}>
             <GameStack.Screen name="GameScreen" component={GameScreen}/>
             <GameStack.Screen name="PauseScreen" component={PauseScreen}/>
@@ -58,7 +58,7 @@ function Menu() {
         <MenuStack.Navigator screenOptions={{
             animationEnabled: false,
             headerTransparent: true,
-            header: props => <Header {...props}/>
+            header: props => <Header {...props} />
         }}>
             <MenuStack.Screen name="SettingScreen" component={SettingScreen} />
         </MenuStack.Navigator>

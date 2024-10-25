@@ -19,18 +19,22 @@ export default function Header({ options, route }: HeaderProps): ReactNode {
     }
 
     return (
-            <View style={{
-                height: 100,
-                ...GS.blurBackgroundView, 
-                backgroundColor: theme.transparentAndroid
-            }}>
+        <View style={{
+            height: 100,
+            ...GS.blurBackgroundView, 
+            backgroundColor: theme.transparentAndroid
+        }}>
             <View style={{...GS.headerView, top: Dimensions.get("window").height / 17}}>
-                <View style={GS.innerHeaderViewOne}>
-                </View>
-                <Text style={{...GS.headerTitle, color: theme.titleTextColor, 
-                            width: 300, textAlign: "center", top: title?.length > 30 ? -8 : undefined}}>
-                            {title}
-                        </Text>
+                <View style={GS.innerHeaderViewOne} />
+                <Text style={{
+                    ...GS.headerTitle, 
+                    color: theme.titleTextColor, 
+                    width: 300, 
+                    textAlign: "center", 
+                    top: title?.length > 30 ? -8 : undefined
+                }}>
+                    {title}
+                </Text>
                     <View style={GS.innerHeaderViewTwo}>
                     {options.headerComponents?.right?.map((node, index) => (
                         <View style={index === 1

@@ -3,11 +3,8 @@ import { StyleSheet } from 'react-native';
 const SHS = StyleSheet.create({
     // Container for the stats section at the top
     statsContainer: {
-        flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        backgroundColor: '#2a2a2a',
+        padding: 10,
         borderRadius: 10,
         margin: 10,
     },
@@ -26,12 +23,10 @@ const SHS = StyleSheet.create({
         paddingLeft: 10,
     },
     itemContainer: {
-        backgroundColor: '#f5f5f5',
-        padding: 15,
+        paddingVertical: 25,
         margin: 5,
         borderRadius: 10,
         alignItems: 'center',
-        width: '45%',  // Ensures two items per row
     },
     itemImage: {
         width: 50,
@@ -48,14 +43,15 @@ const SHS = StyleSheet.create({
         marginVertical: 5,
     },
     buyButton: {
-        backgroundColor: '#4CAF50',
         padding: 10,
         borderRadius: 5,
         marginTop: 10,
+        width: '80%'
     },
     buyButtonText: {
         color: '#fff',
         fontWeight: 'bold',
+        textAlign: 'center'
     },
     // Container for the progress bar
     progressBarContainer: {
@@ -67,7 +63,6 @@ const SHS = StyleSheet.create({
     progressBlockFilled: {
         width: 15,
         height: 10,
-        backgroundColor: '#4CAF50',  // Green for filled blocks
         marginRight: 2,
         borderRadius: 2,
     },
@@ -75,7 +70,6 @@ const SHS = StyleSheet.create({
     progressBlockEmpty: {
         width: 15,
         height: 10,
-        backgroundColor: '#ddd',  // Light gray for empty blocks
         marginRight: 2,
         borderRadius: 2,
     },

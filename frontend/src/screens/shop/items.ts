@@ -1,74 +1,70 @@
-// items.ts (frontend/src/screens/shop/items.ts)
-
-import { UpgradeItem, ConsumableItem, SkinItem } from "@/interfaces";
-
-// Upgrades Data
-export const upgrades: { title: string; data: UpgradeItem[] }[] = [
+// Upgrades
+export const upgrades: { title: string; data: Upgrade[] }[] = [
   {
     title: "Upgrades",
     data: [
       {
-        id: "1",
+        id: 1,
         name: "Bag Upgrade",
-        type: "upgradeItem",
+        type: "Upgrade",
         price: [10, 20, 30, 40, 50],
         maxLevel: 5,
         image: require("@assets/shop/school-bag.png"),
       },
       {
-        id: "2",
+        id: 2,
         name: "Coin Multiplier",
-        type: "upgradeItem",
+        type: "Upgrade",
         price: [15, 30, 45, 60, 75],
         maxLevel: 5,
         image: require("@assets/shop/calculator.png"),
       },
     ],
   },
-];
+]
 
-// Consumables Data
-export const consumables: { title: string; data: ConsumableItem[] }[] = [
-  {
-    title: "Consumables",
-    data: [
-      {
-        id: "3",
-        name: "Start Boost",
-        type: "consumableItem",
-        price: [10],
-        image: require("@assets/shop/coffee-cup.png"),
-      },
-      {
-        id: "4",
-        name: "Electric Scooter",
-        type: "consumableItem",
-        price: [15],
-        image: require("@assets/shop/electric-scooter.png"),
-      },
-    ],
-  },
-];
+// Consumables
+export const consumables: { title: string; data: Consumable[] }[] = [
+    {
+        title: "Consumables",
+        data: [
+            {
+                id: 3,
+                name: "Start Boost",
+                type: "Consumable",
+                price: [10],
+                image: require("@assets/shop/coffee-cup.png"),
+            },
+            {
+                id: 4,
+                name: "Electric Scooter",
+                type: "Consumable",
+                price: [15],
+                image: require("@assets/shop/electric-scooter.png"),
+            },
+        ],
+    },
+]
 
-// Skins Data
-export const skins: { title: string; data: SkinItem[] }[] = [
-  {
-    title: "Skins",
-    data: [
-      {
-        id: "5",
-        name: "Cool Skin",
-        type: "skinItem",
-        price: [20],
-        image: require("@assets/shop/boy.png"),
-      },
-      {
-        id: "6",
-        name: "Another Skin",
-        type: "skinItem",
-        price: [25],
-        image: require("@assets/shop/boy.png"),
-      },
-    ],
-  },
+// Skins
+export const skins: { title: string; data: Skin[] }[] = [
+    {
+        title: "Skins",
+        data: [
+            {
+                id: 5,
+                name: "Cool Skin",
+                type: "Skin",
+                price: [20],
+                image: require("@assets/shop/boy.png"),
+            },
+            {
+                id: 6,
+                name: "Another Skin",
+                type: "Skin",
+                price: [25],
+                image: require("@assets/shop/boy.png"),
+            },
+        ],
+    },
 ];

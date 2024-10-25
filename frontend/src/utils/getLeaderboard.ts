@@ -1,6 +1,6 @@
 import { API } from '@/constants'
 
-async function getLeaderboard() {
+export async function getLeaderboard() {
     try {
         const promise = await fetch(`${API}/leaderboard`, )
     
@@ -12,7 +12,7 @@ async function getLeaderboard() {
     }
 }
 
-async function getWeeklyLeaderboard() {
+export async function getWeeklyLeaderboard() {
     try {
         const promise = await fetch(`${API}/weeklyleaderboard`, )
     

@@ -24,10 +24,14 @@ type ReduxState = {
         inGame: boolean
         alive: boolean
         score: number
-        gameId: string,
+        gameId: string
         highscore: number
         multiplier: number
         coinMultiplier: number
+        multiplayer: boolean
+        consumables: OwnedConsumable[]
+        upgrades: OwnedUpgrade[]
+        skins: number[]
     }
 }
 
@@ -63,6 +67,7 @@ type Theme = {
     trackColor: string
     trackBackgroundColor: string
     dark: string
+    green: string
 }
 
 type Direction = VerticalDirection | HorizontalDirection
@@ -95,3 +100,42 @@ type Score = {
     name: string
     score: number
 }
+
+type Upgrade = {
+    id: number
+    name: string
+    type: "Upgrade"
+    price: number[]
+    image: ImageSourcePropType
+    maxLevel: number
+}
+
+type Consumable = {
+    id: number
+    name: string
+    type: "Consumable"
+    price: number[]
+    image: ImageSourcePropType
+}
+
+type OwnedUpgrade = {
+    id: number
+    level: number
+}
+
+type OwnedConsumable = {
+    id: number
+    quantity: number
+}
+  
+type Skin = {
+    id: number
+    name: string
+    type: "Skin"
+    price: number[]
+    image: ImageSourcePropType
+}
+
+type ShopItem = Upgrade | Consumable | Skin
+  
+  

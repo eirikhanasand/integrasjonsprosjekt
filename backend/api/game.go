@@ -157,12 +157,14 @@ func (server *Server) StartGame(ctx *gin.Context) {
 func (server *Server) GameStatus(ctx *gin.Context) {
 	var req GameRequestParam
 
-	if err := ctx.ShouldBindHeader(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
 	game, found := server.GetGameWithLock(req.GameId)
 	server.ReleaseGameMapLock()
+
+	fmt.Printf("id: %v", req.GameId)
 
 	if found == false {
 		ctx.Status(http.StatusNotFound)
