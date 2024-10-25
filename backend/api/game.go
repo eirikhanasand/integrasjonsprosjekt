@@ -164,6 +164,8 @@ func (server *Server) GameStatus(ctx *gin.Context) {
 	game, found := server.GetGameWithLock(req.GameId)
 	server.ReleaseGameMapLock()
 
+	fmt.Printf("id: %v", req.GameId)
+
 	if found == false {
 		ctx.Status(http.StatusNotFound)
 		return
