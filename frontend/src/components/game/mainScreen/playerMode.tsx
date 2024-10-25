@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux"
 import {setGameId, setMultiplayer} from "@redux/game"
 import { API } from "@/constants"
 
-export default function PlayerMode({ mode, setMode }) {
+export default function PlayerMode({ mode, setMode }: any) {
     const { theme } = useSelector((state: ReduxState) => state.theme)
     const modeText = mode === 'singleplayer' ? 'Single Player' : 'Multiplayer'
     const dispatch = useDispatch()
@@ -63,7 +63,7 @@ export default function PlayerMode({ mode, setMode }) {
     )
 }
 
-async function createLobby(id: string): Promise<string> {
+async function createLobby(id: string): Promise<any> {
     const params = new URLSearchParams({
         userId: id
     }).toString()
