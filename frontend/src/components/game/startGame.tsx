@@ -9,6 +9,7 @@ import Scoreboard from "./mainScreen/leaderboard"
 import {useEffect, useState} from "react"
 import Players from "./mainScreen/players"
 import { API } from "@/constants"
+import {mod} from "three/src/nodes/math/MathNode";
 
 export default function StartGame() {
     // Redux states
@@ -16,7 +17,6 @@ export default function StartGame() {
     const { lang } = useSelector((state: ReduxState) => state.lang)
     const { inGame, multiplayer, gameId } = useSelector((state: ReduxState) => state.game)
     const { userID } = useSelector((state: ReduxState) => state.user)
-    const [mode, setMode] = useState<'singleplayer' | 'multiplayer'>(multiplayer ? "multiplayer" : "singleplayer")
     const [players, setPlayers] = useState([lang ? "Spiller 1" : "Player 1"])
     const height = Dimensions.get("window").height
     const width = Dimensions.get("window").width
@@ -30,7 +30,7 @@ export default function StartGame() {
     }
 
     async function fetchGameStatus() {
-        if (mode == "multiplayer") {
+        if (multiplayer && !inGame) {
             const result = await fetchGameStartStatus(gameId)
 
             if (result == null) {
@@ -54,14 +54,15 @@ export default function StartGame() {
 
     useEffect(() => {
         const intervalId = setInterval(() => {
+            console.log("fetching status")
             fetchGameStatus()
         }, 3000)
         return () => clearInterval(intervalId)
     }, [])
 
-    function handleStart() {
-        if (mode === "multiplayer" && gameId) {
-            startGame(gameId)
+    async function handleStart() {
+        if (multiplayer && gameId) {
+            let gameStart =  await startGame(gameId)
         } else {
             dispatchGameStart()
         }
@@ -70,9 +71,9 @@ export default function StartGame() {
 
     return (
         <View style={{ display: inGame ? 'none' : 'flex' }}>
-            <PlayerMode mode={mode} setMode={setMode} />
+            <PlayerMode />
             <Coins />
-            {mode == "multiplayer" && (
+            {multiplayer && (
                 <PlayerList players={players} setPlayers={setPlayers} />
             )}
             <Scoreboard />
@@ -111,13 +112,11 @@ async function startGame(gameId: string): Promise<boolean> {
         const response = await fetch(`${API}/game/start?${params}`, {
             method: 'PUT',
         })
-
         if (!response.ok) {
             console.error('Failed to start game:', response)
             return false
-        } 
-        
-        console.log('Score sent successfully')
+        }
+        console.log('sent start-game payload')
         return true
     } catch (error) {
         console.error('Error sending score:', error)
@@ -135,17 +134,17 @@ async function fetchGameStartStatus(gameId: string) : Promise<Date | null> {
             method: 'HEAD',
         })
 
-        const time = response.headers.get("time-start")
+        const time = response.headers.get("start-time")
         if (time !== null) {
+            console.log("fetched game start with time")
             return new Date(time)
         }
 
         if (!response.ok) {
             console.error('Failed to start game:', response)
             return null
-        } 
-        
-        console.log('Score sent successfully')
+        }
+        console.log('failed to fetch game start')
         return null
     } catch (error) {
         console.error('Error sending score:', error)
