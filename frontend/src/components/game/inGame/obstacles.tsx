@@ -1,135 +1,93 @@
-import { AnimatedValue } from "@/interfaces"
-import { Animated, Dimensions, StyleProp, ViewStyle } from "react-native"
+import { useState, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 
-type Entity = {
-    position: [number, number]
-    renderer: JSX.Element
-}
+// Define the types for the obstacle entity
+type ObstacleEntity = {
+  id: string,
+  position: [number, number, number],  // 3D position
+  speed: number
+};
 
-type EngineEntity = {
-    nextObstacleSpawn: number
-}
+// Define the types for the obstacle spawner's props
+type ObstacleSpawnerProps = {
+  playerPosition: [number, number, number]  // Player position in 3D space
+};
 
-type Entities = {
-    [key: string]: Entity | EngineEntity
-    engine: EngineEntity
-    player: Entity
-}
+// Define the types for the obstacle's props
+type ObstacleProps = {
+  position: [number, number, number],  // 3D position of the obstacle
+  speed: number,  // Movement speed
+  onRemove: () => void  // Function to call when the obstacle is removed
+};
 
-type CoinProps = {
-    style?: StyleProp<ViewStyle>
-    location?: {
-        x: AnimatedValue
-        y: AnimatedValue
+// Obstacle component that moves in the 3D space
+function Obstacle({ position, speed, onRemove }: ObstacleProps) {
+  const obstacleRef = useRef<THREE.Mesh>(null);
+
+  // Update the position of the obstacle on each frame
+  useFrame(() => {
+    if (obstacleRef.current) {
+      obstacleRef.current.position.z -= speed;  // Move the obstacle towards the player
+
+      // Remove the obstacle if it goes behind the player
+      if (obstacleRef.current.position.z < 0) {
+        onRemove();  // Call the remove function
+      }
     }
+  });
+
+  return (
+    <mesh ref={obstacleRef} position={position}>
+      <boxGeometry args={[1, 3, 1]} />  {/* Geometry of the obstacle */}
+      <meshStandardMaterial color="red" />  {/* Material for the obstacle */}
+    </mesh>
+  );
 }
 
-export default function ObstacleSpawner(entities: Entities, { time }: { time: { delta: number } }) {
-    let engine = entities["engine"]
-    let player = entities["player"] as Entity
-    const kill = entities.kill
-    const lineLength = 5
-    const lanes = [0, 0, 0];
-    // 0-2 lanes will be populated
-    const numLanesToSpawn = Math.floor(Math.random() * 3)
-    const lanesToFill = new Set<number>()
-    while (lanesToFill.size < numLanesToSpawn) {
-        // Randomly fills lanes
-        lanesToFill.add(Math.floor(Math.random() * 3))
+// ObstacleSpawner component responsible for spawning and managing obstacles
+function ObstacleSpawner({ playerPosition }: ObstacleSpawnerProps) {
+  const [obstacles, setObstacles] = useState<ObstacleEntity[]>([]);  // Store obstacles in state
+  const lanes = [-2, 0, 2];  // Lanes for obstacle placement on the X-axis
+
+  // Function to spawn a new obstacle
+  const spawnObstacle = () => {
+    const lane = lanes[Math.floor(Math.random() * lanes.length)];  // Random lane
+    const zPosition = -50;  // Start far behind the player
+    const newObstacle: ObstacleEntity = {
+      id: `obstacle_${Date.now()}`,  // Unique ID
+      position: [lane, 1, zPosition],  // Position of the obstacle
+      speed: 0.1,  // Speed of the obstacle
+    };
+    setObstacles((prevObstacles) => [...prevObstacles, newObstacle]);  // Add new obstacle to the list
+  };
+
+  // Use useFrame to spawn obstacles at intervals
+  useFrame(({ clock }) => {
+    const elapsed = clock.getElapsedTime();
+    if (Math.floor(elapsed) % 2 === 0) {
+      spawnObstacle();  // Spawn a new obstacle every 2 seconds
     }
+  });
 
-    for (const lane of lanesToFill) {
-        lanes[lane] = 1
-    }
- 
-    // Interpolates obstacles toward the player
-    Object.keys(entities).forEach((key) => {
-        if (key.startsWith("obstacle_")) {
-            let obstacle = entities[key] as Entity
-            const [cx, cy] = obstacle.position
-            let [pxValue, pyValue] = player.position
-            // Moves obstacle towards the player based on delta time
-            const speed = 1 * (time.delta / 16.67)
-            // @ts-expect-error (hidden method on player position)
-            const px = pxValue.__getValue()
-            // @ts-expect-error (hidden method on player position)
-            const py = pyValue.__getValue()
-            const newX = cx
-            const newY = cy + speed
-            
-            obstacle.position = [newX, newY]
-            // @ts-expect-error (location does exist)
-            obstacle.location.x.setValue(newX)
-            // @ts-expect-error (location does exist)
-            obstacle.location.y.setValue(newY)
+  // Function to remove an obstacle when it goes behind the player
+  const removeObstacle = (id: string) => {
+    setObstacles((prevObstacles) => prevObstacles.filter((obs) => obs.id !== id));  // Remove obstacle from the list
+  };
 
-            // Despawns the obstacle - player killed
-            if (Math.abs(cy +300 - py) < 10 && Math.abs(cx - px) < 10) {
-                // @ts-expect-error
-                kill()
-                delete entities[key]
-            }
-
-            // Despawns the coin - player passed it already, and its outside of the screen
-            if (cy > Dimensions.get('window').height) {
-                delete entities[key]
-            }
-        }
-    })
-
-    // Spawns coins based on delta time
-    if (!engine.nextObstacleSpawn) {
-        engine.nextObstacleSpawn = 0
-    }
-
-    engine.nextObstacleSpawn -= time.delta
-    if (engine.nextObstacleSpawn <= 0) {
-        lanes[0] && spawnObstacle(0, entities)
-        lanes[1] && spawnObstacle(1, entities)
-        lanes[2] && spawnObstacle(2, entities)
-
-        // Resets the spawn timer (spawns every second / lineLength)
-        engine.nextObstacleSpawn = 2000 * lineLength
-    }
-
-    return entities
+  return (
+    <>
+      {/* Render all obstacles */}
+      {obstacles.map((obstacle) => (
+        <Obstacle
+          key={obstacle.id}  // Use unique ID as key
+          position={obstacle.position}  // Pass position
+          speed={obstacle.speed}  // Pass speed
+          onRemove={() => removeObstacle(obstacle.id)}  // Pass the remove function
+        />
+      ))}
+    </>
+  );
 }
 
-export function Obstacle({ style, location }: CoinProps) {
-    return (
-        <Animated.View style={style ? style : {
-            transform: location ? [
-                { translateX: location.x }, 
-                { translateY: location.y }
-            ] : [],
-            width: 50,
-            height: 300,
-            backgroundColor: 'red',
-            position: 'absolute',
-            zIndex: 50
-        }} />
-    )
-}
-
-function spawnObstacle(lane: number, entities: Entities) {
-    const obstacle = createObstacle(lane)
-    const newObstacleId = `obstacle_${lane}_${new Date().getTime()}`
-    const newObstacle: Entity = {
-        // @ts-expect-error (__getValue() isnt defined in type)
-        position: [obstacle.x.__getValue(), obstacle.y.__getValue()],
-        // @ts-expect-error (location isnt expected here)
-        location: obstacle,
-        renderer: <Obstacle />
-    }
-
-    entities[newObstacleId] = newObstacle
-}
-
-function createObstacle(lane: number) {
-    const originalX = Dimensions.get('window').width * 0.5 - 125
-
-    return {
-        x: new Animated.Value(originalX + lane * 100),
-        y: new Animated.Value(-100),
-    }
-}
+export default ObstacleSpawner;

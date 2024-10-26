@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Text, TouchableOpacity, View } from "react-native"
 import { useSelector } from "react-redux"
-import { Coin } from "../inGame/coins"
+import  Coin  from "../inGame/coin"
 
 export default function Coins() {
     const { theme } = useSelector((state: ReduxState) => state.theme)
@@ -31,17 +31,7 @@ export default function Coins() {
             }}>
                 <Text style={{color: theme.textColor, right: 30, fontSize: 18, fontWeight: 'bold'}}>
                     {coins}
-                    <View>
-                        <Coin style={{
-                            position: 'absolute',
-                            width: 18, 
-                            height: 18, 
-                            backgroundColor: 'yellow',
-                            borderRadius: 20,
-                            right: -22,
-                            bottom: -1
-                        }} />
-                    </View>
+                    
                 </Text>
             </TouchableOpacity>
         </View>

@@ -26,7 +26,7 @@ import Space from "@components/shared/utils"
 import { useEffect } from "react"
 import { Navigation } from "@/interfaces"
 import { useNavigation } from "@react-navigation/native"
-import { Coin } from "@components/game/inGame/coins"
+import  Coin  from "@components/game/inGame/coin"
 
 type HandlePurchaseProps = {
     item: ShopItem
@@ -51,17 +51,7 @@ export default function ShopScreen(): JSX.Element {
         return (
             <Text style={{color: theme.textColor, right: 30, fontSize: 18, fontWeight: 'bold'}}>
                 {coins}
-                <View>
-                    <Coin style={{
-                        position: 'absolute',
-                        width: 18, 
-                        height: 18, 
-                        backgroundColor: 'yellow',
-                        borderRadius: 20,
-                        right: -22,
-                        bottom: -1
-                    }} />
-                </View>
+                
             </Text>
         )
     }
@@ -153,7 +143,7 @@ function Item({ item, index }: RenderItemProps) {
                             ? "Owned" : `${item.price[0]}`
                     }
                     <View style={{paddingLeft: 5, top: 5}}>
-                    {!skins.includes(item.id) && <Coin style={{height: 15, width: 15, backgroundColor: 'yellow', borderRadius: 20}} />}
+                    
                     </View>
                 </Text>
             </TouchableOpacity>

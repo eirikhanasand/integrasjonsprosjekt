@@ -6,7 +6,7 @@ import RightCorner from "../rightCorner"
 import { GameEngine } from "react-native-game-engine"
 import { Animated, Dimensions, View } from "react-native"
 import { useEffect, useMemo, useRef, useState } from "react"
-import CoinSpawner from "./coins"
+import CoinSpawner from "./coinSpawner"
 import Player from "./player"
 import { useDispatch, useSelector } from "react-redux"
 import {

@@ -1,6 +1,6 @@
 import { Text, View } from "react-native"
 import { useSelector } from "react-redux"
-import { Coin } from "./inGame/coins"
+import  Coin  from "./inGame/coin"
 import T from "@styles/text"
 import { getCurrentScores } from "@utils/getRoundScore"
 import { useEffect, useState } from "react"
@@ -37,17 +37,7 @@ export default function RightCorner({ score }: RightCornerProps) {
                     flexDirection: 'row'
                 }}>
                     {score}
-                    <View>
-                        <Coin style={{
-                            position: 'absolute',
-                            width: 18, 
-                            height: 18, 
-                            backgroundColor: 'yellow',
-                            borderRadius: 20,
-                            right: 1,
-                            top: 6.5
-                        }} />
-                    </View>
+                    
                 </Text>
                 <Text style={{
                     ...T.text20,
