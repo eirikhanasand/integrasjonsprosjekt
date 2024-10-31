@@ -66,6 +66,12 @@ func (server *Server) GetUsers(ctx *gin.Context) {
 			user, err := service.FetchTypeFromKeyValue[User]("userId", userId, server.UserCollection)
 
 			if err != nil || user == nil {
+				if err != nil {
+					fmt.Printf("err: %s", err.Error())
+				}
+				if user == nil {
+					fmt.Printf("user nil")
+				}
 				continue
 			}
 

@@ -9,7 +9,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"os"
-	"time"
 )
 
 var database mongo.Database
@@ -28,7 +27,7 @@ func SetupMongoStore() error {
 		return errors.New("missing MONGO environment variable")
 	}
 
-	ctx, _ = context.WithTimeout(context.Background(), 30*time.Second)
+	ctx = context.Background()
 
 	client, clientErr := mongo.NewClient(options.Client().ApplyURI(uri))
 
@@ -93,14 +92,14 @@ func FetchTypeFromKeyValue[T any](key string, value string, collection string) (
 	find := col.FindOne(ctx, bson.D{{key, value}})
 
 	if find.Err() != nil {
-		return nil, nil
+		return nil, find.Err()
 	}
 	var fetch T
 
 	err := find.Decode(&fetch)
 	if err != nil {
 		log.Fatalf("Failed to decode mongo document")
-		return nil, nil
+		return nil, err
 	}
 
 	return &fetch, nil
