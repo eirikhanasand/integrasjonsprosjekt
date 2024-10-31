@@ -104,6 +104,7 @@ func (server *Server) JoinGame(ctx *gin.Context) {
 		Score: 0,
 	}
 	server.SetGame(req.GameId, game)
+	ctx.String(http.StatusOK, "game joined")
 }
 
 func (server *Server) LeaveGame(ctx *gin.Context) {
