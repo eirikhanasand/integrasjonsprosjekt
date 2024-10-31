@@ -4,17 +4,15 @@ import {useDispatch, useSelector} from "react-redux"
 import {setGameId, setMultiplayer} from "@redux/game"
 import { API } from "@/constants"
 
-export default function PlayerMode({ mode, setMode }: any) {
+export default function PlayerMode() {
+    const multiplayer = useSelector((state: ReduxState) => state.game.multiplayer)
     const { theme } = useSelector((state: ReduxState) => state.theme)
-    const modeText = mode === 'singleplayer' ? 'Single Player' : 'Multiplayer'
+    const modeText = !multiplayer ? 'Single Player' : 'Multiplayer'
     const dispatch = useDispatch()
     const userId = useSelector((state: ReduxState) => state.user.userID)
 
     function handlePress() {
-        const newMode = mode === 'singleplayer' ? 'multiplayer' : 'singleplayer'
-        setMode(newMode)
-        const multiplayer = newMode === 'multiplayer'
-        dispatch(setMultiplayer(multiplayer))
+        dispatch(setMultiplayer(!multiplayer))
 
         if (multiplayer) {
             console.log("CREATING LE LOBBY BABY")

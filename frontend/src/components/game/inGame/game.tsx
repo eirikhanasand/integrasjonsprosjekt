@@ -11,7 +11,7 @@ import Player from "./player"
 import { useDispatch, useSelector } from "react-redux"
 import {
     addCoins,
-    setAlive,
+    setAlive, setInGame,
     setScore as storeScore,
     setStartTime,
 } from "@redux/game"
@@ -91,10 +91,16 @@ export default function Gameplay() {
         setPaused(false)
     }
 
-    function kill() {
+    async function kill() {
         if (gameId) {
-            sendDeath(true, userId, gameId)
+            const aliveCount = await sendDeath(true, userId, gameId);
+
+            if (aliveCount != 0) {
+                return
+            }
         }
+        dispatch(setAlive(false))
+        dispatch(setInGame(false))
     }
 
     function updateScore() {
@@ -322,7 +328,7 @@ async function sendScore(score: number, userId: string, gameId: string) {
     }
 }
 
-async function sendDeath(death: boolean, userId: string, gameId: string) {
+async function sendDeath(death: boolean, userId: string, gameId: string): Promise<number> {
     const params = new URLSearchParams({
         userId: userId,
         died: death.toString(),
@@ -338,7 +344,11 @@ async function sendDeath(death: boolean, userId: string, gameId: string) {
         } else {
             console.log("Death sent successfully")
         }
+        const aliveCount = response.json()
+
+        return aliveCount
     } catch (error) {
         console.error("Error sending death:", error)
     }
+    return -1
 }
