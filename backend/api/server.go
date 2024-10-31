@@ -117,7 +117,7 @@ func (server *Server) StartServer() {
 			game.HEAD("/status", server.GameStatus)
 			game.POST("/create", server.CreateGame)
 			game.PUT("/start", server.StartGame)
-			game.HEAD("/join/:gameId/:userId", server.JoinGame)
+			game.PUT("/join/:gameId/:userId", server.JoinGame)
 			game.HEAD("/leave/:gameId/:userId", server.LeaveGame)
 		}
 	}
