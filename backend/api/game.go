@@ -258,7 +258,16 @@ func (server *Server) PostGameDeath(ctx *gin.Context) {
 
 	server.SetGame(req.GameId, game)
 
-	ctx.JSON(http.StatusOK, "request accepted")
+	aliveCount := 0
+
+	for s := range game.PlayerMap {
+		player := game.PlayerMap[s]
+
+		if player.Alive {
+			aliveCount += 1
+		}
+	}
+	ctx.JSON(http.StatusOK, aliveCount)
 }
 
 func (server *Server) PostGameScore(ctx *gin.Context) {
