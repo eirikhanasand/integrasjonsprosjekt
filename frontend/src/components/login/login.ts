@@ -1,9 +1,12 @@
-import { authenticate } from "@redux/user"
+import {authenticate, setAuthState} from "@redux/user"
 import { Dispatch } from "react"
-import { Linking } from "react-native"
+import {Linking, Platform} from "react-native"
 import { UnknownAction } from "redux"
+import {API} from "@/constants";
+import uuid from "expo-modules-core/build/uuid/uuid.web";
+import {randomUUID} from "node:crypto";
 
-const API_LOGIN_URL = ""
+const API_LOGIN_URL = API+"/login"
 
 type HandleLoginProps = {
     dispatch: Dispatch<UnknownAction>
@@ -11,20 +14,35 @@ type HandleLoginProps = {
 
 // Login with Dicord
 export default function handleLogin({ dispatch }: HandleLoginProps) {
-    // Send to Discord login page
-    dispatch(authenticate())
-    // Should redirect to GameNav not ShopNav here
+    const state = randomUUID().toString()
+    dispatch(setAuthState(state))
+
+    redirectToLogin(state)
 }
 
-async function redirectToLogin() {
+async function redirectToLogin(state: string) {
     try {
+        console.log(API_LOGIN_URL)
+
+        const params = new URLSearchParams({
+            state: state
+        }).toString()
+
         // Step 1: Get the login URL from your server
-        const response = await fetch(API_LOGIN_URL);
-        const { authUrl } = await response.json();
-    
-        // Step 2: Open the Discord login page in the browser
+        const response = await fetch(API_LOGIN_URL+params.toString(), {
+            method: "GET",
+        })
+
+        const authUrl = await response.json();
+        
         if (authUrl) {
-            Linking.openURL(authUrl);
+            console.log("attempting to open url")
+
+            if (Platform.OS === 'web') {
+                window.location.href = authUrl;
+            } else {
+                await Linking.openURL(authUrl);
+            }
         } else {
             console.error('Failed to get Discord auth URL');
         }
