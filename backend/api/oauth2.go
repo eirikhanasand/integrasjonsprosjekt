@@ -94,7 +94,7 @@ func (server *Server) DiscordCallback(ctx *gin.Context) {
 	// Print or use the constructed URL
 	finalURL := parsedURL.String()
 
-	ctx.Redirect(http.StatusOK, finalURL)
+	ctx.Redirect(http.StatusPermanentRedirect, finalURL)
 }
 
 func (server *Server) GetDiscordInfo(ctx *gin.Context) {

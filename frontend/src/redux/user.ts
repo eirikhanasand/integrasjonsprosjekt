@@ -11,6 +11,7 @@ export const UserSlice = createSlice({
         username: "",
         userID: "gubb2",
         highscore: 0,
+        authState: ""
     },
     // Declares slice reducer
     reducers: {
@@ -18,6 +19,9 @@ export const UserSlice = createSlice({
         authenticate(state) {
             // Authenticate with Discord here (might need middleware function)
             state.authenticated = true
+        },
+        setAuthState(state, action) {
+            state.authState = action.payload
         },
         // Logs out the user
         logout(state) {
@@ -36,7 +40,8 @@ export const UserSlice = createSlice({
 
 // Exports the change function
 export const { 
-    authenticate, 
+    authenticate,
+    setAuthState,
     logout,
     setUsername,
     setUserID,
