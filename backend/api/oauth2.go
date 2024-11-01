@@ -16,8 +16,8 @@ type DiscordInfo struct {
 }
 
 type DiscordRequest struct {
-	Id    *string `form:"id"`
-	State string  `form:"state"`
+	Id    string `form:"id"`
+	State string `form:"state"`
 }
 
 var stateMap = make(map[string]string)
@@ -30,6 +30,8 @@ func (server *Server) DiscordLogin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Malformed req request")
 		return
 	}
+	stateMap[req.State] = ""
+
 	ctx.JSON(http.StatusOK, server.Oauth2Config.AuthCodeURL(req.State))
 }
 
@@ -102,11 +104,11 @@ func (server *Server) GetDiscordInfo(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Malformed query request")
 		return
 	}
-	if req.Id == nil {
+	if req.Id == "" {
 		ctx.JSON(http.StatusBadRequest, "missing id in query.")
 		return
 	}
-	info, found := DiscordMap[*req.Id]
+	info, found := DiscordMap[req.Id]
 
 	if found == false {
 		ctx.JSON(http.StatusBadRequest, "Faulty id.")
