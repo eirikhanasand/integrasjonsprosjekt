@@ -5,17 +5,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"net/http"
+	"net/url"
 )
 
 type DiscordInfo struct {
 	Id       string `json:"id"`
 	Username string `json:"username"`
+	State    string `json:"state"`
 }
 
 type DiscordRequest struct {
-	Id string `form:"id"`
+	Id    *string `form:"id"`
+	State string  `form:"state"`
 }
 
 var stateMap = make(map[string]string)
@@ -28,11 +30,7 @@ func (server *Server) DiscordLogin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Malformed req request")
 		return
 	}
-
-	var state = uuid.New()
-	stateMap[state.String()] = req.Id
-
-	ctx.JSON(http.StatusOK, server.Oauth2Config.AuthCodeURL(state.String()))
+	ctx.JSON(http.StatusOK, server.Oauth2Config.AuthCodeURL(req.State))
 }
 
 func (server *Server) DiscordCallback(ctx *gin.Context) {
@@ -74,9 +72,27 @@ func (server *Server) DiscordCallback(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, fmt.Sprintf("body error: %s", err.Error()))
 		return
 	}
+
+	// exchange tokens
+
 	DiscordMap[id] = discordInfo
 
-	ctx.JSON(http.StatusOK, discordInfo)
+	parsedURL, err := url.Parse(server.FrontendAuthRedirect)
+	if err != nil {
+		ctx.JSON(500, gin.H{"error": "Failed to parse URL"})
+		return
+	}
+
+	queryParams := parsedURL.Query()
+	queryParams.Set("user_id", discordInfo.Id)
+	queryParams.Set("state", discordInfo.State)
+	queryParams.Set("username", discordInfo.Username)
+	parsedURL.RawQuery = queryParams.Encode()
+
+	// Print or use the constructed URL
+	finalURL := parsedURL.String()
+
+	ctx.Redirect(http.StatusOK, finalURL)
 }
 
 func (server *Server) GetDiscordInfo(ctx *gin.Context) {
@@ -86,8 +102,11 @@ func (server *Server) GetDiscordInfo(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, "Malformed query request")
 		return
 	}
-
-	info, found := DiscordMap[req.Id]
+	if req.Id == nil {
+		ctx.JSON(http.StatusBadRequest, "missing id in query.")
+		return
+	}
+	info, found := DiscordMap[*req.Id]
 
 	if found == false {
 		ctx.JSON(http.StatusBadRequest, "Faulty id.")
