@@ -3,8 +3,7 @@ import { Dispatch } from "react"
 import {Linking, Platform} from "react-native"
 import { UnknownAction } from "redux"
 import {API} from "@/constants";
-import uuid from "expo-modules-core/build/uuid/uuid.web";
-import {randomUUID} from "node:crypto";
+import {v4 as uuidv4} from 'uuid';
 
 const API_LOGIN_URL = API+"/login"
 
@@ -14,7 +13,7 @@ type HandleLoginProps = {
 
 // Login with Dicord
 export default function handleLogin({ dispatch }: HandleLoginProps) {
-    const state = randomUUID().toString()
+    const state = uuidv4();
     dispatch(setAuthState(state))
 
     redirectToLogin(state)
@@ -29,7 +28,7 @@ async function redirectToLogin(state: string) {
         }).toString()
 
         // Step 1: Get the login URL from your server
-        const response = await fetch(API_LOGIN_URL+params.toString(), {
+        const response = await fetch(`${API_LOGIN_URL}?${params}`, {
             method: "GET",
         })
 
