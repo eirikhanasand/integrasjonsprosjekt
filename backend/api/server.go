@@ -18,6 +18,7 @@ type Server struct {
 	GameMapLock           sync.Mutex
 	Oauth2Config          oauth2.Config
 	LeaderboardPageLength uint8
+	FrontendAuthRedirect  string
 	// TODO add more fields.
 }
 
@@ -42,6 +43,14 @@ func (server *Server) InitServer() error {
 	if found == false {
 		return errors.New("no LOGIN_REDIRECT environment variable")
 	}
+
+	frontendRedirect, found := os.LookupEnv("FRONTEND_AUTH_REDIRECT")
+
+	if found == false {
+		return errors.New("no FRONTEND_AUTH_REDIRECT environment variable")
+	}
+
+	server.FrontendAuthRedirect = frontendRedirect
 
 	clientId, found := os.LookupEnv("CLIENT_ID")
 
