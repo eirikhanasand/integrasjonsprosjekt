@@ -38,7 +38,7 @@ export default function LoginScreen(): JSX.Element {
                             padding: 12,
                             borderRadius: 12
                         }}
-                        onPress={() => handleLogin({dispatch})}
+                        onPress={() => handleLogin({ dispatch })}
                     >
                         <Text style={{ color: 'white', fontSize: 16 }}>
                             Login with Discord
