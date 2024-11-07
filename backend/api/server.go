@@ -119,8 +119,8 @@ func (server *Server) StartServer() {
 
 		game := api.Group("/game")
 		{
-			game.GET("/chat", server.GetChatMessages)
-			game.POST("/chat", server.PostChatMessage)
+			game.GET("/chat/:gameId", server.GetChatMessages)
+			game.POST("/chat/:gameId", server.PostChatMessage)
 			game.GET("/deaths", server.GetGameDeaths)
 			game.GET("/scores", server.GetGameScores)
 			game.POST("/score", server.PostGameScore)
