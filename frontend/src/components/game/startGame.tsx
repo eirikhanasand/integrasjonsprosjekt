@@ -53,7 +53,6 @@ export default function StartGame() {
 
     useEffect(() => {
         const intervalId = setInterval(() => {
-            console.log("fetching status")
             if (multiplayer) {
                 fetchGameStatus()
             }
