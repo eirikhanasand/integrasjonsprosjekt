@@ -77,7 +77,7 @@ type HorizontalDirection = 'left' | 'right' | 'middle'
 
 type Song = {
     uri: string
-    nextSongs: string[]
+    nextSongs: number[]
 }
 
 type Entity = {

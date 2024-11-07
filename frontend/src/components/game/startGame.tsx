@@ -9,7 +9,6 @@ import Scoreboard from "./mainScreen/leaderboard"
 import {useEffect, useState} from "react"
 import Players from "./mainScreen/players"
 import { API } from "@/constants"
-import {mod} from "three/src/nodes/math/MathNode";
 
 export default function StartGame() {
     // Redux states
@@ -110,14 +109,17 @@ async function startGame(gameId: string): Promise<boolean> {
     const params = new URLSearchParams({
         gameId: gameId,
     }).toString()
+
     try {
         const response = await fetch(`${API}/game/start?${params}`, {
             method: 'PUT',
         })
+
         if (!response.ok) {
             console.error('Failed to start game:', response)
             return false
         }
+
         console.log('sent start-game payload')
         return true
     } catch (error) {

@@ -66,7 +66,7 @@ export default function ObstacleSpawner(entities: Entities, { time }: { time: { 
             // Despawns the obstacle - player killed
             if (Math.abs(cy +300 - py) < 10 && Math.abs(cx - px) < 10) {
                 // @ts-expect-error
-                kill()
+                // kill()
                 delete entities[key]
             }
 
