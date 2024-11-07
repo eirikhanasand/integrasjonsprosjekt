@@ -78,6 +78,7 @@ func (server *Server) DiscordCallback(ctx *gin.Context) {
 	// exchange tokens
 
 	DiscordMap[id] = discordInfo
+	discordInfo.State = value
 
 	parsedURL, err := url.Parse(server.FrontendAuthRedirect)
 	if err != nil {

@@ -14,6 +14,7 @@ type Game struct {
 	LobbyLeader string
 	Playing     bool
 	StartTime   *time.Time
+	Chat        []interface{}
 }
 
 type Player struct {
@@ -40,6 +41,12 @@ type GameCreationRequest struct {
 type GameJoinLeaveRequest struct {
 	GameId string `uri:"gameId" binding:"required"`
 	UserId string `uri:"userId" binding:"required"`
+}
+
+type GameChatRequest struct {
+	GameId  string `uri:"gameId" binding:"required"`
+	UserId  string `form:"userId" binding:"required"`
+	Message string `form:"message" binding:"required"`
 }
 
 func (server *Server) CreateGame(ctx *gin.Context) {
@@ -304,4 +311,60 @@ func (server *Server) PostGameScore(ctx *gin.Context) {
 	server.SetGame(req.GameId, game)
 
 	ctx.JSON(http.StatusOK, "request accepted")
+}
+
+func (server *Server) GetChatMessages(ctx *gin.Context) {
+	var req GameRequestParam
+
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, "Malformed param request")
+		return
+	}
+
+	game, exists := server.GetGameWithLock(req.GameId)
+	defer server.ReleaseGameMapLock()
+
+	if exists == false {
+		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
+		return
+	}
+
+	ctx.JSON(http.StatusOK, game.Chat)
+}
+
+func (server *Server) PostChatMessage(ctx *gin.Context) {
+	var req GameChatRequest
+
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, "Malformed param request")
+		return
+	}
+
+	game, exists := server.GetGameWithLock(req.GameId)
+	defer server.ReleaseGameMapLock()
+
+	if exists == false {
+		ctx.JSON(http.StatusNotFound, "No game with this id exists.")
+		return
+	}
+
+	type Message struct {
+		Message string
+		User    string
+	}
+
+	chat := game.Chat
+
+	message := Message{
+		Message: req.Message,
+		User:    req.UserId,
+	}
+
+	chat = append(chat, message)
+
+	game.Chat = chat
+
+	server.SetGame(req.GameId, game)
+
+	ctx.JSON(http.StatusOK, "Successful insert")
 }
