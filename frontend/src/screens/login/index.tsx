@@ -1,8 +1,12 @@
-import GS from "@styles/globalStyles"
-import Swipe from "@components/nav/swipe"
-import { useDispatch, useSelector } from "react-redux"
-import { Text, TouchableOpacity, View } from "react-native"
-import handleLogin from "@components/login/login"
+import GS from "@styles/globalStyles";
+import Swipe from "@components/nav/swipe";
+import { useDispatch, useSelector } from "react-redux";
+import { Text, TouchableOpacity, View, Alert } from "react-native";
+import { useEffect } from "react";
+import handleLogin from "@components/login/login";
+import {authenticate, setUserID, setUsername} from "@redux/user";
+import {Navigation} from "@/interfaces";
+import {useNavigation} from "@react-navigation/native";
 
 /**
  * Parent GameScreen component
@@ -15,8 +19,41 @@ import handleLogin from "@components/login/login"
  */
 export default function LoginScreen(): JSX.Element {
     // Redux states
-    const { theme } = useSelector((state: ReduxState) => state.theme)
-    const dispatch = useDispatch()
+    const { theme } = useSelector((state: ReduxState) => state.theme);
+    const dispatch = useDispatch();
+    const currentState = useSelector((state: ReduxState) => state.user.authState)
+    const navigation: Navigation = useNavigation()
+
+    function initiateLogin() {
+        handleLogin({ dispatch });
+    };
+
+    function handleAuthCallback () {
+        const url = new URL(window.location.href);
+        const userId = url.searchParams.get("user_id");
+        const username = url.searchParams.get("username");
+        const state = url.searchParams.get("state")
+
+        console.log("state maxxing")
+
+        if (currentState != state) {
+            Alert.alert("failed login", `state mismatch`);
+        }
+        if (userId && username) {
+            dispatch(setUserID(userId));
+            dispatch(setUsername(username))
+            dispatch(authenticate())
+
+            navigation.navigate("GameScreen");
+
+            Alert.alert("Login Successful", `Welcome ${username}!`);
+        } else {
+            console.log("No user data found");
+        }
+    };
+    useEffect(() => {
+        handleAuthCallback();
+    }, []);
 
     // --- DISPLAYS THE LOGINSCREEN ---
     return (
@@ -29,16 +66,16 @@ export default function LoginScreen(): JSX.Element {
                     justifyContent: 'center',
                     alignContent: 'center'
                 }}>
-                    <TouchableOpacity 
-                        style={{ 
-                            backgroundColor: theme.contrast, 
-                            justifyContent: 'center', 
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: theme.contrast,
+                            justifyContent: 'center',
                             alignItems: 'center',
                             margin: 'auto',
                             padding: 12,
                             borderRadius: 12
                         }}
-                        onPress={() => handleLogin({ dispatch })}
+                        onPress={initiateLogin}
                     >
                         <Text style={{ color: 'white', fontSize: 16 }}>
                             Login with Discord
@@ -48,5 +85,4 @@ export default function LoginScreen(): JSX.Element {
             </View>
         </Swipe>
     )
-            
 }
