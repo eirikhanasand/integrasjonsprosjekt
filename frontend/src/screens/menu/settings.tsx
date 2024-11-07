@@ -50,7 +50,7 @@ function Content(): JSX.Element {
                             {info[0].description}
                         </Text>
                     </View>
-                    <View style={GS.view2}><Logout/></View>
+                    <Logout/>
                 </View>
             </Cluster>
             <Cluster marginHorizontal={0}>
@@ -69,7 +69,7 @@ function Content(): JSX.Element {
                             {info[1].description}
                         </Text>
                     </View>
-                    <View style={GS.view2}><Language/></View>
+                    <Language/>
                 </View>
             </Cluster>
 

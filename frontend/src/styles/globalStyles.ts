@@ -21,13 +21,9 @@ export const GS = StyleSheet.create({
     },
     // Left view of settings
     view: {
+        left: Dimensions.get('window').width > 1000 ? '4.7%' : undefined,
         alignSelf: "center",
         width: "85%",
-    },
-    // Right view of settings
-    view2: {
-        justifyContent: "center",
-        marginVertical: 2,
     },
     headerView: {
         position: "absolute",

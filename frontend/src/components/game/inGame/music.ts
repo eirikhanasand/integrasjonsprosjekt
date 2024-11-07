@@ -8,7 +8,11 @@ export default function Music() {
 
     // Loads and plays a song
     async function playSong(song: Song) {
-        const { sound } = await Audio.Sound.createAsync(Number(song.uri))
+        const uri: number | string = 
+            typeof song.uri === 'object' && 'default' in song.uri 
+                ? song.uri.default as string 
+                : song.uri as unknown as number
+        const { sound } = await Audio.Sound.createAsync(Number(uri as string) || { uri: uri as string })
         setSound(sound)
         sound.playAsync()
 
