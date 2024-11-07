@@ -74,8 +74,8 @@ export default function PlayerList({ players, setPlayers }: { players: any[], se
                 placeholder="Enter game ID"
                 placeholderTextColor={theme.textColor}
                 style={{
-                    backgroundColor: theme.inputBackground,
-                    borderColor: theme.inputBorder,
+                    backgroundColor: theme.background,
+                    borderColor: theme.contrast,
                     borderWidth: 1,
                     borderRadius: 8,
                     width: 120,

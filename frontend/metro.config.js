@@ -12,6 +12,7 @@ const config = getExpoDefaultConfig(__dirname)
 config.resolver.sourceExts.push('css')
 config.resolver.assetExts.push('fbx')
 config.resolver.assetExts.push('glb')
+config.resolver.assetExts.push('mp3')
 
 // Export the merged configuration
 module.exports = {

@@ -75,20 +75,20 @@ function Tabs(): JSX.Element {
     const { inGame } = useSelector((state: ReduxState) => state.game)
     const { theme } = useSelector((state: ReduxState) => state.theme)
 
-    if (!authenticated) {
-        return (
-            <Tab.Navigator
-                // Set initialscreen at to not defaut to top of tab stack
-                initialRouteName={"LoginNav"}
-                backBehavior="history"
-                screenOptions={{headerShown: false}}
-                // Hides default tabBar without showing anything
-                tabBar={_ => undefined}
-            >
-                <Tab.Screen name="LoginNav" component={LoginScreen} />
-            </Tab.Navigator>
-        )
-    }
+    // if (!authenticated) {
+    //     return (
+    //         <Tab.Navigator
+    //             // Set initialscreen at to not defaut to top of tab stack
+    //             initialRouteName={"LoginNav"}
+    //             backBehavior="history"
+    //             screenOptions={{headerShown: false}}
+    //             // Hides default tabBar without showing anything
+    //             tabBar={_ => undefined}
+    //         >
+    //             <Tab.Screen name="LoginNav" component={LoginScreen} />
+    //         </Tab.Navigator>
+    //     )
+    // }
 
     return (
         <Tab.Navigator

@@ -12,7 +12,8 @@ const compileNodeModules = [
     '@react-three/fiber',
     '@react-three/drei',
     'react-native-gesture-handler',
-    '@react-native/assets-registry'
+    '@react-native/assets-registry',
+    'expo-av'
 ].map((moduleName) => path.resolve(appDirectory, `node_modules/${moduleName}`))
 
 const babelLoaderConfiguration = {
@@ -81,6 +82,17 @@ const glbLoaderConfiguration = {
     },
 };
 
+const mp3LoaderConfiguration = {
+    test: /\.(mp3)$/,
+    use: {
+        loader: 'file-loader',
+        options: {
+            outputPath: 'assets/models/',
+            name: '[name].[ext]',
+        },
+    },
+};
+
 module.exports = {
     entry: {
         app: path.join(__dirname, "index.web.js"),
@@ -105,7 +117,8 @@ module.exports = {
             imageLoaderConfiguration,
             svgLoaderConfiguration,
             tsLoaderConfiguration,
-            glbLoaderConfiguration
+            glbLoaderConfiguration,
+            mp3LoaderConfiguration
         ],
     },
     plugins: [

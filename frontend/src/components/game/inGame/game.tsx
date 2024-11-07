@@ -1,5 +1,3 @@
-// game.tsx (frontend/src/components/game/inGame)
-
 import Map from "./map"
 import PauseButton from "./pause"
 import RightCorner from "../rightCorner"
@@ -21,6 +19,7 @@ import { Asset } from "expo-asset"
 import { getCurrentScores } from "@utils/getRoundScore"
 import { setScore as saveScore } from "@redux/game"
 import { API } from "@/constants"
+import Music from "./music"
 
 // Remove custom AnimatedValue type and use Animated.Value directly
 // type AnimatedValue = Animated.Value
@@ -120,7 +119,7 @@ export default function Gameplay() {
 
     useEffect(() => {
         return () => {
-        dispatch(storeScore(scoreRef.current))
+            dispatch(storeScore(scoreRef.current))
         }
     }, [])
 
@@ -129,16 +128,18 @@ export default function Gameplay() {
         dispatch(saveScore(score))
     }, [score])
 
-    const handleSendScore = () => {
+    function handleSendScore() {
         sendScore(score, userId, "")
     }
 
     useEffect(() => {
         if (gameId) {
-        const interval = setInterval(handleSendScore, 1000)
-        return () => clearInterval(interval)
+            const interval = setInterval(handleSendScore, 1000)
+            return () => clearInterval(interval)
         }
     }, [gameId, score])
+
+    Music()
 
     return (
         <>

@@ -1,11 +1,9 @@
-import {authenticate, setAuthState} from "@redux/user"
+import { authenticate, setAuthState } from "@redux/user"
 import { Dispatch } from "react"
-import {Linking, Platform} from "react-native"
+import { Linking, Platform } from "react-native"
 import { UnknownAction } from "redux"
-import {API} from "@/constants";
-import {v4 as uuidv4} from 'uuid';
-
-const API_LOGIN_URL = API+"/login"
+import { API } from "@/constants"
+import { v4 as uuidv4 } from 'uuid'
 
 type HandleLoginProps = {
     dispatch: Dispatch<UnknownAction>
@@ -15,20 +13,17 @@ type HandleLoginProps = {
 export default function handleLogin({ dispatch }: HandleLoginProps) {
     const state = uuidv4();
     dispatch(setAuthState(state))
-
     redirectToLogin(state)
 }
 
 async function redirectToLogin(state: string) {
     try {
-        console.log(API_LOGIN_URL)
-
         const params = new URLSearchParams({
             state: state
         }).toString()
 
         // Step 1: Get the login URL from your server
-        const response = await fetch(`${API_LOGIN_URL}?${params}`, {
+        const response = await fetch(`${API}/login?${params}`, {
             method: "GET",
         })
 
