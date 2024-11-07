@@ -42,7 +42,7 @@ export default function Leaderboard() {
                         borderRadius: 8,
                     }}
                 >
-                    <Trophy color="none" style={{width: 30, height: 30, alignSelf: 'center'}} />
+                    <Trophy style={{width: 30, height: 30, alignSelf: 'center'}} />
                 </TouchableOpacity>
             </View>
             {displayLeaderboard && <List handlePress={handlePress} />}
@@ -219,7 +219,7 @@ function ListView({player, index}: {player: any, index: number}) {
                     marginVertical: 'auto'
                 }}>{player.score}
                 </Text>
-                <Trophy color="none" style={{width: 28, height: 28}} />
+                <Trophy style={{width: 28, height: 28}} />
             </View>
         </View>
     )

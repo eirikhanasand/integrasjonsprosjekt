@@ -1,7 +1,7 @@
 import { StyleProp, View, ViewStyle } from "react-native"
 import { Svg, Path, Ellipse } from "react-native-svg"
 
-export default function Trophy({style, color}: {style?: StyleProp<ViewStyle>, color: string}) {
+export default function Trophy({style}: {style?: StyleProp<ViewStyle>}) {
     return (
         <View style={style}>
             <Svg viewBox="0 0 600 600">
