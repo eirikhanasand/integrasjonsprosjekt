@@ -44,6 +44,10 @@ type GameJoinLeaveRequest struct {
 }
 
 type GameChatRequest struct {
+	GameId string `uri:"gameId" binding:"required"`
+}
+
+type GameChatPostRequest struct {
 	GameId  string `uri:"gameId" binding:"required"`
 	UserId  string `form:"userId" binding:"required"`
 	Message string `form:"message" binding:"required"`
@@ -314,7 +318,7 @@ func (server *Server) PostGameScore(ctx *gin.Context) {
 }
 
 func (server *Server) GetChatMessages(ctx *gin.Context) {
-	var req GameRequestParam
+	var req GameChatRequest
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, "Malformed param request")
@@ -333,7 +337,7 @@ func (server *Server) GetChatMessages(ctx *gin.Context) {
 }
 
 func (server *Server) PostChatMessage(ctx *gin.Context) {
-	var req GameChatRequest
+	var req GameChatPostRequest
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, "Malformed param request")
